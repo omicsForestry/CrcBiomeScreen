@@ -5,7 +5,7 @@
 packages <- c("caret", "ranger", "progress", "doParallel", "future.apply", 
               "doFuture", "future", "foreach", "progressr", "dplyr", 
               "devtools", "glmnet", 
-              "pROC", "GUniFrac", "Matrix","microbiomeMarker")
+              "pROC", "GUniFrac", "Matrix","microbiomeMarker","curatedMetagenomicData","phyloseq","tidyr","dplyr")
 
 # Function to check and install missing packages
 # This function checks if a package is installed and installs it if not.
