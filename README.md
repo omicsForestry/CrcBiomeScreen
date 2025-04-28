@@ -10,3 +10,10 @@
  * Add more description and annotation in Vignette.
  * Change the way results are saved.
  * Change more details.
+
+## Plan
+ * Set up one object that is similar to the phyloseq structure.
+ * Design a unified data structure (one large object)
+ * Modularize each step and clarify input and output
+ * Record all operation history
+ * Increased flexibility control
