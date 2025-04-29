@@ -1,4 +1,4 @@
-# CRCscreening-Workflow
+# CrcBiomeScreen
 
 ## Description
  * Vignette.R : The toy sample for this workflow.
