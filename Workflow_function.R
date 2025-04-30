@@ -1,31 +1,68 @@
 #' Set up one obeject to save the results
 #' Create a list to store the results
-screening_results <- list() 
-screening_results$OriginalData <- NULL
-screening_results$Abundance <- NULL
-screening_results$NormalizedData <- NULL
-screening_results$ModelData <- NULL
-screening_results$RF_Model <- NULL
-screening_results$XGBoost_Model <- NULL
-screening_results$RF_Test <- NULL
-screening_results$XGBoost_Test <- NULL
-screening_results$ROC_Curve <- NULL
-screening_results$Best_Params <- NULL
-screening_results$Best_Params_XGBoost <- NULL
-screening_results$Best_Params_RF <- NULL
-screening_results$Best_Params_XGBoost <- NULL
-screening_results$Best_Params_RF_Test <- NULL
-screening_results$Best_Params_XGBoost_Test <- NULL
-screening_results$ROC_Curve_RF <- NULL
-screening_results$ROC_Curve_XGBoost <- NULL
-screening_results$ROC_Curve_RF_Test <- NULL 
-screening_results$ROC_Curve_XGBoost_Test <- NULL
-screening_results$Timestamp <- Sys.time()
-screening_results$TaskName <- NULL
+CreateCrcBiomeScreenObject <- function(AbsoluteAbundance = NULL, TaxaData = NULL, SampleData = NULL, RelativeAbundance = NULL) {
+  # If AbsoluteAbundance is NULL, check if RelativeAbundance is provided
+  if (!is.null(RelativeAbundance) && is.null(AbsoluteAbundance)) {
+    if (is.null(SampleData)) {
+      stop("SampleData is required to convert RelativeAbundance to AbsoluteAbundance.")
+    }
+    if (!"number_reads" %in% colnames(SampleData)) {
+      stop("SampleData must contain a 'number_reads' column to convert RelativeAbundance to AbsoluteAbundance.")
+    }
+      AbsoluteAbundance <- RelativeAbundance %>%
+      t() %>%
+      data.frame() %>%
+      mutate(across(seq_len(dim(RelativeAbundance)[2]), ~ (. * SampleData$number_reads / 100))) %>%
+      t() %>%
+      data.frame()
+  }
+  
+  # Set up the object
+  obj <- list(
+    AbsoluteAbundance = AbsoluteAbundance,
+    TaxaData = TaxaData,
+    SampleData = SampleData,
+    RelativeAbundance = RelativeAbundance, 
+    GenusLevelData = NULL,
+    NormalizedData = NULL,
+    ModelData = NULL,
+    ScreeningResult = NULL,
+    ModelResult = NULL,
+    PredictResult = NULL,
+    Params = list()
+  )
+  
+  # 设置类名
+  class(obj) <- "CrcBiomeScreenObject"
+  return(obj)
+}
 
 
 
+SplitTaxas <- function(CrcBiomeScreenObject) {
+    CrcBiomeScreenObject$TaxaData <- 
+        CrcBiomeScreenObject$TaxaData %>% 
+        tibble(variable = CrcBiomeScreenObject$TaxaData) %>%
+        separate(variable, into = c('Kingdom', 'Phylum', 'Class', 'Order', 'Family', 'Genus', 'Species'),
+                sep = '\\|', fill = "right") %>%
+        mutate(across(everything(), ~ ifelse(. == "", NA, sub("^[a-z]__", "", .)))) %>%
+        as.data.frame()
+    return(CrcBiomeScreenObject)
+}
 
+
+KeepGenusLevel <- function(CrcBiomeScreenObject){
+CrcBiomeScreenObject$GenusLevelData <- 
+    CrcBiomeScreenObject$AbsoluteAbundance %>%
+        as.data.frame() %>%
+        mutate(genus = CrcBiomeScreenObject$TaxaData$Genus) %>%
+        group_by(genus) %>%
+        summarise_all(sum) %>%
+        column_to_rownames("genus") %>%
+        t() %>%
+        as.data.frame()
+        return(CrcBiomeScreenObject)
+}
 
 #' Normalization - Choose
 #'
@@ -39,26 +76,27 @@ screening_results$TaskName <- NULL
 #' 
 #' @export 
 #'
-ChooseNormalize <- function(Data,
-                            taxa_col = NULL,
+NormalizeData <- function(CrcBiomeScreenObject = NULL,
                             method = NULL,
                             TaskName = NULL){
+    Data <- CrcBiomeScreenObject$GenusLevelData
     if(method == "TSS"){
                 # Transforming into relative abundance
-                Data[,taxa_col] <-  t(normalize(t(Data[,taxa_col]), method = "TSS"))
+                Data <-  t(normalize(t(Data), method = "TSS"))
         }else if(method == "GMPR"){
-            size.factor <- GMPR(t(Data[,taxa_col]))
+            size.factor <- GMPR(t(Data))
             size.factor[is.na(size.factor)] <- mean(size.factor,na.rm = TRUE)
-            Data[,taxa_col] <- Data[,taxa_col] / size.factor 
+            Data <- Data / size.factor 
         }
 
     # Add the normalization method to the Data
     attr(Data, "NormalizationMethod") <- method
     attr(Data, "TaskName") <- TaskName
     attr(Data, "Timestamp") <- Sys.time()
-
-    saveRDS(Data,paste0("Data_Normalization_",TaskName,".rds"))
-    return(Data)
+    CrcBiomeScreenObject$NormalizedData <- Data
+    # Save the Data
+    saveRDS(CrcBiomeScreenObject,paste0("CrcBiomeScreenObject_",TaskName,".rds"))
+    return(CrcBiomeScreenObject)
 }
 
 
@@ -75,28 +113,61 @@ ChooseNormalize <- function(Data,
 #' @name TaskName Save the running results
 #' @export List for the Datasets
 #'
-SplitDataSet <- function(data = NULL,
-                        label = NULL,
-                        TaskName = NULL,
-                        partition = NULL){
-
-    set.seed(123)
-    trainIndex <- createDataPartition(get(label, data), p = partition, list = F)
-    train <- data[trainIndex,]
-    test <- data[-trainIndex,]
-    train[[label]] <- as.factor(train[[label]])
-    test[[label]] <- as.factor(test[[label]])
-    ModelData <- list(train,test)
-    names(ModelData) <- c("Training","Test")
-    
-    # Add the Split Partition to the Data
-    attr(ModelData, "Split Partition") <- partition
-    attr(ModelData, "Timestamp") <- Sys.time()
-    
-    saveRDS(ModelData,paste0("ModelData_Split_",TaskName,".rds"))
-    return(ModelData)
-    
+SplitDataSet <- function(CrcBiomeScreenObject = NULL,
+                         label = NULL,
+                         partition = 0.7,
+                         condition_col = "study_condition") {
+  # Check if the required parameters are provided
+  if (is.null(CrcBiomeScreenObject)) stop("CrcBiomeScreenObject cannot be NULL.")
+  if (is.null(label)) stop("Label cannot be NULL.")
+  if (is.null(partition) || partition <= 0 || partition >= 1) {
+    stop("Partition must be a value between 0 and 1.")
+  }
+  if (!condition_col %in% colnames(CrcBiomeScreenObject$SampleData)) {
+    stop(paste("Condition column", condition_col, "not found in SampleData."))
+  }
+  
+  # Select the data based on the label
+  sample_condition <- CrcBiomeScreenObject$SampleData[[condition_col]]
+  data <- CrcBiomeScreenObject$NormalizedData[sample_condition %in% label, ]
+  sample_condition <- sample_condition[sample_condition %in% label]
+  
+  # Check if the data is empty
+  if (nrow(data) == 0) stop("No data found for the specified label.")
+  
+  # Create training and test set indexes
+  set.seed(123)
+  trainIndex <- createDataPartition(sample_condition, p = partition, list = FALSE)
+  
+  # Split the data
+  train <- data[trainIndex, ]
+  test <- data[-trainIndex, ]
+  
+  # Add labels to the training and test sets
+  train_label <- sample_condition[trainIndex]
+  test_label <- sample_condition[-trainIndex]
+  train[[condition_col]] <- as.factor(train_label)
+  test[[condition_col]] <- as.factor(test_label)
+  
+  # Create a list to store the training and test sets
+  ModelData <- list(
+    Training = train,
+    Test = test
+  )
+  
+  # Add attributes to the ModelData
+  attr(ModelData, "Split Partition") <- partition
+  attr(ModelData, "Task Name") <- "SplitDataSet"
+  attr(ModelData, "Timestamp") <- Sys.time()
+  attr(ModelData, "Training Size") <- nrow(train)
+  attr(ModelData, "Test Size") <- nrow(test)
+  
+  CrcBiomeScreenObject$ModelData <- ModelData
+  saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", "SplitDataSet", ".rds"))
+  
+  return(CrcBiomeScreenObject)
 }
+
 
 
 #' Random Forest Model
@@ -439,3 +510,8 @@ RunAnalysis <- function(data, label, taxa_col, methods, task_name) {
   return(list(NormalizedData = normalized_data, RF_Results = rf_results))
 }
 
+SelectImportantFeatures <- function(model, threshold = 0.01) {
+  importance <- varImp(model)$importance
+  selected <- rownames(importance)[importance$Overall > threshold]
+  return(selected)
+}
