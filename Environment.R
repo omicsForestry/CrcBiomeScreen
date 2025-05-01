@@ -4,8 +4,10 @@
 # Define required R packages
 packages <- c("caret", "ranger", "progress", "doParallel", "future.apply", 
               "doFuture", "future", "foreach", "progressr", "dplyr", 
-              "devtools", "glmnet", 
-              "pROC", "GUniFrac", "Matrix","microbiomeMarker","curatedMetagenomicData","phyloseq","tidyr","dplyr")
+              "devtools", "glmnet", "pROC", "GUniFrac", "Matrix","microbiomeMarker",
+              "curatedMetagenomicData","tidyr","dplyr","tibble","doParallel","foreach",
+              "ggplot2","phyloseq","ggpubr","ggrepel","ggplotify","ggtree","ggtreeExtra",
+              "ape","BiocManager","microbiome","vegan","xgboost")
 
 # Function to check and install missing packages
 # This function checks if a package is installed and installs it if not.
