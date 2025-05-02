@@ -6,9 +6,9 @@
  * Workflow_function.R : Multiple functions for processing and analyzing.
 
 ## To be continued...
- * The journey of the data may be put in one object.
- * Add more description and annotation in Vignette.
+ * Add the description and annotation in Vignette and function.
  * Change the way results are saved.
+ * Split more functions and change the way to use all functions.
 
 ## Plan
  * Modularize each step and clarify input and output.✅➡️
