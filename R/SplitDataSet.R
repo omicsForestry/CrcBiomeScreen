@@ -1,4 +1,7 @@
-     condition_col = "study_condition") {
+SplitDataSet <- function(CrcBiomeScreenObject = NULL,
+                         label = NULL,
+                         partition = 0.7,
+                         condition_col = "study_condition") {
   # Check if the required parameters are provided
   if (is.null(CrcBiomeScreenObject)) stop("CrcBiomeScreenObject cannot be NULL.")
   if (is.null(label)) stop("Label cannot be NULL.")
