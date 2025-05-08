@@ -18,8 +18,64 @@ CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
 CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject, label = c("control","CRC"), partition = 0.7)
+CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject, 
+                                    model_type = "RF",
+                                    TaskName = "ToyData_RF", 
+                                    TrueLabel = "CRC",
+                                    num_cores = 10)
+
+CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject, 
+                                    model_type = "XGBoost",
+                                    TaskName = "ToyData_XGBoost", 
+                                    TrueLabel = "CRC",
+                                    num_cores = 10)
+
+CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject, 
+                                       model_type = "RF",
+                                       TaskName = "ToyData_RF_Test", 
+                                       TrueLabel = "CRC",
+                                       PlotAUC = TRUE)
+CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject, 
+                                       model_type = "XGBoost",
+                                       TaskName = "ToyData_XGBoost_Test", 
+                                       TrueLabel = "CRC",
+                                       PlotAUC = TRUE)
+
+ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = Validation[[1]]@assays@data@listData$relative_abundance,
+                                                  TaxaData = Validation[[1]]@rowLinks$nodeLab,
+                                                  SampleData = Validation[[1]]@colData)
+ValidationData <- SplitTaxas(ValidationData)
+ValidationData <- KeepGenusLevel(ValidationData)
+ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+
+CrcBiomeScreenObject <- PredictValidation(CrcBiomeScreenObject, 
+                                       model_type = "RF",
+                                       ValidationData = ValidationData,
+                                       TaskName = "ValidationData_RF_Validation", 
+                                       TrueLabel = "CRC",
+                                       PlotAUC = TRUE)
+                                       
+CrcBiomeScreenObject <- PredictValidation(CrcBiomeScreenObject, 
+                                       model_type = "XGBoost",
+                                       ValidationData = ValidationData,
+                                       TaskName = "ValidationData_XGBoost_Validation", 
+                                       TrueLabel = "CRC",
+                                       PlotAUC = TRUE)
 
 
+
+# CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject, TaskName = "ToyData_RF_Test", TrueLabel = "CRC")
+
+RunScreening <- function(obj, normalize_method = "TSS", model = "RF", test_size = 0.3, feature_screening = TRUE) {
+  obj <- NormalizeData(obj, method = normalize_method)
+  obj <- SplitDataSet(obj, test_size = test_size)
+  if (feature_screening) {
+    obj <- ScreeningFeatures(obj)
+  }
+  obj <- TrainModels(obj, model_type = model)
+  obj <- EvaluateModel(obj)
+  return(obj)
+}
 
 
 
