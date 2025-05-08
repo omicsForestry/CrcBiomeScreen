@@ -3,15 +3,16 @@
 ## Description
  * Vignette.R : The toy sample for this workflow.
  * Environment.R : For setting up the environment for this workflow.
- * Workflow_function.R : Multiple functions for processing and analyzing.
+ * R folder : Multiple functions for processing and analyzing.
 
-## To be continued...
- * Add the description and annotation in Vignette and function.
- * Change the way results are saved.
- * Split more functions and change the way to use all functions.
+## Memos...
+ * Need to pay attention to the 'class_weights' in differnt datasets.
 
 ## Plan
+ * Add the description and annotation in Vignette and function.➡️
  * Modularize each step and clarify input and output.✅➡️
  * Record all operation history ➡️
- * Increased flexibility control ➡️
- * Need to plot the AUC figures for each model ➡️
+ * In the future, more functions(modules) will put in this workflow.
+   * CompareModels()
+   * SelectImportanceFeatures()
+   * SHAP values...
