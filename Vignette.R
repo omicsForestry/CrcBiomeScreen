@@ -1,8 +1,10 @@
+rm(list = ls())
 setwd("/home/CRCscreening/CRCscreening-Workflow/")
 setwd("/mnt/scratch/ngzh5554/CRCscreening-Workflow")
 # Load required libraries
-source("Environment.R")
-source("Workflow_function.R")
+source("R/Environment.R")
+source("R/main.R")
+
 # Load the data_relative abundance
 # toydata <- readRDS("toy_data.rds")
 toydata <- curatedMetagenomicData(
@@ -16,37 +18,46 @@ CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[
                                                   SampleData = toydata[[1]]@colData)
 CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
-CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR",TaskName = "Normalize_ToyData")
 CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject, label = c("control","CRC"), partition = 0.7)
 CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject, 
                                     model_type = "RF",
                                     TaskName = "ToyData_RF", 
                                     TrueLabel = "CRC",
                                     num_cores = 10)
+# CrcBiomeScreenObject <- readRDS("CrcBiomeScreenObject_ToyData_RF.rds")
 
 CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject, 
                                     model_type = "XGBoost",
                                     TaskName = "ToyData_XGBoost", 
                                     TrueLabel = "CRC",
                                     num_cores = 10)
+CrcBiomeScreenObject <- readRDS("CrcBiomeScreenObject_ToyData_XGBoost.rds")
 
 CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject, 
                                        model_type = "RF",
                                        TaskName = "ToyData_RF_Test", 
                                        TrueLabel = "CRC",
                                        PlotAUC = TRUE)
+
 CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject, 
                                        model_type = "XGBoost",
                                        TaskName = "ToyData_XGBoost_Test", 
                                        TrueLabel = "CRC",
                                        PlotAUC = TRUE)
 
-ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = Validation[[1]]@assays@data@listData$relative_abundance,
-                                                  TaxaData = Validation[[1]]@rowLinks$nodeLab,
-                                                  SampleData = Validation[[1]]@colData)
+# CrcBiomeScreenObject <- readRDS("CrcBiomeScreenObject_ToyData_XGBoost_Test.rds")
+
+ValidationData <- curatedMetagenomicData(
+            paste0(available_studies[11],".","relative_abundance")
+            , dryrun = FALSE, rownames = "short")  
+ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData[[1]]@assays@data@listData$relative_abundance,
+                                                  TaxaData = ValidationData[[1]]@rowLinks$nodeLab,
+                                                  SampleData = ValidationData[[1]]@colData)
 ValidationData <- SplitTaxas(ValidationData)
 ValidationData <- KeepGenusLevel(ValidationData)
-ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+ValidationData <- NormalizeData(ValidationData, method = "GMPR",TaskName = "Normalize_ValidationData")
+ValidationData$SampleData$study_condition <- ifelse(ValidationData$SampleData$study_condition == "CRC", "CRC", "Control")
 
 CrcBiomeScreenObject <- PredictValidation(CrcBiomeScreenObject, 
                                        model_type = "RF",
@@ -150,12 +161,7 @@ TestModel(ModelData = toy_data_ModelData,
     ModelData <- list(train,test)
                       TrueLabel = "Cancer")
 
-## XGBoost model
-XGBoost_Modeling(ModelData = toy_data_ModelData,
-                label = "StudyCondition",
-                taxa_col = c(3:150),
-                TaskName = "ToyData_XGBoost",
-                TrueLabel = "Cancer")
+
 
 
 
