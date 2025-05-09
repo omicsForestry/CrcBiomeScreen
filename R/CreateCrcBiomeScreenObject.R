@@ -26,10 +26,12 @@ CreateCrcBiomeScreenObject <- function(AbsoluteAbundance = NULL, TaxaData = NULL
     GenusLevelData = NULL,
     NormalizedData = NULL,
     ModelData = NULL,
-    ScreeningResult = NULL,
     ModelResult = NULL,
-    PredictResult = NULL,
-    Params = list()
+    EvaluateResult = list(
+      RF = NULL,
+      XGBoost = NULL
+    ),
+    PredictResult = NULL
   )
   
   # 设置类名

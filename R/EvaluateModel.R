@@ -19,15 +19,19 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
                       TaskName = NULL,
                       TrueLabel = NULL,
                       PlotAUC = NULL){
-
+    if (is.null(CrcBiomeScreenObject$EvaluateResult)) {
+        CrcBiomeScreenObject$EvaluateResult <- list()
+}
     set.seed(123)
     if ("RF" %in% model_type){
+       CrcBiomeScreenObject <- 
        EvaluateRF(CrcBiomeScreenObject = CrcBiomeScreenObject, 
                       TaskName = TaskName,
                       TrueLabel = TrueLabel,
                       PlotAUC = PlotAUC)
 
     } else if ("XGBoost" %in% model_type) {
+        CrcBiomeScreenObject <- 
         EvaluateXGBoost(CrcBiomeScreenObject = CrcBiomeScreenObject, 
                       TaskName = TaskName,
                       TrueLabel = TrueLabel,
@@ -38,7 +42,7 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
     # Save the result into the CrcBiomeScreenObject
     # CrcBiomeScreenObject$ModelResult <- results
     saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))
-    print("Save the result sucessfully!")
+    # print("Save the result sucessfully!")
     return(CrcBiomeScreenObject)
 }
 
@@ -79,20 +83,23 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 
     # calculating the ROC Curve
     roc.curve.rf <- roc(test.actual.classes.rf, test.pred.prob.rf, levels = levels(as.factor(ModelData$TestLabel)))
+    
+    CrcBiomeScreenObject$EvaluateResult$RF <- 
+    list(roc.curve = roc.curve.rf,
+         AUC = auc(roc.curve.rf),
+         RF.Model = rf.Model)
+
     # Plot
     if(PlotAUC == TRUE){
         pdf(paste0("roc.curve.rf.",TaskName,".pdf"))
         plot(roc.curve.rf, print.auc = TRUE, print.thres = TRUE)
         dev.off()
     }
-    CrcBiomeScreenObject$ModelResult$RF$EvaluateResult <- 
-    list(roc.curve = roc.curve.rf,
-            AUC = auc(roc.curve.rf),
-            RF.Model = rf.Model)
 
     # Save the result
     saveRDS(roc.curve.rf,paste0("roc.curve.rf.",TaskName,".rds"))
-    print("Save the result sucessfully!")
+    # print("Save the result sucessfully!")
+
     return(CrcBiomeScreenObject)
 }
 
@@ -128,7 +135,7 @@ EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
     )
     
   # Test the model
-  test.pred.prob.xgb <- predict(xgb.model, newdata = dtest)[[TrueLabel]]
+  test.pred.prob.xgb <- predict(xgb.model, newdata = dtest, type = "prob")
   
   # Calculate AUC
   roc.curve.xgb <- roc(label_test, test.pred.prob.xgb)
@@ -140,7 +147,7 @@ EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
         plot(roc.curve.xgb, print.auc = TRUE, print.thres = TRUE)
         dev.off()
     }
-    CrcBiomeScreenObject$ModelResult$XGBoost$EvaluateResult <- 
+    CrcBiomeScreenObject$EvaluateResult$XGBoost <- 
     list(roc.curve = roc.curve.xgb,
          AUC = auc(roc.curve.xgb),
          XGBoost.Model = xgb.model)

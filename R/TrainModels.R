@@ -12,7 +12,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   
   # Run the RF model
   if ("RF" %in% model_type){
-    CrcBiomeScreenObject <- RF_Modeling(
+    CrcBiomeScreenObject <- ModelingRF(
       CrcBiomeScreenObject = CrcBiomeScreenObject,
       k.rf = n_cv,
       TaskName = TaskName,
@@ -21,8 +21,9 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   }
   else if ("XGBoost" %in% model_type) {
   # Run the XGBoost model
-    CrcBiomeScreenObject <- XGBoost_Modeling(
+    CrcBiomeScreenObject <- ModelingXGBoost(
       CrcBiomeScreenObject = CrcBiomeScreenObject,
+      k.rf = n_cv,
       TaskName = TaskName,
       TrueLabel = TrueLabel,
       num_cores = num_cores)
@@ -33,3 +34,4 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   
   return(CrcBiomeScreenObject)
 }
+
