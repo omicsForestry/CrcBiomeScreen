@@ -46,22 +46,26 @@ CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject,
                                        TrueLabel = "CRC",
                                        PlotAUC = TRUE)
 
-# CrcBiomeScreenObject <- readRDS("CrcBiomeScreenObject_ToyData_XGBoost_Test.rds")
+CrcBiomeScreenObject <- readRDS("CrcBiomeScreenObject_ToyData_XGBoost_Test.rds")
 
-ValidationData <- curatedMetagenomicData(
+ValidationData_curated <- curatedMetagenomicData(
             paste0(available_studies[11],".","relative_abundance")
             , dryrun = FALSE, rownames = "short")  
-ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData[[1]]@assays@data@listData$relative_abundance,
-                                                  TaxaData = ValidationData[[1]]@rowLinks$nodeLab,
-                                                  SampleData = ValidationData[[1]]@colData)
+# saveRDS(ValidationData_curated, "ValidationData.rds")
+ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+                                                  TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+                                                  SampleData = ValidationData_curated[[1]]@colData)
 ValidationData <- SplitTaxas(ValidationData)
 ValidationData <- KeepGenusLevel(ValidationData)
 ValidationData <- NormalizeData(ValidationData, method = "GMPR",TaskName = "Normalize_ValidationData")
-ValidationData$SampleData$study_condition <- ifelse(ValidationData$SampleData$study_condition == "CRC", "CRC", "Control")
-
+ValidationData_filtered <- FilterDataSet(ValidationData, 
+                                 label = c("CRC","control"),
+                                 condition_col = "study_condition")
+# ValidationData$SampleData$study_condition <- ifelse(ValidationData$SampleData$study_condition == "CRC", "CRC", "Control")
+# dim(ValidationData$NormalizedData)
 CrcBiomeScreenObject <- PredictValidation(CrcBiomeScreenObject, 
                                        model_type = "RF",
-                                       ValidationData = ValidationData,
+                                       ValidationData = ValidationData_filtered,
                                        TaskName = "ValidationData_RF_Validation", 
                                        TrueLabel = "CRC",
                                        PlotAUC = TRUE)
