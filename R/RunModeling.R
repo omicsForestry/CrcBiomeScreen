@@ -162,6 +162,11 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   stopCluster(cl)
   registerDoSEQ()
 
+  # Select the best parameters
+  best.params.index.xgb <- which.max(grid.xgb$AUC)
+  best.params.xgb <- grid.xgb[best.params.index.xgb, ]
+  
+
   # Save the results in the CrcBiomeScreenObject
   CrcBiomeScreenObject$ModelResult$XGBoost <- list(
     BestParams = best.params.xgb,
