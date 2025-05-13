@@ -167,12 +167,10 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   best.params.xgb <- grid.xgb[best.params.index.xgb, ]
   
 
-  # Save the results in the CrcBiomeScreenObject
+  # Save the results
   CrcBiomeScreenObject$ModelResult$XGBoost <- list(
-    BestParams = best.params.xgb,
-    Model = xgb_model,
-    ROC = roc.curve.xgb,
-    AUC = auc.value.xgb
+    grid.xgb = grid.xgb,
+    best.params = best.params.xgb
   )
   
   return(CrcBiomeScreenObject)
