@@ -6,7 +6,7 @@
  * R folder : Multiple functions for processing and analyzing.
 
 ## Memos...
- * Need to pay attention to the ='class_weights'= in differnt datasets.
+ * Need to pay attention to the =='class_weights'== in differnt datasets.
 
 ## Plan
  * Need to do the test for the whole pipeline,especially the PredictValidation part.
