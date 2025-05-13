@@ -6,7 +6,8 @@
  * R folder : Multiple functions for processing and analyzing.
 
 ## Memos...
- * Need to pay attention to the =='class_weights'== in differnt datasets.
+ * Need to pay attention to the <mark>'class_weights'</mark> in differnt datasets.
+   * How to define the imbalance ratio better to improve applicability...
 
 ## Plan
  * Need to do the test for the whole pipeline,especially the PredictValidation part.
