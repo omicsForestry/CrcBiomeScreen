@@ -3,6 +3,7 @@ PredictValidation <- function(
   model_type = NULL,
   ValidationData = NULL,
   TaskName = NULL,
+  TrueLabel = NULL,
   condition_col = "study_condition",
   PlotAUC = NULL
 ) {
@@ -13,6 +14,7 @@ PredictValidation <- function(
     if(model_type == "RF") {
         rf.model <- CrcBiomeScreenObject$EvaluateResult$RF$RF.Model
         probs.ValidationData.rf <- predict(rf.model, data = ValidationData$NormalizedData, type = "response")$predictions
+        probs.ValidationData.rf <- probs.ValidationData.rf[, TrueLabel] 
         # Actual labels
         actual.classes.rf <- as.factor(ValidationData$SampleData$study_condition)
         # calculating the ROC Curve
@@ -28,7 +30,7 @@ PredictValidation <- function(
              AUC = auc(roc.curve.rf))
     } else if(model_type == "XGBoost") {
         xgb.model <- CrcBiomeScreenObject$EvaluateResult$XGBoost$XGBoost.Model
-        label_ValidationData <- ifelse(CrcBiomeScreenObject$SampleData$study_condition == TrueLabel, 1, 0)
+        label_ValidationData <- ifelse(ValidationData$SampleData$study_condition == TrueLabel, 1, 0)
         ValidationData <- xgb.DMatrix(data = as.matrix(ValidationData$NormalizedData), label = as.factor(ValidationData$SampleData$study_condition))
         # Test the model
         pred.prob.xgb <- predict(xgb.model, newdata = ValidationData, type = "prob")
