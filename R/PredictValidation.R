@@ -33,7 +33,7 @@ PredictValidation <- function(
         # Test the model
         pred.prob.xgb <- predict(xgb.model, newdata = ValidationData, type = "prob")
   
-k        # Calculate AUC
+        # Calculate AUC
         roc.curve.xgb <- roc(label_ValidationData, pred.prob.xgb)
         auc.value.xgb <- auc(roc.curve.xgb)
         
