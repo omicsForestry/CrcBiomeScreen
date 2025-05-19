@@ -12,7 +12,7 @@ PredictValidation <- function(
     # Load the model
     if(model_type == "RF") {
         rf.model <- CrcBiomeScreenObject$EvaluateResult$RF$RF.Model
-        probs.ValidationData.rf <- predict(rf.model, newdata = ValidationData$NormalizedData, type = 'response')$predictions
+        probs.ValidationData.rf <- predict(rf.model, data = ValidationData$NormalizedData, type = "response")$predictions
         # Actual labels
         actual.classes.rf <- as.factor(ValidationData$SampleData$study_condition)
         # calculating the ROC Curve
@@ -29,11 +29,11 @@ PredictValidation <- function(
     } else if(model_type == "XGBoost") {
         xgb.model <- CrcBiomeScreenObject$EvaluateResult$XGBoost$XGBoost.Model
         label_ValidationData <- ifelse(CrcBiomeScreenObject$SampleData$study_condition == TrueLabel, 1, 0)
-        ValidationData <- xgb.DMatrix(data = as.matrix(ValidationData$NormalizedData), label = ValidationData$SampleData$study_condition)
+        ValidationData <- xgb.DMatrix(data = as.matrix(ValidationData$NormalizedData), label = as.factor(ValidationData$SampleData$study_condition))
         # Test the model
         pred.prob.xgb <- predict(xgb.model, newdata = ValidationData, type = "prob")
   
-        # Calculate AUC
+k        # Calculate AUC
         roc.curve.xgb <- roc(label_ValidationData, pred.prob.xgb)
         auc.value.xgb <- auc(roc.curve.xgb)
         
@@ -51,8 +51,8 @@ PredictValidation <- function(
         stop("Invalid model type. Please choose either 'RF' or 'XGBoost'.")
     }
   # Save the result
-  saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))
-  print("Save the result successfully!")
+  # saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))
+  # print("Save the result successfully!")
   return(CrcBiomeScreenObject)
 }
 
