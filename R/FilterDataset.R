@@ -27,8 +27,7 @@ FilterDataSet <- function(CrcBiomeScreenObject = NULL,
   attr(FilteredData, "Filtered Size") <- nrow(data)
   
   CrcBiomeScreenObject <- FilteredData
-  saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", "FilteredDataSet", ".rds"))
+  # saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", "FilteredDataSet", ".rds"))
   
   return(CrcBiomeScreenObject)
 }
-
