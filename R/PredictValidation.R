@@ -13,12 +13,15 @@ PredictValidation <- function(
     # Load the model
     if(model_type == "RF") {
         rf.model <- CrcBiomeScreenObject$EvaluateResult$RF$RF.Model
+        # class_weights <- table(ValidationData$SampleData$study_condition)
+        # class_weights <- sum(class_weights) / (length(class_weights) * class_weights)
+
         probs.ValidationData.rf <- predict(rf.model, data = ValidationData$NormalizedData, type = "response")$predictions
-        probs.ValidationData.rf <- probs.ValidationData.rf[, TrueLabel] 
+        probs.ValidationData.rf.prob <- probs.ValidationData.rf[, TrueLabel] 
         # Actual labels
         actual.classes.rf <- as.factor(ValidationData$SampleData$study_condition)
         # calculating the ROC Curve
-        roc.curve.rf <- roc(actual.classes.rf, probs.ValidationData.rf, levels = levels(as.factor(ValidationData$SampleData$study_condition)))
+        roc.curve.rf <- roc(actual.classes.rf, probs.ValidationData.rf.prob, levels = levels(as.factor(ValidationData$SampleData$study_condition)))
         # Plot
         if(PlotAUC == TRUE){
             pdf(paste0("roc.curve.rf.",TaskName,".pdf"))
@@ -28,16 +31,27 @@ PredictValidation <- function(
         CrcBiomeScreenObject$PredictResult[["RF"]][[TaskName]] <- 
         list(roc.curve = roc.curve.rf,
              AUC = auc(roc.curve.rf))
+
     } else if(model_type == "XGBoost") {
-        xgb.model <- CrcBiomeScreenObject$EvaluateResult$XGBoost$XGBoost.Model
-        label_ValidationData <- ifelse(ValidationData$SampleData$study_condition == TrueLabel, 1, 0)
-        ValidationData <- xgb.DMatrix(data = as.matrix(ValidationData$NormalizedData), label = as.factor(ValidationData$SampleData$study_condition))
+    
+        xgb.model <- CrcBiomeScreenObject$ModelResult$XGBoost$model
+        
         # Test the model
-        pred.prob.xgb <- predict(xgb.model, newdata = ValidationData, type = "prob")
-  
+        test.pred.prob.xgb <- predict(xgb.model, newdata = ValidationData$NormalizedData, type = "prob")[[TrueLabel]]
+        
         # Calculate AUC
-        roc.curve.xgb <- roc(label_ValidationData, pred.prob.xgb)
+        roc.curve.xgb <- roc(ValidationData$SampleData$study_condition, test.pred.prob.xgb)
         auc.value.xgb <- auc(roc.curve.xgb)
+
+        # xgb.model <- CrcBiomeScreenObject$EvaluateResult$XGBoost$XGBoost.Model
+        # label_ValidationData <- ifelse(ValidationData$SampleData$study_condition == TrueLabel, 1, 0)
+        # Valid_Data <- xgb.DMatrix(data = as.matrix(ValidationData$NormalizedData), label = as.factor(ValidationData$SampleData$study_condition))
+        # # Test the model
+        # pred.prob.xgb <- predict(xgb.model, newdata = Valid_Data, type = "prob")
+  
+        # # Calculate AUC
+        # roc.curve.xgb <- roc(label_ValidationData, pred.prob.xgb)
+        # auc.value.xgb <- auc(roc.curve.xgb)
         
         # Plot the ROC curve
         if(PlotAUC == TRUE){
