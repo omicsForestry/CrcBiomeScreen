@@ -1,9 +1,12 @@
 # CrcBiomeScreen
 
+![CrcBiomeScreen](CrcBiomeScreen.png)
+
 ## Description
  * Vignette.R : The toy sample for this workflow.
  * Environment.R : For setting up the environment for this workflow.
  * R folder : Multiple functions for processing and analyzing.
+ * CrcBiomeScreen.png
 
 ## Memos...
  * Need to pay attention to the <mark>'class_weights'</mark> in differnt datasets.
