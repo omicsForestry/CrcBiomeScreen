@@ -46,8 +46,10 @@ CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject,
 CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject, 
                                     normalize_method = "GMPR", 
                                     model = "RF", 
-                                    split.requirement = c(label = c("control","CRC"), partition = 0.7), 
-                                    TaskName = "GMPR_NHSBCSP", num_cores = 10)
+                                    split.requirement = c(label = c("control","CRC")), 
+                                    TaskName = "GMPR_NHSBCSP", num_cores = 10,
+                                    ValidationData = ValidationData,
+                                    TrueLabel = "Cancer")
 
 
 
@@ -65,14 +67,14 @@ ValidationData_filtered <- FilterDataSet(ValidationData,
                                  label = c("CRC","control"),
                                  condition_col = "study_condition")
 
-CrcBiomeScreenObject <- PredictValidation(CrcBiomeScreenObject, 
+CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject, 
                                        model_type = "RF",
                                        ValidationData = ValidationData_filtered,
                                        TaskName = "ValidationData_RF_Validation", 
                                        TrueLabel = "CRC",
                                        PlotAUC = TRUE)
                                        
-CrcBiomeScreenObject <- PredictValidation(CrcBiomeScreenObject, 
+CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject, 
                                        model_type = "XGBoost",
                                        ValidationData = ValidationData,
                                        TaskName = "ValidationData_XGBoost_Validation", 
