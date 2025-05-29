@@ -1,6 +1,6 @@
 # CrcBiomeScreen
 
-![CrcBiomeScreen](CrcBiomeScreen/CrcBiomeScreen.png)
+![CrcBiomeScreen](images/CrcBiomeScreen.png)
 
 ## Description
  * Vignette.R : The toy sample for this workflow.
