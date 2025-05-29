@@ -25,11 +25,22 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   # Prepare training data
   train_data <- CrcBiomeScreenObject$ModelData$Training
   label_train <- CrcBiomeScreenObject$ModelData$TrainLabel
+  
   # label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject$ModelData$TrainLabel))
+  # # Suppose Positive is majority class.  Upweight Negative by ratio:
+  # w_pos <- 1
+  # w_neg <- nrow(train_data[train_data$Class=="Positive",]) / 
+  #         nrow(train_data[train_data$Class=="Negative",])
+  # weights <- ifelse(train_data$Class=="Positive", w_pos, w_neg) 
+
+  class_counts <- table(label_train)
+  positive_class <- names(which.max(class_counts))
+  negative_class <- names(class_counts)[names(class_counts) != positive_class]
+
   w_pos <- 1
-  w_neg <- nrow(train_data[label_train=="Blood_Negative",]) / 
-          nrow(train_data[label_train=="Cancer",])
-  weights <- ifelse(label_train=="Blood_Negative", w_pos, w_neg)
+  w_neg <- nrow(train_data[label_train==positive_class,]) / 
+          nrow(train_data[label_train==negative_class,])
+  weights <- ifelse(label_train==positive_class, w_pos, w_neg)
 
   # Define caret trainControl
   ctrl <- trainControl(
