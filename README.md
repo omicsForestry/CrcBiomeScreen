@@ -1,6 +1,6 @@
 # CrcBiomeScreen
 
-![Pipeline](https://raw.githubusercontent.com/iChronostasis/CrcBiomeScreen/main/images/CrcBiomeScreen.png)
+![Pipeline](images/pipeline.jpg)
 
 ## Description
  * Vignette.R : The toy sample for this workflow.
