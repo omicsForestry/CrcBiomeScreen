@@ -1,16 +1,13 @@
 # CrcBiomeScreen
 
-![Pipeline](https://github.com/user-attachments/assets/57d1173f-170e-4581-92d2-1b0daa5fd367)
+![Pipeline](https://github.com/user-attachments/assets/ac072299-afec-4c4f-93da-2c78887dabbd)
 
 ## Description
  * Vignette.R : The toy sample for this workflow.
  * Environment.R : For setting up the environment for this workflow.
  * R folder : Multiple functions for processing and analyzing.
- * CrcBiomeScreen.png
 
 ## Memos...
- * Need to pay attention to the <mark>'class_weights'</mark> in differnt datasets.
-   * How to define the imbalance ratio better to improve applicability...[Part of it]
  * Need to add the <mark>attributes</mark> in the object![Maybe no need to do this part...]
 
 ## Plan
