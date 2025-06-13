@@ -2,7 +2,7 @@
 # This script checks for the required R packages and installs any that are missing.
 # It also loads the necessary libraries for the analysis. 
 # Define required R packages
-packages <- c("caret", "ranger", "progress", "doParallel", "future.apply", 
+packages <- c("stats","caret", "ranger", "progress", "doParallel", "future.apply", 
               "doFuture", "future", "foreach", "progressr", "dplyr", 
               "devtools", "glmnet", "pROC", "GUniFrac", "Matrix","microbiomeMarker",
               "curatedMetagenomicData","tidyr","dplyr","tibble","doParallel","foreach",
@@ -15,11 +15,11 @@ packages <- c("caret", "ranger", "progress", "doParallel", "future.apply",
 # The function takes the package name as an argument and checks if it is installed.
 # If the package is not installed, it installs it using install.packages() or BiocManager::install() for Bioconductor packages.
 # The function also includes an option to install dependencies.
+options("repos" = c(CRAN="https://cran.ma.imperial.ac.uk/"))
 install_if_missing <- function(pkg) {
   if (!requireNamespace(pkg, quietly = TRUE)) {
     message(paste("Installing missing package:", pkg))
     if (pkg %in% c("microbiomeMarker","GUniFrac")) {
-      # 这些是 Bioconductor 包
       if (!requireNamespace("BiocManager", quietly = TRUE)) {
         install.packages("BiocManager")
       }
