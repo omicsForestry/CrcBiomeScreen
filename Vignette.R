@@ -7,8 +7,13 @@ source("R/main.R")
 
 # Load the data_relative abundance
 # toydata <- readRDS("toy_data.rds")
+# ThomasaAM_a
 toydata <- curatedMetagenomicData(
             "ZellerG_2014.relative_abundance"
+            , dryrun = FALSE, rownames = "short")  
+
+toydata <- curatedMetagenomicData(
+            "ThomasAM_2018a.relative_abundance"
             , dryrun = FALSE, rownames = "short")  
 
 CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
@@ -18,16 +23,31 @@ CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
 
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR",TaskName = "Normalize_ToyData")
+# CrcBiomeScreenObject <- qcByCmdscale(CrcBiomeScreenObject,
+#                                               TaskName = "ToyData",
+#                                               normalize_method = "GMPR")
+table(CrcBiomeScreenObject$SampleData$study_condition)
+
 CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject, label = c("control","CRC"), partition = 0.7)
+
+# Optinal: quality control by cmdscale
+CrcBiomeScreenObject <- qcByCmdscale(CrcBiomeScreenObject,
+                                    TaskName = "Normalize_ToyData_filtered_qc",
+                                    normalize_method = "GMPR")
+# Example: check balance in your classification labels
+checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)
+
 CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject, 
                                     model_type = "RF",
-                                    TaskName = "ToyData_RF", 
+                                    TaskName = "ToyData_RF",
+                                    ClassBalance = TRUE, 
                                     TrueLabel = "CRC",
                                     num_cores = 10)
 
 CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject, 
                                     model_type = "XGBoost",
                                     TaskName = "ToyData_XGBoost", 
+                                    ClassBalance = TRUE,
                                     TrueLabel = "CRC",
                                     num_cores = 10)
 
@@ -63,23 +83,28 @@ ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_
 ValidationData <- SplitTaxas(ValidationData)
 ValidationData <- KeepGenusLevel(ValidationData)
 ValidationData <- NormalizeData(ValidationData, method = "GMPR",TaskName = "Normalize_ValidationData")
+
 ValidationData_filtered <- FilterDataSet(ValidationData, 
                                  label = c("CRC","control"),
                                  condition_col = "study_condition")
 
+ValidationData_filtered_qc <- qcByCmdscale(ValidationData_filtered,
+                                              TaskName = "Normalize_ValidationData_filtered_qc",
+                                              normalize_method = "GMPR")
+
 CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject, 
                                        model_type = "RF",
-                                       ValidationData = ValidationData_filtered,
+                                       ValidationData = ValidationData_filtered_qc,
                                        TaskName = "ValidationData_RF_Validation", 
                                        TrueLabel = "CRC",
                                        PlotAUC = TRUE)
                                        
-CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject, 
-                                       model_type = "XGBoost",
-                                       ValidationData = ValidationData,
-                                       TaskName = "ValidationData_XGBoost_Validation", 
-                                       TrueLabel = "CRC",
-                                       PlotAUC = TRUE)
+# CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject, 
+#                                        model_type = "XGBoost",
+#                                        ValidationData = ValidationData,
+#                                        TaskName = "ValidationData_XGBoost_Validation", 
+#                                        TrueLabel = "CRC",
+#                                        PlotAUC = TRUE)
 
 
 
