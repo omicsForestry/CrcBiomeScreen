@@ -8,9 +8,9 @@ source("R/main.R")
 # Load the data_relative abundance
 # toydata <- readRDS("toy_data.rds")
 # ThomasaAM_a
-toydata <- curatedMetagenomicData(
-            "ZellerG_2014.relative_abundance"
-            , dryrun = FALSE, rownames = "short")  
+# toydata <- curatedMetagenomicData(
+#             "ZellerG_2014.relative_abundance"
+#             , dryrun = FALSE, rownames = "short")  
 
 toydata <- curatedMetagenomicData(
             "ThomasAM_2018a.relative_abundance"
@@ -26,6 +26,23 @@ CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR",Task
 # CrcBiomeScreenObject <- qcByCmdscale(CrcBiomeScreenObject,
 #                                               TaskName = "ToyData",
 #                                               normalize_method = "GMPR")
+ValidationData_curated <- curatedMetagenomicData(
+            paste0("ZellerG_2014",".","relative_abundance")
+            , dryrun = FALSE, rownames = "short")  
+# saveRDS(ValidationData_curated, "ValidationData.rds")
+ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+                                                  TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+                                                  SampleData = ValidationData_curated[[1]]@colData)
+ValidationData <- SplitTaxas(ValidationData)
+ValidationData <- KeepGenusLevel(ValidationData)
+ValidationData <- NormalizeData(ValidationData, method = "GMPR",TaskName = "Normalize_ValidationData")
+
+ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(ValidationData$NormalizedData) %in% 
+                                            colnames(CrcBiomeScreenObject$NormalizedData)]
+
+CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, colnames(CrcBiomeScreenObject$NormalizedData) %in% 
+                                            colnames(ValidationData_filtered_qc$NormalizedData)]
+
 table(CrcBiomeScreenObject$SampleData$study_condition)
 
 CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject, label = c("control","CRC"), partition = 0.7)
@@ -73,16 +90,16 @@ CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
 
 
 
-ValidationData_curated <- curatedMetagenomicData(
-            paste0(available_studies[11],".","relative_abundance")
-            , dryrun = FALSE, rownames = "short")  
-# saveRDS(ValidationData_curated, "ValidationData.rds")
-ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
-                                                  TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
-                                                  SampleData = ValidationData_curated[[1]]@colData)
-ValidationData <- SplitTaxas(ValidationData)
-ValidationData <- KeepGenusLevel(ValidationData)
-ValidationData <- NormalizeData(ValidationData, method = "GMPR",TaskName = "Normalize_ValidationData")
+# ValidationData_curated <- curatedMetagenomicData(
+#             paste0("ZellerG_2014",".","relative_abundance")
+#             , dryrun = FALSE, rownames = "short")  
+# # saveRDS(ValidationData_curated, "ValidationData.rds")
+# ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+#                                                   TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+#                                                   SampleData = ValidationData_curated[[1]]@colData)
+# ValidationData <- SplitTaxas(ValidationData)
+# ValidationData <- KeepGenusLevel(ValidationData)
+# ValidationData <- NormalizeData(ValidationData, method = "GMPR",TaskName = "Normalize_ValidationData")
 
 ValidationData_filtered <- FilterDataSet(ValidationData, 
                                  label = c("CRC","control"),
