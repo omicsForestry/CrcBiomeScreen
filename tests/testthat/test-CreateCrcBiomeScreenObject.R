@@ -1,8 +1,8 @@
 test_that("CreateCrcBiomeScreenObject works correctly", {
-
   toydata <- curatedMetagenomicData(
-    "ThomasAM_2018a.relative_abundance"
-    , dryrun = FALSE, rownames = "short")
+    "ThomasAM_2018a.relative_abundance",
+    dryrun = FALSE, rownames = "short"
+  )
 
   rel_abund <- toydata[[1]]@assays@data@listData$relative_abundance
   taxa_data <- toydata[[1]]@rowLinks$nodeLab
@@ -16,7 +16,9 @@ test_that("CreateCrcBiomeScreenObject works correctly", {
 
   expect_s3_class(result, "CrcBiomeScreenObject")
 
-  expect_error(CreateCrcBiomeScreenObject(RelativeAbundance = NULL,
-                                                    TaxaData = NULL,
-                                                    SampleData = sample_data))
+  expect_error(CreateCrcBiomeScreenObject(
+    RelativeAbundance = NULL,
+    TaxaData = NULL,
+    SampleData = sample_data
+  ))
 })
