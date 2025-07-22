@@ -1,13 +1,27 @@
+#' The packaging function for XGBoost modeling
+#'
+#' @param CrcBiomeScreenObject A \code{CrcBiomeScreenObject} containing normalized microbiome data, sample metadata, etc.
+#' @param k.rf Set the number of cross validation
+#' @param repeats Set the number of repeats in cross validation
+#' @param TaskName A character string used to label the output
+#' @param TrueLabel This label is the future prediction target
+#' @param num_cores Set the number of the cores in parallel computing
+#'
+#' @return CrcBiomeScreenObject
+#' @export
+#'
+#' @examples       CrcBiomeScreenObject <- ModelingXGBoost(
+#'                                         CrcBiomeScreenObject = CrcBiomeScreenObject,
+#'                                         k.rf = n_cv,TaskName = TaskName,
+#'                                         TrueLabel = TrueLabel,
+#'                                         num_cores = num_cores)
+#'
 ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
                             k.rf = 10,
                             repeats = 5,
                             TaskName = NULL,
                             TrueLabel = NULL,
                             num_cores = num_cores) {
-  if (is.null(CrcBiomeScreenObject$ModelData)) {
-    stop("ModelData is missing in CrcBiomeScreenObject. Please run SplitDataSet first.")
-  }
-
   set.seed(123)
   # Parallel setup（memory friendly）
   cl <- makePSOCKcluster(num_cores)
@@ -77,6 +91,7 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
     model = model_fit,
     bestTune = model_fit$bestTune
   )
-  saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))
+  attr(CrcBiomeScreenObject$ModelResult$XGBoost, "TaskName") <- TaskName
+
   return(CrcBiomeScreenObject)
 }
