@@ -1,18 +1,17 @@
-
 ModelingRF <- function(CrcBiomeScreenObject = NULL,
-                        k.rf = n_cv,
-                        TaskName = NULL,
-                        TrueLabel = NULL,
-                        num_cores = NULL) {
+                       k.rf = n_cv,
+                       TaskName = NULL,
+                       TrueLabel = NULL,
+                       num_cores = NULL) {
   set.seed(123)
   folds.rf <- createFolds(CrcBiomeScreenObject$ModelData$TrainLabel, k = k.rf)
-  
+
   # Calculate the number of cores
   # num_cores <- 10
   # num_cores <- detectCores() - 20
   cl <- makePSOCKcluster(num_cores)
   registerDoParallel(cl)
-  
+
   # tuneGrid for ranger
   grid.rf <- expand.grid(
     mtry = seq(5, 25, by = 5),
@@ -21,7 +20,7 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
     num.trees = seq(300, 600, by = 100),
     AUC = 0
   )
-  
+
   # Using ranger random forest for faster implementation
   grid.rf$AUC <- foreach(i = 1:nrow(grid.rf), .combine = c, .packages = c("ranger", "pROC")) %dopar% {
     aucs <- sapply(1:k.rf, function(j) {
@@ -54,15 +53,15 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
       roc.obj <- roc(val.Label, predictions[, TrueLabel])
       auc(roc.obj)
     })
-    
+
     # AUC on the current fold
     mean(aucs)
   }
-  
+
   # Stop the cluster
   stopCluster(cl)
   registerDoSEQ()
-  
+
   # Choose the best parameters
   best.params.index.rf <- which.max(grid.rf$AUC)
   best.params.rf <- grid.rf[best.params.index.rf, ]
@@ -70,10 +69,7 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   CrcBiomeScreenObject$ModelResult$RF <- list(grid.para = grid.rf, best.params = best.params.rf)
 
   # saveRDS(best.params.rf, paste0("best.params.rf_", TaskName, ".rds"))
-  
+
   print("Save the result successfully!")
   return(CrcBiomeScreenObject)
 }
-
-
-
