@@ -1,0 +1,72 @@
+ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
+                                      k.rf = 10,
+                                      repeats = 5,
+                                      TaskName = NULL,
+                                      TrueLabel = NULL,
+                                      num_cores = num_cores) {
+  set.seed(123)
+
+  if (is.null(CrcBiomeScreenObject$ModelData)) {
+    stop("ModelData is missing in CrcBiomeScreenObject. Please run SplitDataSet first.")
+  }
+
+  # Parallel setup（memory friendly）
+  cl <- makePSOCKcluster(num_cores)
+  registerDoParallel(cl)
+
+  # Prepare training data
+  train_data <- CrcBiomeScreenObject$ModelData$Training
+  label_train <- as.factor(CrcBiomeScreenObject$ModelData$TrainLabel)
+  label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject$ModelData$TrainLabel))
+
+  # Define caret trainControl
+  ctrl <- trainControl(
+    method = "repeatedcv",
+    number = k.rf,
+    repeats = repeats,
+    classProbs = TRUE,
+    summaryFunction = twoClassSummary,
+    allowParallel = TRUE
+  )
+
+
+  tune_grid <- expand.grid(
+    nrounds = c(100, 200, 300),
+    max_depth = c(3, 5, 7, 9),
+    eta = c(0.01, 0.1, 0.3),
+    gamma = 0,
+    colsample_bytree = c(0.5, 0.75, 1),
+    min_child_weight = 1,
+    subsample = c(0.5, 0.75, 1)
+  )
+
+  # # Calculate class weights
+  # class_weights <- table(label_train)
+  # class_weights <- sum(class_weights) / (length(class_weights) * class_weights)
+  # sample_weights <- class_weights[CrcBiomeScreenObject$ModelData$TrainLabel]
+
+  train_data <- as.data.frame(train_data)
+  train_data$label_train <- label_train
+
+  # Train the model using caret
+  set.seed(123)
+  # Train the model using caret
+  model_fit <- train(label_train ~ .,
+    data = train_data,
+    method = "xgbTree",
+    metric = "ROC",
+    trControl = ctrl,
+    tuneGrid = tune_grid,
+    verbose = TRUE
+  )
+
+  stopCluster(cl)
+  registerDoSEQ()
+
+  CrcBiomeScreenObject$ModelResult$XGBoost <- list(
+    model = model_fit,
+    bestTune = model_fit$bestTune
+  )
+  saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))
+  return(CrcBiomeScreenObject)
+}

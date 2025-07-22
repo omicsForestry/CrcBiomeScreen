@@ -16,10 +16,11 @@ checkClassBalance <- function(labels, threshold = 0.3, plot = TRUE) {
   if (plot) {
     pdf("class_balance_plot.pdf", width = 8, height = 6)
     barplot(class_counts,
-            col = "steelblue",
-            main = "Class Distribution",
-            ylab = "Sample Count",
-            xlab = "Class Label")
+      col = "steelblue",
+      main = "Class Distribution",
+      ylab = "Sample Count",
+      xlab = "Class Label"
+    )
     abline(h = mean(class_counts), col = "red", lty = 2)
     dev.off()
   }

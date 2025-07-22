@@ -1,9 +1,10 @@
-ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
-                            k.rf = 10,
-                            repeats = 5,
-                            TaskName = NULL,
-                            TrueLabel = NULL,
-                            num_cores = num_cores) {
+ModelingXGBoost_sampling <- function(CrcBiomeScreenObject = NULL,
+                                     k.rf = 10,
+                                     repeats = 5,
+                                     TaskName = NULL,
+                                     TrueLabel = NULL,
+                                     sampling_method = NULL,
+                                     num_cores = num_cores) {
   if (is.null(CrcBiomeScreenObject$ModelData)) {
     stop("ModelData is missing in CrcBiomeScreenObject. Please run SplitDataSet first.")
   }
@@ -34,14 +35,14 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   #         nrow(train_data[train_data$Class=="Negative",])
   # weights <- ifelse(train_data$Class=="Positive", w_pos, w_neg)
 
-  class_counts <- table(label_train)
-  positive_class <- names(which.max(class_counts))
-  negative_class <- names(class_counts)[names(class_counts) != positive_class]
+  # class_counts <- table(label_train)
+  # positive_class <- names(which.max(class_counts))
+  # negative_class <- names(class_counts)[names(class_counts) != positive_class]
 
-  w_pos <- 1
-  w_neg <- nrow(train_data[label_train == positive_class, ]) /
-    nrow(train_data[label_train == negative_class, ])
-  weights <- ifelse(label_train == positive_class, w_pos, w_neg)
+  # w_pos <- 1
+  # w_neg <- nrow(train_data[label_train==positive_class,]) /
+  #         nrow(train_data[label_train==negative_class,])
+  # weights <- ifelse(label_train==positive_class, w_pos, w_neg)
 
   # Define caret trainControl
   ctrl <- trainControl(
@@ -50,9 +51,11 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
     repeats = repeats,
     summaryFunction = twoClassSummary,
     classProbs = TRUE,
-    allowParallel = TRUE
+    allowParallel = TRUE,
+    sampling = sampling_method
   )
-
+  ctrl_orig <- readRDS("/mnt/scratch/ngzh5554/CRCscreening-Workflow/TestWeights/CRCvsBN/Noweights/ctrl.rds")
+  ctrl$seeds <- ctrl_orig$seeds
   # model_weights <- model_weights[CrcBiomeScreenObject$ModelData$TrainLabel]
 
   train_data <- as.data.frame(train_data)
@@ -66,7 +69,6 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
     metric = "ROC",
     trControl = ctrl,
     tuneGrid = tune_grid,
-    weights = weights,
     verbose = TRUE
   )
 

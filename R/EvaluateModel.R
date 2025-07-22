@@ -1,4 +1,3 @@
-
 #' Test the Model
 #'
 #' @Description:
@@ -11,181 +10,189 @@
 #' @param best.params The best parameters for model
 #' @name TaskName Save the running results
 #' @name TrueLabel The positive class
-#' 
-#' @export 
 #'
-EvaluateModel <- function(CrcBiomeScreenObject = NULL, 
-                      model_type = c("RF", "XGBoost"),
-                      TaskName = NULL,
-                      TrueLabel = NULL,
-                      PlotAUC = NULL){
-    if (is.null(CrcBiomeScreenObject$EvaluateResult)) {
-        CrcBiomeScreenObject$EvaluateResult <- list()
+#' @export
+#'
+EvaluateModel <- function(CrcBiomeScreenObject = NULL,
+                          model_type = c("RF", "XGBoost"),
+                          TaskName = NULL,
+                          TrueLabel = NULL,
+                          PlotAUC = NULL) {
+  if (is.null(CrcBiomeScreenObject$EvaluateResult)) {
+    CrcBiomeScreenObject$EvaluateResult <- list()
+  }
+  set.seed(123)
+  if ("RF" %in% model_type) {
+    CrcBiomeScreenObject <-
+      EvaluateRF(
+        CrcBiomeScreenObject = CrcBiomeScreenObject,
+        TaskName = TaskName,
+        TrueLabel = TrueLabel,
+        PlotAUC = PlotAUC
+      )
+  } else if ("XGBoost" %in% model_type) {
+    CrcBiomeScreenObject <-
+      EvaluateXGBoost(
+        CrcBiomeScreenObject = CrcBiomeScreenObject,
+        TaskName = TaskName,
+        TrueLabel = TrueLabel,
+        PlotAUC = PlotAUC
+      )
+  } else {
+    stop("Invalid model type. Please choose either 'RF' or 'XGBoost'.")
+  }
+  # Save the result into the CrcBiomeScreenObject
+  # CrcBiomeScreenObject$ModelResult <- results
+  saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))
+  # print("Save the result sucessfully!")
+  return(CrcBiomeScreenObject)
 }
-    set.seed(123)
-    if ("RF" %in% model_type){
-       CrcBiomeScreenObject <- 
-       EvaluateRF(CrcBiomeScreenObject = CrcBiomeScreenObject, 
-                      TaskName = TaskName,
-                      TrueLabel = TrueLabel,
-                      PlotAUC = PlotAUC)
-
-    } else if ("XGBoost" %in% model_type) {
-        CrcBiomeScreenObject <- 
-        EvaluateXGBoost(CrcBiomeScreenObject = CrcBiomeScreenObject, 
-                      TaskName = TaskName,
-                      TrueLabel = TrueLabel,
-                      PlotAUC = PlotAUC)
-    } else {
-        stop("Invalid model type. Please choose either 'RF' or 'XGBoost'.")
-    }
-    # Save the result into the CrcBiomeScreenObject
-    # CrcBiomeScreenObject$ModelResult <- results
-    saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))
-    # print("Save the result sucessfully!")
-    return(CrcBiomeScreenObject)
-}
 
 
 
-EvaluateRF <- function(CrcBiomeScreenObject = NULL, 
-                      TaskName = NULL,
-                      TrueLabel = NULL,
-                      PlotAUC = NULL){
-    # Load the best parameters
-    best.params <- CrcBiomeScreenObject$ModelResult$RF$best.params
-    ModelData <- CrcBiomeScreenObject$ModelData
-    
-    # # Class weights in each fold
-    # class_weights <- table(ModelData$TestLabel)
-    # class_weights <- sum(class_weights) / (length(class_weights) * class_weights)
-    ModelData[["Training"]] <- as.data.frame(ModelData[["Training"]])
-    ModelData[["Training"]]$TrainLabel <- as.factor(ModelData$TrainLabel)
-    # Retraining the model with the best hyperparameters on the entire training dataset
-    rf.Model <- ranger(
-        formula         = as.formula(paste("TrainLabel ~ .")),
-        data            = ModelData[["Training"]], 
-        num.trees       = best.params$num.trees,
-        mtry            = best.params$mtry,
-        min.node.size   = best.params$node_size,
-        sample.fraction = best.params$sample_size,
-        # class.weights   = class_weights,
-        seed            = 123,
-        classification  = TRUE,
-        probability     = TRUE
+EvaluateRF <- function(CrcBiomeScreenObject = NULL,
+                       TaskName = NULL,
+                       TrueLabel = NULL,
+                       PlotAUC = NULL) {
+  # Load the best parameters
+  best.params <- CrcBiomeScreenObject$ModelResult$RF$best.params
+  ModelData <- CrcBiomeScreenObject$ModelData
+
+  # # Class weights in each fold
+  # class_weights <- table(ModelData$TestLabel)
+  # class_weights <- sum(class_weights) / (length(class_weights) * class_weights)
+  ModelData[["Training"]] <- as.data.frame(ModelData[["Training"]])
+  ModelData[["Training"]]$TrainLabel <- as.factor(ModelData$TrainLabel)
+  # Retraining the model with the best hyperparameters on the entire training dataset
+  rf.Model <- ranger(
+    formula         = as.formula(paste("TrainLabel ~ .")),
+    data            = ModelData[["Training"]],
+    num.trees       = best.params$num.trees,
+    mtry            = best.params$mtry,
+    min.node.size   = best.params$node_size,
+    sample.fraction = best.params$sample_size,
+    # class.weights   = class_weights,
+    seed            = 123,
+    classification  = TRUE,
+    probability     = TRUE
+  )
+  # Evaluate the model on the test dataset
+  # Generating predictions (probabilities for Neoplasm or cancer) for positive class
+  test.predictions.rf <- predict(rf.Model, data = ModelData[["Test"]], type = "response")$predictions
+  test.pred.prob.rf <- test.predictions.rf[, TrueLabel]
+  # Actual labels
+  test.actual.classes.rf <- as.factor(ModelData$TestLabel)
+
+  # calculating the ROC Curve
+  roc.curve.rf <- roc(test.actual.classes.rf, test.pred.prob.rf, levels = levels(as.factor(ModelData$TestLabel)))
+  # Confidence Interval
+  ci.auc(roc.curve.rf, conf.level = 0.95, method = "delong")
+  # Finding Optimal threshold using Youden's Index
+  coords.rf <- coords(roc.curve.rf, "best", ret = "all", best.method = "youden")
+  optimal.threshold.rf <- coords.rf$threshold
+  optimal.threshold.rf
+  label <- levels(as.factor(ModelData$TestLabel))
+  # Making predictions based on optimal threshold
+  test.class.predictions.rf <- as.factor(ifelse(test.pred.prob.rf >= optimal.threshold.rf, TrueLabel,
+    label[!label %in% TrueLabel]
+  ))
+  # COnfusion Matrix
+  conf.matrix.rf <- confusionMatrix(test.class.predictions.rf, as.factor(ModelData$TestLabel), positive = TrueLabel)
+  # F1-score
+  f1_score.rf <- conf.matrix.rf$byClass["F1"]
+
+  # Balanced Accuracy
+  balanced_accuracy.rf <- conf.matrix.rf$byClass["Balanced Accuracy"]
+
+  # Precision
+  precision.rf <- conf.matrix.rf$byClass["Precision"]
+
+  # Recall
+  recall.rf <- conf.matrix.rf$byClass["Recall"]
+
+  CrcBiomeScreenObject$EvaluateResult$RF <-
+    list(
+      roc.curve = roc.curve.rf,
+      AUC = auc.value.rf,
+      F1 = f1_score.rf,
+      BalancedAccuracy = balanced_accuracy.rf,
+      Precision = precision.rf,
+      Recall = recall.rf,
+      RF.Model = rf.Model,
+      conf.matrix = conf.matrix.rf
     )
-    # Evaluate the model on the test dataset
-    # Generating predictions (probabilities for Neoplasm or cancer) for positive class
-    test.predictions.rf <- predict(rf.Model, data = ModelData[["Test"]], type = "response")$predictions
-    test.pred.prob.rf <- test.predictions.rf[, TrueLabel] 
-    # Actual labels
-    test.actual.classes.rf <- as.factor(ModelData$TestLabel)
 
-    # calculating the ROC Curve
-    roc.curve.rf <- roc(test.actual.classes.rf, test.pred.prob.rf, levels = levels(as.factor(ModelData$TestLabel)))
-    # Confidence Interval
-    ci.auc(roc.curve.rf, conf.level = 0.95, method = 'delong')
-    # Finding Optimal threshold using Youden's Index
-    coords.rf <- coords(roc.curve.rf, 'best', ret = 'all', best.method = 'youden')
-    optimal.threshold.rf <- coords.rf$threshold
-    optimal.threshold.rf
-    label <- levels(as.factor(ModelData$TestLabel))
-    # Making predictions based on optimal threshold
-    test.class.predictions.rf <- as.factor(ifelse(test.pred.prob.rf >= optimal.threshold.rf, TrueLabel, 
-                                                  label[!label %in% TrueLabel]))
-    # COnfusion Matrix
-    conf.matrix.rf <- confusionMatrix(test.class.predictions.rf, as.factor(ModelData$TestLabel), positive = TrueLabel)
-    # F1-score
-    f1_score.rf <- conf.matrix.rf$byClass["F1"]
+  # Plot
+  if (PlotAUC == TRUE) {
+    pdf(paste0("roc.curve.rf.", TaskName, ".pdf"))
+    plot(roc.curve.rf, print.auc = TRUE, print.thres = TRUE)
+    dev.off()
+  }
 
-    # Balanced Accuracy
-    balanced_accuracy.rf <- conf.matrix.rf$byClass["Balanced Accuracy"]
+  # Save the result
+  saveRDS(roc.curve.rf, paste0("roc.curve.rf.", TaskName, ".rds"))
+  # print("Save the result sucessfully!")
 
-    # Precision
-    precision.rf <- conf.matrix.rf$byClass["Precision"]
-
-    # Recall
-    recall.rf <- conf.matrix.rf$byClass["Recall"]
-
-    CrcBiomeScreenObject$EvaluateResult$RF <- 
-    list(roc.curve = roc.curve.rf,
-        AUC = auc.value.rf,
-        F1 = f1_score.rf,
-        BalancedAccuracy = balanced_accuracy.rf,
-        Precision = precision.rf,
-        Recall = recall.rf,
-        RF.Model = rf.Model,
-        conf.matrix = conf.matrix.rf)
-
-    # Plot
-    if(PlotAUC == TRUE){
-        pdf(paste0("roc.curve.rf.",TaskName,".pdf"))
-        plot(roc.curve.rf, print.auc = TRUE, print.thres = TRUE)
-        dev.off()
-    }
-
-    # Save the result
-    saveRDS(roc.curve.rf,paste0("roc.curve.rf.",TaskName,".rds"))
-    # print("Save the result sucessfully!")
-
-    return(CrcBiomeScreenObject)
+  return(CrcBiomeScreenObject)
 }
 
 
-EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL, 
-                      TaskName = NULL,
-                      TrueLabel = NULL,
-                      PlotAUC = NULL){
-                      
-    xgb.model <- CrcBiomeScreenObject$ModelResult$XGBoost$model
-    
-    # Test the model
-    test.pred.prob.xgb <- predict(xgb.model, newdata = CrcBiomeScreenObject$ModelData$Test, type = "prob")[[TrueLabel]]
-    
-    # Calculate AUC
-    roc.curve.xgb <- roc(CrcBiomeScreenObject$ModelData$TestLabel, test.pred.prob.xgb)
-    auc.value.xgb <- auc(roc.curve.xgb)
-    
-    # Optimal threshold using Youden's Index
-    coords.xgb <- coords(roc.curve.xgb, 'best', ret = 'all', best.method = 'youden')
-    optimal.threshold.xgb <- coords.xgb$threshold
-    label <- levels(as.factor(CrcBiomeScreenObject$ModelData$TestLabel))
-    test.class.predictions.xgb <- as.factor(ifelse(test.pred.prob.xgb >= optimal.threshold.xgb, TrueLabel, 
-                                                            label[!label %in% TrueLabel]))
-                                                            
-    # Confusion Matrix
-    conf.matrix.xgb <- confusionMatrix(test.class.predictions.xgb, as.factor(CrcBiomeScreenObject$ModelData$TestLabel), positive = TrueLabel)
-    # F1-score
-    f1_score.xgb <- conf.matrix.xgb$byClass["F1"]
+EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
+                            TaskName = NULL,
+                            TrueLabel = NULL,
+                            PlotAUC = NULL) {
+  xgb.model <- CrcBiomeScreenObject$ModelResult$XGBoost$model
 
-    # Balanced Accuracy
-    balanced_accuracy.xgb <- conf.matrix.xgb$byClass["Balanced Accuracy"]
+  # Test the model
+  test.pred.prob.xgb <- predict(xgb.model, newdata = CrcBiomeScreenObject$ModelData$Test, type = "prob")[[TrueLabel]]
 
-    # Precision
-    precision.xgb <- conf.matrix.xgb$byClass["Precision"]
+  # Calculate AUC
+  roc.curve.xgb <- roc(CrcBiomeScreenObject$ModelData$TestLabel, test.pred.prob.xgb)
+  auc.value.xgb <- auc(roc.curve.xgb)
 
-    # Recall
-    recall.xgb <- conf.matrix.xgb$byClass["Recall"]
+  # Optimal threshold using Youden's Index
+  coords.xgb <- coords(roc.curve.xgb, "best", ret = "all", best.method = "youden")
+  optimal.threshold.xgb <- coords.xgb$threshold
+  label <- levels(as.factor(CrcBiomeScreenObject$ModelData$TestLabel))
+  test.class.predictions.xgb <- as.factor(ifelse(test.pred.prob.xgb >= optimal.threshold.xgb, TrueLabel,
+    label[!label %in% TrueLabel]
+  ))
 
-    # Plot the ROC curve
-    if(PlotAUC == TRUE){
-        pdf(paste0("roc.curve.xgb.",TaskName,".pdf"))
-        plot(roc.curve.xgb, print.auc = TRUE, print.thres = TRUE)
-        dev.off()
-    }
+  # Confusion Matrix
+  conf.matrix.xgb <- confusionMatrix(test.class.predictions.xgb, as.factor(CrcBiomeScreenObject$ModelData$TestLabel), positive = TrueLabel)
+  # F1-score
+  f1_score.xgb <- conf.matrix.xgb$byClass["F1"]
 
-    # Save results
-    CrcBiomeScreenObject$EvaluateResult$XGBoost <- 
-    list(roc.curve = roc.curve.xgb,
-        AUC = auc.value.xgb,
-        F1 = f1_score.xgb,
-        ConfusionMatrix = conf.matrix.xgb,
-        BalancedAccuracy = balanced_accuracy.xgb,
-        Precision = precision.xgb,
-        Recall = recall.xgb,
-        XGBoost.Model = xgb.model)
+  # Balanced Accuracy
+  balanced_accuracy.xgb <- conf.matrix.xgb$byClass["Balanced Accuracy"]
 
-    saveRDS(roc.curve.xgb,paste0("roc.curve.xgb.",TaskName,".rds"))
-    print("Save the result sucessfully!")
-    return(CrcBiomeScreenObject)
+  # Precision
+  precision.xgb <- conf.matrix.xgb$byClass["Precision"]
+
+  # Recall
+  recall.xgb <- conf.matrix.xgb$byClass["Recall"]
+
+  # Plot the ROC curve
+  if (PlotAUC == TRUE) {
+    pdf(paste0("roc.curve.xgb.", TaskName, ".pdf"))
+    plot(roc.curve.xgb, print.auc = TRUE, print.thres = TRUE)
+    dev.off()
+  }
+
+  # Save results
+  CrcBiomeScreenObject$EvaluateResult$XGBoost <-
+    list(
+      roc.curve = roc.curve.xgb,
+      AUC = auc.value.xgb,
+      F1 = f1_score.xgb,
+      ConfusionMatrix = conf.matrix.xgb,
+      BalancedAccuracy = balanced_accuracy.xgb,
+      Precision = precision.xgb,
+      Recall = recall.xgb,
+      XGBoost.Model = xgb.model
+    )
+
+  saveRDS(roc.curve.xgb, paste0("roc.curve.xgb.", TaskName, ".rds"))
+  print("Save the result sucessfully!")
+  return(CrcBiomeScreenObject)
 }
