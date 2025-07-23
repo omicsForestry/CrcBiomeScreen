@@ -1,6 +1,6 @@
 # CrcBiomeScreen
 
-![Pipeline](https://github.com/user-attachments/assets/23d1a0f6-f01b-42b9-af23-8c823d709462)
+![Pipeline](https://github.com/user-attachments/assets/5434dac9-5392-4825-884e-06a56d232a1e)
 
 ## Description
  * Vignette.R : The toy sample for this workflow.

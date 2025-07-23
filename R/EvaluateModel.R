@@ -101,6 +101,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 
   # calculating the ROC Curve
   roc.curve.rf <- roc(test.actual.classes.rf, test.pred.prob.rf, levels = levels(as.factor(ModelData$TestLabel)))
+  auc.value.rf <- auc(roc.curve.rf)
   # Confidence Interval
   ci.auc(roc.curve.rf, conf.level = 0.95, method = "delong")
   # Finding Optimal threshold using Youden's Index
@@ -112,7 +113,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
   test.class.predictions.rf <- as.factor(ifelse(test.pred.prob.rf >= optimal.threshold.rf, TrueLabel,
     label[!label %in% TrueLabel]
   ))
-  # COnfusion Matrix
+  # Confusion Matrix
   conf.matrix.rf <- confusionMatrix(test.class.predictions.rf, as.factor(ModelData$TestLabel), positive = TrueLabel)
   # F1-score
   f1_score.rf <- conf.matrix.rf$byClass["F1"]
