@@ -1,3 +1,23 @@
+#' Train the different models
+#'
+#' @param CrcBiomeScreenObject  A \code{CrcBiomeScreenObject} containing normalized microbiome data, sample metadata, etc.
+#' @param model_type Select the method for modeling
+#' @param ClassBalance Choose using the class weights or not
+#' @param n_cv Set the number of cross validation
+#' @param TaskName A character string used to label the output
+#' @param TrueLabel This label is the future prediction target
+#' @param num_cores Set the number of the cores in parallel computing
+#'
+#' @return CrcBiomeScreenObject
+#' @export
+#'
+#' @examples CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
+#'                                               model_type = "RF",
+#'                                               TaskName = "ToyData_RF",
+#'                                               ClassBalance = TRUE,
+#'                                               TrueLabel = "CRC",
+#'                                               num_cores = 10)
+#'
 TrainModels <- function(CrcBiomeScreenObject = NULL,
                         model_type = c("RF", "XGBoost"),
                         ClassBalance = TRUE,
@@ -12,7 +32,8 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
 
   # Run the RF model
   if ("RF" %in% model_type) {
-    if (ClassBalance) {
+    # Using the RF with class weights
+    if (ClassBalance == TRUE) {
       CrcBiomeScreenObject <- ModelingRF(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         k.rf = n_cv,
@@ -21,6 +42,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
         num_cores = num_cores
       )
     } else {
+      # Using the RF without class weights
       CrcBiomeScreenObject <- ModelingRF_noweights(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         k.rf = n_cv,
@@ -33,8 +55,8 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
 
   # Run the XGBoost model
   if ("XGBoost" %in% model_type) {
-    if (ClassBalance) {
-      # 使用加权的 XGBoost 模型
+    if (ClassBalance == TRUE) {
+      # Using the XGBoost with class weights
       CrcBiomeScreenObject <- ModelingXGBoost(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         k.rf = n_cv,
@@ -43,7 +65,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
         num_cores = num_cores
       )
     } else {
-      # 使用不加权的 XGBoost 模型
+      # Using the XGBoost without class weights
       CrcBiomeScreenObject <- ModelingXGBoost_noweights(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         k.rf = n_cv,
@@ -53,9 +75,6 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
       )
     }
   }
-
-  # Save the result into the CrcBiomeScreenObject
-  saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))
 
   return(CrcBiomeScreenObject)
 }

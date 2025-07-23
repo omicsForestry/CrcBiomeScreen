@@ -1,3 +1,11 @@
+#' Keep the taxa data at genus level
+#'
+#' @param CrcBiomeScreenObject
+#'
+#' @return CrcBiomeScreenObject$GenusLevelData
+#' @export
+#'
+#' @examples CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
 KeepGenusLevel <- function(CrcBiomeScreenObject) {
   CrcBiomeScreenObject$GenusLevelData <-
     CrcBiomeScreenObject$AbsoluteAbundance %>%

@@ -32,6 +32,7 @@ ValidateModelOnData <- function(
   }
   # Load the model
   if (model_type == "RF") {
+    rf.model <- CrcBiomeScreenObject$EvaluateResult$RF$RF.Model
     probs.ValidationData.rf <- predict(rf.model, data = ValidationData$NormalizedData, type = "response")$predictions
     probs.ValidationData.rf.prob <- probs.ValidationData.rf[, TrueLabel]
 
