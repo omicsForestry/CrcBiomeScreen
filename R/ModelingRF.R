@@ -1,3 +1,21 @@
+#' The packaging function for Random Forest modeling
+#'
+#' @param CrcBiomeScreenObject A \code{CrcBiomeScreenObject} containing normalized microbiome data, sample metadata, etc.
+#' @param k.rf Set the number of cross validation
+#' @param TaskName A character string used to label the output
+#' @param TrueLabel This label is the future prediction target
+#' @param num_cores Set the number of the cores in parallel computing
+#'
+#' @return CrcBiomeScreenObject
+#' @export
+#'
+#' @examples CrcBiomeScreenObject <- ModelingRF(
+#'                                   CrcBiomeScreenObject = CrcBiomeScreenObject,
+#'                                   k.rf = n_cv,
+#'                                   TaskName = TaskName,
+#'                                   TrueLabel = TrueLabel,
+#'                                   num_cores = num_cores)
+#'
 ModelingRF <- function(CrcBiomeScreenObject = NULL,
                        k.rf = n_cv,
                        TaskName = NULL,
@@ -7,8 +25,6 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   folds.rf <- createFolds(CrcBiomeScreenObject$ModelData$TrainLabel, k = k.rf)
 
   # Calculate the number of cores
-  # num_cores <- 10
-  # num_cores <- detectCores() - 20
   cl <- makePSOCKcluster(num_cores)
   registerDoParallel(cl)
 
@@ -67,9 +83,7 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   best.params.rf <- grid.rf[best.params.index.rf, ]
   # Save the best parameters
   CrcBiomeScreenObject$ModelResult$RF <- list(grid.para = grid.rf, best.params = best.params.rf)
+  attr(CrcBiomeScreenObject$ModelResult$RF, "TaskName") <- TaskName
 
-  # saveRDS(best.params.rf, paste0("best.params.rf_", TaskName, ".rds"))
-
-  print("Save the result successfully!")
   return(CrcBiomeScreenObject)
 }

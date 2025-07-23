@@ -1,3 +1,21 @@
+#' The function for modeling random forest without using class weights
+#'
+#' @param CrcBiomeScreenObject A \code{CrcBiomeScreenObject} containing normalized microbiome data, sample metadata, etc.
+#' @param k.rf Set the number of cross validation
+#' @param TaskName A character string used to label the output
+#' @param TrueLabel This label is the future prediction target
+#' @param num_cores Set the number of the cores in parallel computing
+#'
+#' @return CrcBiomeScreenObject
+#' @export
+#'
+#' @examples CrcBiomeScreenObject <- ModelingRF_noweights(
+#'                                   CrcBiomeScreenObject = CrcBiomeScreenObject,
+#'                                   k.rf = n_cv,
+#'                                   TaskName = TaskName,
+#'                                   TrueLabel = TrueLabel,
+#'                                   num_cores = num_cores)
+#'
 ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  k.rf = n_cv,
                                  TaskName = NULL,
@@ -66,10 +84,8 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   best.params.index.rf <- which.max(grid.rf$AUC)
   best.params.rf <- grid.rf[best.params.index.rf, ]
   # Save the best parameters
-  CrcBiomeScreenObject$ModelResult$RF <- list(grid.para = grid.rf, best.params = best.params.rf)
+  CrcBiomeScreenObject$ModelResult$RF_noweights <- list(grid.para = grid.rf, best.params = best.params.rf)
+  attr(CrcBiomeScreenObject$ModelResult$RF_noweights, "TaskName") <- TaskName
 
-  # saveRDS(best.params.rf, paste0("best.params.rf_", TaskName, ".rds"))
-
-  print("Save the result successfully!")
   return(CrcBiomeScreenObject)
 }

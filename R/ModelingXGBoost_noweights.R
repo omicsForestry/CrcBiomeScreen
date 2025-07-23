@@ -1,3 +1,22 @@
+#' The packaging function for XGBoost modeling without using class weights
+#'
+#' @param CrcBiomeScreenObject A \code{CrcBiomeScreenObject} containing normalized microbiome data, sample metadata, etc.
+#' @param k.rf Set the number of cross validation
+#' @param repeats Set the number of repeats in cross validation
+#' @param TaskName A character string used to label the output
+#' @param TrueLabel This label is the future prediction target
+#' @param num_cores Set the number of the cores in parallel computing
+#'
+#' @return CrcBiomeScreenObject
+#' @export
+#'
+#' @examples CrcBiomeScreenObject <- ModelingXGBoost_noweights(
+#'                                   CrcBiomeScreenObject = CrcBiomeScreenObject,
+#'                                   k.rf = n_cv,
+#'                                   TaskName = TaskName,
+#'                                   TrueLabel = TrueLabel,
+#'                                   num_cores = num_cores)
+#'
 ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
                                       k.rf = 10,
                                       repeats = 5,
@@ -5,11 +24,6 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
                                       TrueLabel = NULL,
                                       num_cores = num_cores) {
   set.seed(123)
-
-  if (is.null(CrcBiomeScreenObject$ModelData)) {
-    stop("ModelData is missing in CrcBiomeScreenObject. Please run SplitDataSet first.")
-  }
-
   # Parallel setup（memory friendly）
   cl <- makePSOCKcluster(num_cores)
   registerDoParallel(cl)
@@ -29,7 +43,6 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
     allowParallel = TRUE
   )
 
-
   tune_grid <- expand.grid(
     nrounds = c(100, 200, 300),
     max_depth = c(3, 5, 7, 9),
@@ -39,11 +52,6 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
     min_child_weight = 1,
     subsample = c(0.5, 0.75, 1)
   )
-
-  # # Calculate class weights
-  # class_weights <- table(label_train)
-  # class_weights <- sum(class_weights) / (length(class_weights) * class_weights)
-  # sample_weights <- class_weights[CrcBiomeScreenObject$ModelData$TrainLabel]
 
   train_data <- as.data.frame(train_data)
   train_data$label_train <- label_train
@@ -63,10 +71,11 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
   stopCluster(cl)
   registerDoSEQ()
 
-  CrcBiomeScreenObject$ModelResult$XGBoost <- list(
+  CrcBiomeScreenObject$ModelResult$XGBoost_noweights <- list(
     model = model_fit,
     bestTune = model_fit$bestTune
   )
-  saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))
+  attr(CrcBiomeScreenObject$ModelResult$XGBoost_noweights, "TaskName") <- TaskName
+
   return(CrcBiomeScreenObject)
 }
