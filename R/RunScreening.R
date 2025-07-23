@@ -8,6 +8,9 @@
 #' @param ValidationData A \code{CrcBiomeScreenObject} containing validation data for model evaluation, default is NULL
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance
 #' @param num_cores Set the number of cores for parallel computing, default is NULL
+#' @param partition The number of partitions for cross-validation
+#' @param ClassBalance Whether to use class balancing in the model training, default is NULL
+#' @param n_cv The number of cross-validation folds, default is NULL
 #'
 #' @return A \code{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
 #' @export
@@ -24,20 +27,24 @@
 #'                                                TrueLabel = "Cancer")
 #'
 RunScreening <- function(obj,
-                         normalize_method = normalize_method, # c("TSS", "GMPR")
-                         model_type = ModelType, # c("RF", "XGBoost")
+                         normalize_method = NULL, # c("TSS", "GMPR")
+                         model_type = NULL, # c("RF", "XGBoost")
                          split.requirement = NULL, # c(label = c("control","CRC"),  condition_col = "study_condition")
                          TaskName = TaskName,
+                         partition = NULL,
+                         ClassBalance = NULL,
+                         n_cv = NULL,
                          ValidationData = NULL,
-                         TrueLabel = truelabel,
-                         num_cores = num_cores) {
-  obj <- NormalizeData(obj, normalize_method = normalize_method)
-  obj <- SplitDataSet(obj, split.requirement, partition = 0.7)
+                         TrueLabel = NULL,
+                         num_cores = NULL) {
 
-  obj <- TrainModels(obj, model_type = ModelType, TaskName = TaskName, TrueLabel = truelabel, num_cores = num_cores)
-  obj <- EvaluateModel(obj, model_type = ModelType, TaskName = paste0(TaskName, "_Test"), TrueLabel = truelabel, PlotAUC = TRUE)
+  # obj <- NormalizeData(obj, method = normalize_method)
+  obj <- SplitDataSet(obj, split.requirement, partition = partition)
 
-  obj <- ValidateModelOnData(obj, model_type = model, ValidationData = ValidationData, TaskName = paste0(TaskName, "_Validation"), TrueLabel = TrueLabel, PlotAUC = TRUE)
+  obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassBalance = ClassBalance, n_cv = n_cv)
+  obj <- EvaluateModel(obj, model_type = model_type, TaskName = paste0(TaskName, "_Test"), TrueLabel = TrueLabel, PlotAUC = TRUE)
+
+  obj <- ValidateModelOnData(obj, model_type = model_type, ValidationData = ValidationData, TaskName = paste0(TaskName, "_Validation"), TrueLabel = TrueLabel, PlotAUC = TRUE)
 
   return(obj)
 }

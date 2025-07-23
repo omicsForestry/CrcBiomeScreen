@@ -31,7 +31,7 @@ CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
 ValidationData_curated <- curatedMetagenomicData(
             paste0("ZellerG_2014",".","relative_abundance")
             , dryrun = FALSE, rownames = "short")
-# saveRDS(ValidationData_curated, "ValidationData.rds")
+
 ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
                                                   TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
                                                   SampleData = ValidationData_curated[[1]]@colData)
@@ -43,11 +43,11 @@ ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(Valida
                                             colnames(CrcBiomeScreenObject$NormalizedData)]
 
 CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, colnames(CrcBiomeScreenObject$NormalizedData) %in%
-                                            colnames(ValidationData_filtered_qc$NormalizedData)]
+                                            colnames(ValidationData$NormalizedData)]
 
 table(CrcBiomeScreenObject$SampleData$study_condition)
-# ------------------------------------------------------------------------------
 
+# ------------------------------------------------------------------------------
 CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject, label = c("control","CRC"), partition = 0.7)
 
 # Optinal: quality control by cmdscale
@@ -89,7 +89,7 @@ CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
                                     split.requirement =
                                     c(label = c("control","CRC"),
                                       condition_col = "study_condition"),
-                                    TaskName = "GMPR_NHSBCSP",
+                                    TaskName = "GMPR_toydata",
                                     num_cores = 10,
                                     ValidationData = ValidationData,
                                     TrueLabel = "Cancer")
@@ -122,12 +122,12 @@ CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
                                        TrueLabel = "CRC",
                                        PlotAUC = TRUE)
 
-# CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
-#                                        model_type = "XGBoost",
-#                                        ValidationData = ValidationData,
-#                                        TaskName = "ValidationData_XGBoost_Validation",
-#                                        TrueLabel = "CRC",
-#                                        PlotAUC = TRUE)
+CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
+                                       model_type = "XGBoost",
+                                       ValidationData = ValidationData,
+                                       TaskName = "ValidationData_XGBoost_Validation",
+                                       TrueLabel = "CRC",
+                                       PlotAUC = TRUE)
 
 
 
