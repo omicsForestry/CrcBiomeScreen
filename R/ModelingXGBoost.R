@@ -10,11 +10,12 @@
 #' @return CrcBiomeScreenObject
 #' @export
 #'
-#' @examples       CrcBiomeScreenObject <- ModelingXGBoost(
-#'                                         CrcBiomeScreenObject = CrcBiomeScreenObject,
-#'                                         k.rf = n_cv,TaskName = TaskName,
-#'                                         TrueLabel = TrueLabel,
-#'                                         num_cores = num_cores)
+#' @examples CrcBiomeScreenObject <- ModelingXGBoost(
+#'                                   CrcBiomeScreenObject = CrcBiomeScreenObject,
+#'                                   k.rf = n_cv,
+#'                                   TaskName = TaskName,
+#'                                   TrueLabel = TrueLabel,
+#'                                   num_cores = num_cores)
 #'
 ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
                             k.rf = 10,
