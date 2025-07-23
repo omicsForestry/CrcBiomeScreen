@@ -1,17 +1,19 @@
-#' Test the Model
+#' Evaluate the model to select the optimal model
 #'
-#' @Description:
-#' This function is for testing the model
-#' and get the AUC on test dataset
+#' @param CrcBiomeScreenObject A CrcBiomeScreenObject containing the model data and results
+#' @param model_type A character vector indicating the type of model to evaluate. Options are "RF" for Random Forest and "XGBoost" for XGBoost.
+#' @param TaskName A character string used to label the output files and results.
+#' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
+#' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
 #'
-#' @param ModelData List for the Datasets
-#' @param label The label are used for modeling
-#' @param taxa_col Select the needed Column
-#' @param best.params The best parameters for model
-#' @name TaskName Save the running results
-#' @name TrueLabel The positive class
-#'
+#' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult` slot.
 #' @export
+#'
+#' @examples CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject,
+#'                                                 model_type = "RF",
+#'                                                 TaskName = "ToyData_RF_Test",
+#'                                                 TrueLabel = "CRC",
+#'                                                 PlotAUC = TRUE)
 #'
 EvaluateModel <- function(CrcBiomeScreenObject = NULL,
                           model_type = c("RF", "XGBoost"),
@@ -50,6 +52,22 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
 
 
 
+#' Evaluate the Random Forest model
+#'
+#' @param CrcBiomeScreenObject A CrcBiomeScreenObject containing the model data and results
+#' @param TaskName A character string used to label the output files and results.
+#' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
+#' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
+#'
+#' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$RF` slot.
+#' @export
+#'
+#' @examples  CrcBiomeScreenObject <- EvaluateRF(
+#'                                    CrcBiomeScreenObject = CrcBiomeScreenObject,
+#'                                    TaskName = TaskName,
+#'                                    TrueLabel = TrueLabel,
+#'                                    PlotAUC = PlotAUC)
+#'
 EvaluateRF <- function(CrcBiomeScreenObject = NULL,
                        TaskName = NULL,
                        TrueLabel = NULL,
@@ -58,11 +76,9 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
   best.params <- CrcBiomeScreenObject$ModelResult$RF$best.params
   ModelData <- CrcBiomeScreenObject$ModelData
 
-  # # Class weights in each fold
-  # class_weights <- table(ModelData$TestLabel)
-  # class_weights <- sum(class_weights) / (length(class_weights) * class_weights)
   ModelData[["Training"]] <- as.data.frame(ModelData[["Training"]])
   ModelData[["Training"]]$TrainLabel <- as.factor(ModelData$TrainLabel)
+
   # Retraining the model with the best hyperparameters on the entire training dataset
   rf.Model <- ranger(
     formula         = as.formula(paste("TrainLabel ~ .")),
@@ -71,11 +87,11 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
     mtry            = best.params$mtry,
     min.node.size   = best.params$node_size,
     sample.fraction = best.params$sample_size,
-    # class.weights   = class_weights,
     seed            = 123,
     classification  = TRUE,
     probability     = TRUE
   )
+
   # Evaluate the model on the test dataset
   # Generating predictions (probabilities for Neoplasm or cancer) for positive class
   test.predictions.rf <- predict(rf.Model, data = ModelData[["Test"]], type = "response")$predictions
@@ -129,14 +145,26 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
     dev.off()
   }
 
-  # Save the result
-  saveRDS(roc.curve.rf, paste0("roc.curve.rf.", TaskName, ".rds"))
-  # print("Save the result sucessfully!")
-
   return(CrcBiomeScreenObject)
 }
 
 
+#' Evaluate the XGBoost model
+#'
+#' @param CrcBiomeScreenObject A CrcBiomeScreenObject containing the model data and results
+#' @param TaskName A character string used to label the output files and results.
+#' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
+#' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
+#'
+#' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$XGBoost` slot.
+#' @export
+#'
+#' @examples CrcBiomeScreenObject <- EvaluateXGBoost(
+#'                         CrcBiomeScreenObject = CrcBiomeScreenObject,
+#'                         TaskName = TaskName,
+#'                         TrueLabel = TrueLabel,
+#'                         PlotAUC = PlotAUC)
+#'
 EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
                             TaskName = NULL,
                             TrueLabel = NULL,
@@ -192,7 +220,5 @@ EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
       XGBoost.Model = xgb.model
     )
 
-  saveRDS(roc.curve.xgb, paste0("roc.curve.xgb.", TaskName, ".rds"))
-  print("Save the result sucessfully!")
   return(CrcBiomeScreenObject)
 }
