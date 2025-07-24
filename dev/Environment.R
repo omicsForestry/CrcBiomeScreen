@@ -2,20 +2,13 @@
 # This script checks for the required R packages and installs any that are missing.
 # It also loads the necessary libraries for the analysis.
 # Define required R packages
-# packages <- c("stats","caret", "ranger", "progress", "doParallel", "future.apply",
-#               "doFuture", "future", "foreach", "progressr", "dplyr",
-#               "devtools", "glmnet", "pROC", "GUniFrac", "Matrix","microbiomeMarker",
-#               "curatedMetagenomicData","tidyr","dplyr","tibble","doParallel","foreach",
-#               "ggplot2","phyloseq","ggpubr","ggrepel","ggplotify","ggtree",
-#               "ape","BiocManager","microbiome","vegan","xgboost")
-packages <- c(
-  "stats", "caret", "ranger", "progress", "doParallel", "future.apply",
-  "doFuture", "future", "foreach", "progressr", "dplyr",
-  "devtools", "pROC", "GUniFrac", "Matrix", "microbiomeMarker",
-  "curatedMetagenomicData", "tidyr", "dplyr", "tibble", "doParallel", "foreach",
-  "ggplot2", "phyloseq", "ggpubr", "ggrepel", "ggplotify", "ggtree",
-  "ape", "BiocManager", "vegan", "xgboost"
-)
+packages <- c("stats","caret", "ranger", "progress", "doParallel", "future.apply",
+              "doFuture", "future", "foreach", "progressr", "dplyr",
+              "devtools", "glmnet", "pROC", "GUniFrac", "Matrix","microbiomeMarker",
+              "curatedMetagenomicData","tidyr","tibble","doParallel","foreach",
+              "ggplot2","phyloseq","ggpubr","ggrepel","ggplotify","ggtree",
+              "ape","BiocManager","microbiome","vegan","xgboost")
+
 
 # Function to check and install missing packages
 # This function checks if a package is installed and installs it if not.
@@ -27,7 +20,7 @@ options("repos" = c(CRAN = "https://cran.ma.imperial.ac.uk/"))
 install_if_missing <- function(pkg) {
   if (!requireNamespace(pkg, quietly = TRUE)) {
     message(paste("Installing missing package:", pkg))
-    if (pkg %in% c("microbiomeMarker", "GUniFrac")) {
+    if (pkg %in% c("microbiome","microbiomeMarker", "GUniFrac")) {
       if (!requireNamespace("BiocManager", quietly = TRUE)) {
         install.packages("BiocManager")
       }
@@ -47,3 +40,20 @@ invisible(lapply(packages, install_if_missing))
 # The character.only = TRUE argument allows for the package names to be passed as strings.
 # This is useful for dynamically loading packages based on the names in the vector.
 lapply(packages, library, character.only = TRUE)
+
+
+
+# imports <- c("stats", "caret", "ranger", "progress", "doParallel", "future.apply",
+#              "doFuture", "future", "foreach", "progressr", "dplyr", "pROC",
+#              "GUniFrac", "Matrix", "microbiomeMarker", "curatedMetagenomicData",
+#              "tidyr", "tibble", "xgboost", "vegan")
+#
+# suggests <- c("devtools", "testthat", "ggplot2", "phyloseq", "ggpubr", "ggrepel",
+#               "ggplotify", "ggtree", "ape", "gt", "BiocManager")
+#
+# lapply(unique(imports), usethis::use_package)
+#
+# lapply(unique(suggests), function(pkg) usethis::use_package(pkg, type = "Suggests"))
+
+# usethis::use_package("R", type = "Depends", min_version = "4.3.3")
+# usethis::use_package("BiocManager", type = "Imports", min_version = "3.18")
