@@ -4,6 +4,10 @@
 #' @param CrcBiomeScreenObject From the CreateCrcBiomeScreenObject()
 #' @param method TSS or GMPR
 #'
+#' @importFrom tibble tibble
+#' @importFrom GUniFrac GMPR
+#' @importFrom microbiomeMarker normalize
+#'
 #' @return CrcBiomeScreenObject$NormalizedData
 #' @export
 #'

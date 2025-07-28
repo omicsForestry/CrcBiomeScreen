@@ -5,6 +5,8 @@
 #' @param threshold The threshold for the ratio (0.5) if it is the imbalanced dataset
 #' @param plot Choose to have the figures or not
 #'
+#' @importFrom tibble tibble
+#'
 #' @return A list including the details about this step
 #' @export
 #'

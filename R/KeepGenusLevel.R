@@ -2,6 +2,11 @@
 #'
 #' @param CrcBiomeScreenObject
 #'
+#' @importFrom dplyr mutate across summarise_all
+#' @importFrom tidyr separate
+#' @importFrom tibble column_to_rownames
+#' @importFrom rstatix group_by
+#'
 #' @return CrcBiomeScreenObject$GenusLevelData
 #' @export
 #'

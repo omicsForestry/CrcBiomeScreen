@@ -12,6 +12,11 @@
 #' @param ClassBalance Whether to use class balancing in the model training, default is NULL
 #' @param n_cv The number of cross-validation folds, default is NULL
 #'
+#' @importFrom dplyr mutate across
+#' @importFrom tidyr separate
+#' @importFrom tibble tibble
+#' @importFrom ggplot2 ggplot
+#'
 #' @return A \code{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
 #' @export
 #'

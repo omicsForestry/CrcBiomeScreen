@@ -5,6 +5,9 @@
 #' @param partition The ratio of dividing the data set
 #' @param condition_col The colname of label in SampleData
 #'
+#' @importFrom dplyr mutate across
+#' @importFrom tidyr separate
+#'
 #' @return CrcBiomeScreenObject$ModelData
 #' @export
 #'
@@ -37,7 +40,7 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
 
   # Create training and test set indexes
   set.seed(123)
-  trainIndex <- createDataPartition(sample_condition, p = partition, list = FALSE)
+  trainIndex <- caret::createDataPartition(sample_condition, p = partition, list = FALSE)
 
   # Split the data
   train <- data[trainIndex, ]

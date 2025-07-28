@@ -1,6 +1,6 @@
 test_that("TrainModels works correctly", {
   # Load the CrcBiomeScreenObject
-  CrcBiomeScreenObject <- readRDS("tests/testthat/CrcBiomeScreenObject.rds")
+  CrcBiomeScreenObject <- readRDS("CrcBiomeScreenObject.rds")
 
   # Define parameters
   model_type <- c("RF", "XGBoost")
