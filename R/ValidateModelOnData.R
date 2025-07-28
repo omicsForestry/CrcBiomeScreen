@@ -8,6 +8,9 @@
 #' @param condition_col The column name in the SampleData that contains the study condition labels. Default is "study_condition".
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
 #'
+#' @importFrom tidyr separate
+#' @importFrom tibble tibble
+#'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `PredictResult` slot for the specified model type.
 #' @export
 #'

@@ -6,6 +6,10 @@
 #' @param TrueLabel This label is the future prediction target
 #' @param num_cores Set the number of the cores in parallel computing
 #'
+#' @importFrom dplyr mutate across
+#' @importFrom foreach foreach %dopar% %do%
+#' @importFrom caret twoClassSummary createFolds
+#'
 #' @return CrcBiomeScreenObject
 #' @export
 #'
@@ -26,7 +30,7 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
 
   # Calculate the number of cores
   cl <- makePSOCKcluster(num_cores)
-  registerDoParallel(cl)
+  doParallel::registerDoParallel(cl)
 
   # tuneGrid for ranger
   grid.rf <- expand.grid(
@@ -38,7 +42,7 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   )
 
   # Using ranger random forest for faster implementation
-  grid.rf$AUC <- foreach(i = 1:nrow(grid.rf), .combine = c, .packages = c("ranger", "pROC")) %dopar% {
+  grid.rf$AUC <- foreach::foreach(i = 1:nrow(grid.rf), .combine = c, .packages = c("ranger", "pROC","foreach")) %dopar% {
     aucs <- sapply(1:k.rf, function(j) {
       val.indices <- folds.rf[[j]]
       val.data <- CrcBiomeScreenObject$ModelData$Training[val.indices, ]
@@ -75,8 +79,8 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   }
 
   # Stop the cluster
-  stopCluster(cl)
-  registerDoSEQ()
+  parallel::stopCluster(cl)
+  foreach::registerDoSEQ()
 
   # Choose the best parameters
   best.params.index.rf <- which.max(grid.rf$AUC)

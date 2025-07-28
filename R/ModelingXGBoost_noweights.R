@@ -7,6 +7,10 @@
 #' @param TrueLabel This label is the future prediction target
 #' @param num_cores Set the number of the cores in parallel computing
 #'
+#' @importFrom dplyr mutate across
+#' @importFrom foreach %dopar%
+#' @importFrom caret twoClassSummary
+#'
 #' @return CrcBiomeScreenObject
 #' @export
 #'
@@ -26,7 +30,7 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
   set.seed(123)
   # Parallel setup（memory friendly）
   cl <- makePSOCKcluster(num_cores)
-  registerDoParallel(cl)
+  doParallel::registerDoParallel(cl)
 
   # Prepare training data
   train_data <- CrcBiomeScreenObject$ModelData$Training
@@ -34,7 +38,7 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
   label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject$ModelData$TrainLabel))
 
   # Define caret trainControl
-  ctrl <- trainControl(
+  ctrl <- caret::trainControl(
     method = "repeatedcv",
     number = k.rf,
     repeats = repeats,
@@ -59,7 +63,7 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
   # Train the model using caret
   set.seed(123)
   # Train the model using caret
-  model_fit <- train(label_train ~ .,
+  model_fit <- caret::train(label_train ~ .,
     data = train_data,
     method = "xgbTree",
     metric = "ROC",
@@ -68,8 +72,8 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
     verbose = TRUE
   )
 
-  stopCluster(cl)
-  registerDoSEQ()
+  parallel::stopCluster(cl)
+  foreach::registerDoSEQ()
 
   CrcBiomeScreenObject$ModelResult$XGBoost_noweights <- list(
     model = model_fit,

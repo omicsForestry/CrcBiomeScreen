@@ -2,6 +2,10 @@
 #'
 #' @param CrcBiomeScreenObject
 #'
+#' @importFrom dplyr mutate across
+#' @importFrom tidyr separate
+#' @importFrom tibble tibble
+#'
 #' @return CrcBiomeScreenObject$TaxaData
 #' @export
 #'

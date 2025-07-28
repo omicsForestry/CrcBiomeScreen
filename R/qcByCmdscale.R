@@ -13,6 +13,11 @@
 #' @param threshold_sd Numeric value indicating how many standard deviations above the mean
 #'        distance should be considered an outlier (default is 1).
 #'
+#' @importFrom dplyr mutate across
+#' @importFrom tibble tibble
+#' @importFrom ggplot2 ggplot geom_point geom_text labs theme_minimal ggsave aes theme
+#'
+#'
 #' @return A modified \code{CrcBiomeScreenObject} where:
 #' \itemize{
 #'   \item \code{$NormalizedData} contains filtered data with outliers removed.
@@ -78,15 +83,15 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
   pdf_name <- paste0("cmdscale_", TaskName, "_", normalize_method, ".pdf")
 
   # Create plot
-  p <- ggplot(plot_df, aes(x = Dim1, y = Dim2)) +
-    geom_point(color = "grey50", size = 2) + # 背景点为灰色
+  p <- ggplot2::ggplot(plot_df, aes(x = Dim1, y = Dim2)) +
+    geom_point(color = "grey50", size = 2) +
     geom_point(
       data = subset(plot_df, IsOutlier == TRUE),
-      aes(x = Dim1, y = Dim2),
+      ggplot2::aes(x = Dim1, y = Dim2),
       color = "red", size = 2, shape = 1, stroke = 1.2
     ) +
     geom_text(aes(label = SampleID, color = IsOutlier), size = 3, vjust = -0.6) +
-    scale_color_manual(values = c(`FALSE` = "black", `TRUE` = "red")) +
+    ggplot2::scale_color_manual(values = c(`FALSE` = "black", `TRUE` = "red")) +
     labs(
       title = paste0("cmdscale_", TaskName, " (", normalize_method, ")"),
       x = "PCoA 1", y = "PCoA 2"

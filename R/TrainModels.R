@@ -8,6 +8,12 @@
 #' @param TrueLabel This label is the future prediction target
 #' @param num_cores Set the number of the cores in parallel computing
 #'
+#' @importFrom dplyr mutate across
+#' @importFrom caret createFolds
+#' @importFrom parallel makePSOCKcluster
+#' @importFrom tibble tibble
+#' @importFrom foreach %dopar%
+#'
 #' @return CrcBiomeScreenObject
 #' @export
 #'
