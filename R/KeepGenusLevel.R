@@ -6,8 +6,7 @@
 #' @importFrom tidyr separate %>%
 #' @importFrom tibble column_to_rownames
 #' @importFrom rstatix group_by
-#' @importFrom dplyr
-#'
+#' @importFrom purrr %>%
 #' @return CrcBiomeScreenObject$GenusLevelData
 #' @export
 #'
