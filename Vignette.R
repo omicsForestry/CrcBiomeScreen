@@ -1,4 +1,6 @@
 rm(list = ls())
+library(devtools)
+devtools::install_github("iChronostasis/CrcBiomeScreen",force = TRUE)
 setwd("/home/CRCscreening/CRCscreening-Workflow/")
 library(CrcBiomeScreen)
 # Load required libraries
