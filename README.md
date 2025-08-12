@@ -6,10 +6,12 @@
  * Vignette.R : The toy sample for this workflow.
  * Environment.R : For setting up the environment for this workflow.
  * R folder : Multiple functions for processing and analyzing.
-
+ * dev folder: Functions for developing this workflow, but only for development.
+ * tests folder: Functions for testing this workflow, but only for testing.
+ 
+ 
 ## Plan
- * Add the description and annotation in Vignette and function.➡️
- * In the future, more functions(modules) will put in this workflow.
+ * In the future, more functions(modules) will put in this workflow.➡️
    * CompareModels()
    * SelectImportanceFeatures()
    * SHAP values...
