@@ -9,18 +9,16 @@ License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
-Suggests: 
-    gt,
-    testthat
 Config/testthat/edition: 3
-Imports: 
+Depends: 
+    R (>= 4.3.3)
+Imports:
     ape,
     caret,
     curatedMetagenomicData,
-    devtools,
+    dplyr,
     doFuture,
     doParallel,
-    dplyr,
     foreach,
     future,
     future.apply,
@@ -44,6 +42,13 @@ Imports:
     tidyr,
     vegan,
     xgboost
-Depends: 
-    BiocManager,
-    R (>= 4.3.3)
+Suggests:
+    gt,
+    testthat,
+    devtools,
+    BiocManager
+biocViews: Software, Microbiome, Metagenomics
+Remotes: 
+    yiluheihei/microbiomeMarker
+Additional_repositories: 
+    https://bioconductor.org/packages/release/bioc
