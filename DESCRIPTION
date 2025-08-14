@@ -25,12 +25,12 @@ Imports:
     progressr,
     stats,
     tibble,
-    tidyr,
+    tidyr
+Suggests:
     ggplot2,
     Matrix,
     MASS,
-    mgcv
-Suggests:
+    mgcv,
     caret,
     curatedMetagenomicData,
     ggplotify,
