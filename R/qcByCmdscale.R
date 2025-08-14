@@ -15,7 +15,6 @@
 #'
 #' @importFrom dplyr mutate across
 #' @importFrom tibble tibble
-#' @importFrom ggplot2 ggplot geom_point geom_text labs theme_minimal ggsave aes theme
 #'
 #'
 #' @return A modified \code{CrcBiomeScreenObject} where:

@@ -25,9 +25,9 @@ Imports:
     progressr,
     stats,
     tibble,
-    tidyr,
-    ggplot2
+    tidyr
 Suggests:
+    ggplot2,
     Matrix,
     MASS,
     mgcv,
