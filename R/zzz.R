@@ -26,7 +26,6 @@
 #     install.packages(missing, dependencies = TRUE)
 #   }
 # }
-options(repos = c(CRAN = "https://cran.rstudio.com/"))
 .onLoad <- function(libname, pkgname) {
   pkgs <- list(
     Matrix = "1.6-5",
@@ -35,6 +34,9 @@ options(repos = c(CRAN = "https://cran.rstudio.com/"))
     mgcv = "1.9-1",
     rstatix = "0.7.2"
   )
+  if (is.null(getOption("repos")) || getOption("repos") == "@CRAN@") {
+    options(repos = c(CRAN = "https://cran.rstudio.com/"))
+  }
   for (p in names(pkgs)) {
     if (!requireNamespace(p, quietly = TRUE)) {
       remotes::install_version(p, version = pkgs[[p]], dependencies = TRUE)
