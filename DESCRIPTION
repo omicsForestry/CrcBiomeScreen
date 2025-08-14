@@ -25,7 +25,8 @@ Imports:
     progressr,
     stats,
     tibble,
-    tidyr
+    tidyr,
+    rstatix
 Suggests:
     ggplot2,
     Matrix,
