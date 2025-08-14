@@ -40,6 +40,9 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   if (!requireNamespace("parallel", quietly = TRUE)) {
     stop("The function TrainModels() requires the 'parallel' package. Please install it with install.packages('parallel').")
   }
+  if (!requireNamespace("ranger", quietly = TRUE)) {
+    stop("Package 'ranger' is required for this function. Please install it with install.packages('ranger').")
+  }
 
   # For specific model types
   if ("RF" %in% model_type && !requireNamespace("ranger", quietly = TRUE)) {
