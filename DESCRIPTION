@@ -45,10 +45,8 @@ Imports:
 Suggests:
     gt,
     testthat,
-    devtools,
     BiocManager,
+    devtools,
+    microbiomeMarker,
     curatedMetagenomicData,
-    microbiomeMarker
-biocViews: Software, Microbiome, Metagenomics
-Remotes: 
-    yiluheihei/microbiomeMarker
+    GUniFrac
