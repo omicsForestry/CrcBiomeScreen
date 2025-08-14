@@ -2,7 +2,7 @@
 % Please edit documentation in R/NormalizeData.R
 \name{NormalizeData}
 \alias{NormalizeData}
-\title{Normalise the absolute data to relative data by using Total sum scaling
+\title{Normalise the absolute data to relative data by using Total Sum Scaling
 and Geometric Mean of Pairwise Ratios (GMPR)}
 \usage{
 NormalizeData(CrcBiomeScreenObject = NULL, method = NULL)
@@ -10,19 +10,23 @@ NormalizeData(CrcBiomeScreenObject = NULL, method = NULL)
 \arguments{
 \item{CrcBiomeScreenObject}{From the CreateCrcBiomeScreenObject()}
 
-\item{method}{TSS or GMPR}
+\item{method}{"TSS" or "GMPR"}
 }
 \value{
-CrcBiomeScreenObject$NormalizedData
+Updated CrcBiomeScreenObject with NormalizedData
 }
 \description{
-Normalise the absolute data to relative data by using Total sum scaling
+Normalise the absolute data to relative data by using Total Sum Scaling
 and Geometric Mean of Pairwise Ratios (GMPR)
 }
 \examples{
-CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject,
-                                                method = "GMPR",
-                                                TaskName = "Normalize_ToyData")
-          attributes(CrcBiomeScreenObject$NormalizedData)
-
+\dontrun{
+# Example only runs if suggested packages are installed
+if (requireNamespace("GUniFrac", quietly = TRUE) &&
+    requireNamespace("microbiomeMarker", quietly = TRUE)) {
+  CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject,
+                                        method = "GMPR")
+  attributes(CrcBiomeScreenObject$NormalizedData)
+}
+}
 }
