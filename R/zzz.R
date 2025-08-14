@@ -26,7 +26,7 @@
 #     install.packages(missing, dependencies = TRUE)
 #   }
 # }
-
+options(repos = c(CRAN = "https://cran.rstudio.com/"))
 .onLoad <- function(libname, pkgname) {
   pkgs <- list(
     Matrix = "1.6-5",
