@@ -9,7 +9,6 @@
 #'
 #' @importFrom dplyr mutate across
 #' @importFrom foreach %dopar%
-#' @importFrom caret twoClassSummary
 #'
 #' @return CrcBiomeScreenObject
 #' @export
