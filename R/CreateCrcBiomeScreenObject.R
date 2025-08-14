@@ -11,7 +11,7 @@
 #' @export
 #'
 #' @examples
-#' #' \dontrun{
+#' \dontrun{
 #' if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
 #'   toydata <- curatedMetagenomicData::curatedMetagenomicData(
 #'     "ThomasAM_2018a.relative_abundance",

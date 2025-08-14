@@ -24,16 +24,20 @@ CreateCrcBiomeScreenObject(
 An object with data
 }
 \description{
-This function creates the CrcBiomeScreenObject to contain the data for analysis.
+Creates the CrcBiomeScreenObject to contain the data for analysis.
 }
 \examples{
-toydata <- curatedMetagenomicData::curatedMetagenomicData("ThomasAM_2018a.relative_abundance",
-  dryrun = FALSE, rownames = "short"
-)
-
-CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
-  TaxaData = toydata[[1]]@rowLinks$nodeLab,
-  SampleData = toydata[[1]]@colData
-)
+\dontrun{
+if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
+  toydata <- curatedMetagenomicData::curatedMetagenomicData(
+    "ThomasAM_2018a.relative_abundance",
+    dryrun = FALSE, rownames = "short"
+  )
+  CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
+    RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
+    TaxaData = toydata[[1]]@rowLinks$nodeLab,
+    SampleData = toydata[[1]]@colData
+  )
+}
+}
 }
