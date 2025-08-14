@@ -15,7 +15,6 @@
 #' @importFrom dplyr mutate across
 #' @importFrom tidyr separate
 #' @importFrom tibble tibble
-#' @importFrom ggplot2 ggplot
 #'
 #' @return A \code{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
 #' @export
