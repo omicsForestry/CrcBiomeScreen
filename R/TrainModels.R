@@ -31,15 +31,33 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
                         TaskName = NULL,
                         TrueLabel = NULL,
                         num_cores = NULL) {
-  # Check the input
+  # ---- Dependency checks ----
+  if (!requireNamespace("caret", quietly = TRUE)) {
+    stop("The function TrainModels() requires the 'caret' package. Please install it with install.packages('caret').")
+  }
+  if (!requireNamespace("foreach", quietly = TRUE)) {
+    stop("The function TrainModels() requires the 'foreach' package. Please install it with install.packages('foreach').")
+  }
+  if (!requireNamespace("parallel", quietly = TRUE)) {
+    stop("The function TrainModels() requires the 'parallel' package. Please install it with install.packages('parallel').")
+  }
+
+  # For specific model types
+  if ("RF" %in% model_type && !requireNamespace("ranger", quietly = TRUE)) {
+    stop("The RF model in TrainModels() requires the 'ranger' package. Please install it with install.packages('ranger').")
+  }
+  if ("XGBoost" %in% model_type && !requireNamespace("xgboost", quietly = TRUE)) {
+    stop("The XGBoost model in TrainModels() requires the 'xgboost' package. Please install it with install.packages('xgboost').")
+  }
+
+  # ---- Input check ----
   if (is.null(CrcBiomeScreenObject$ModelData)) {
     stop("ModelData is missing in CrcBiomeScreenObject. Please run SplitDataSet first.")
   }
 
-  # Run the RF model
+  # ---- Run RF model ----
   if ("RF" %in% model_type) {
-    # Using the RF with class weights
-    if (ClassBalance == TRUE) {
+    if (ClassBalance) {
       CrcBiomeScreenObject <- ModelingRF(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         k.rf = n_cv,
@@ -48,7 +66,6 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
         num_cores = num_cores
       )
     } else {
-      # Using the RF without class weights
       CrcBiomeScreenObject <- ModelingRF_noweights(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         k.rf = n_cv,
@@ -59,10 +76,9 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
     }
   }
 
-  # Run the XGBoost model
+  # ---- Run XGBoost model ----
   if ("XGBoost" %in% model_type) {
-    if (ClassBalance == TRUE) {
-      # Using the XGBoost with class weights
+    if (ClassBalance) {
       CrcBiomeScreenObject <- ModelingXGBoost(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         k.rf = n_cv,
@@ -71,7 +87,6 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
         num_cores = num_cores
       )
     } else {
-      # Using the XGBoost without class weights
       CrcBiomeScreenObject <- ModelingXGBoost_noweights(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         k.rf = n_cv,

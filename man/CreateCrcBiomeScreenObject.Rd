@@ -27,7 +27,7 @@ An object with data
 This function creates the CrcBiomeScreenObject to contain the data for analysis.
 }
 \examples{
-toydata <- curatedMetagenomicData("ThomasAM_2018a.relative_abundance",
+toydata <- curatedMetagenomicData::curatedMetagenomicData("ThomasAM_2018a.relative_abundance",
   dryrun = FALSE, rownames = "short"
 )
 

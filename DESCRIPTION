@@ -14,14 +14,21 @@ Depends:
     R (>= 4.3.3)
 Imports:
     ape,
-    caret,
-    curatedMetagenomicData,
     dplyr,
     doFuture,
     doParallel,
     foreach,
     future,
     future.apply,
+    pROC,
+    progress,
+    progressr,
+    stats,
+    tibble,
+    tidyr
+Suggests:
+    caret,
+    curatedMetagenomicData,
     ggplot2,
     ggplotify,
     ggpubr,
@@ -33,20 +40,10 @@ Imports:
     microbiome,
     microbiomeMarker,
     phyloseq,
-    pROC,
-    progress,
-    progressr,
     ranger,
-    stats,
-    tibble,
-    tidyr,
     vegan,
-    xgboost
-Suggests:
+    xgboost,
     gt,
     testthat,
     BiocManager,
-    devtools,
-    microbiomeMarker,
-    curatedMetagenomicData,
-    GUniFrac
+    devtools
