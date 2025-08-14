@@ -11,7 +11,7 @@ Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
 Config/testthat/edition: 3
 Depends: 
-    R (>= 4.3.3)
+    R (>= 4.3.0)
 Imports:
     ape,
     dplyr,
@@ -26,9 +26,10 @@ Imports:
     stats,
     tibble,
     tidyr,
-    ggplot2 (>= 3.2.0),
-    Matrix (>= 1.5.0),
-    MASS (>= 7.3-58.1)
+    ggplot2 (= 3.5.2),
+    Matrix (= 1.6-5),
+    MASS (= 7.3-60.0.1),
+    mgcv (= 1.9-1)
 Suggests:
     caret,
     curatedMetagenomicData,
