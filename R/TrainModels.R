@@ -9,7 +9,6 @@
 #' @param num_cores Set the number of the cores in parallel computing
 #'
 #' @importFrom dplyr mutate across
-#' @importFrom caret createFolds
 #' @importFrom parallel makePSOCKcluster
 #' @importFrom tibble tibble
 #' @importFrom foreach %dopar%

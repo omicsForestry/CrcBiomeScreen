@@ -10,7 +10,6 @@
 #' @importFrom dplyr mutate across
 #' @importFrom foreach %dopar%
 #' @importFrom doParallel registerDoParallel
-#' @importFrom caret twoClassSummary createFolds
 #'
 #' @return CrcBiomeScreenObject
 #' @export
