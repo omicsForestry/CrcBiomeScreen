@@ -6,7 +6,6 @@
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
 #'
-#' @importFrom ranger ranger
 #' @importFrom dplyr mutate across
 #' @importFrom pROC roc auc ci.auc coords ci.coords plot.roc
 #'
