@@ -25,11 +25,11 @@ Imports:
     progressr,
     stats,
     tibble,
-    tidyr
+    tidyr,
+    ggplot2
 Suggests:
     caret,
     curatedMetagenomicData,
-    ggplot2,
     ggplotify,
     ggpubr,
     ggrepel,
