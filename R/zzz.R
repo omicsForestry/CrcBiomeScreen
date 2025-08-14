@@ -32,7 +32,8 @@
     Matrix = "1.6-5",
     MASS = "7.3-60.0.1",
     ggplot2 = "3.5.2",
-    mgcv = "1.9-1"
+    mgcv = "1.9-1",
+    rstatix = "0.7.2"
   )
   for (p in names(pkgs)) {
     if (!requireNamespace(p, quietly = TRUE)) {
