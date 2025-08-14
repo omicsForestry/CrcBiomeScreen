@@ -7,12 +7,11 @@
 #'
 #' @importFrom dplyr mutate across
 #' @importFrom tibble tibble
-#' @importFrom curatedMetagenomicData curatedMetagenomicData
 #' @return An object with data
 #' @export
 #'
 #' @examples
-#' toydata <- curatedMetagenomicData("ThomasAM_2018a.relative_abundance",
+#' toydata <- curatedMetagenomicData::curatedMetagenomicData("ThomasAM_2018a.relative_abundance",
 #'   dryrun = FALSE, rownames = "short"
 #' )
 #'

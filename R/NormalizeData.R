@@ -6,7 +6,6 @@
 #'
 #' @importFrom tibble tibble
 #' @importFrom GUniFrac GMPR
-#' @importFrom microbiomeMarker normalize
 #'
 #' @return CrcBiomeScreenObject$NormalizedData
 #' @export
@@ -21,7 +20,7 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL,
   Data <- CrcBiomeScreenObject$GenusLevelData
   if (method == "TSS") {
     # Transforming into relative abundance
-    Data <- as.data.frame(t(normalize(t(Data), method = "TSS")))
+    Data <- as.data.frame(t(microbiomeMarker::normalize(t(Data), method = "TSS")))
   } else if (method == "GMPR") {
     size.factor <- GMPR(t(Data))
     size.factor[is.na(size.factor)] <- mean(size.factor, na.rm = TRUE)
