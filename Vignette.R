@@ -1,10 +1,17 @@
+# CrcBiomeScreen Vignette
+# Set up the environment and install the package
+conda create -n CrcBiomeScreen -c conda-forge r-base=4.3.3
+conda activate CrcBiomeScreen
+conda install -c conda-forge r-devtools r-mass r-matrix r-mgcv r-ggplot2 r-car r-rstatix r-ggpubr r-httpuv -y
+
+# ------------------------------------------------------------------------------
 rm(list = ls())
 library(devtools)
 devtools::install_github("iChronostasis/CrcBiomeScreen",force = TRUE)
+
 setwd("/home/CRCscreening/CRCscreening-Workflow/")
 library(CrcBiomeScreen)
 library(ggplot2)
-
 # Load required libraries
 # source("R/Environment.R")
 # source("R/main.R")
@@ -18,8 +25,8 @@ library(ggplot2)
 
 # Start the CrcBiomeScreening workflow
 # If running in a conda environment, install curatedMetagenomicData via Bioconda
-# system("conda install -y -c bioconda bioconductor-curatedmetagenomicdata")
-BiocManager::install("waldronlab/curatedMetagenomicData", dependencies = TRUE, build_vignettes = TRUE)
+system("conda install -y -c bioconda bioconductor-curatedmetagenomicdata")
+# BiocManager::install("waldronlab/curatedMetagenomicData", dependencies = TRUE, build_vignettes = TRUE)
 library(curatedMetagenomicData)
 # ------------------------------------------------------------------------------
 ## Get the toy data from curatedMetagenomicData
