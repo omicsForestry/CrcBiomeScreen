@@ -3,6 +3,8 @@ library(devtools)
 devtools::install_github("iChronostasis/CrcBiomeScreen",force = TRUE)
 setwd("/home/CRCscreening/CRCscreening-Workflow/")
 library(CrcBiomeScreen)
+library(ggplot2)
+
 # Load required libraries
 # source("R/Environment.R")
 # source("R/main.R")
@@ -15,7 +17,11 @@ library(CrcBiomeScreen)
 #             , dryrun = FALSE, rownames = "short")
 
 # Start the CrcBiomeScreening workflow
-
+# If running in a conda environment, install curatedMetagenomicData via Bioconda
+# system("conda install -y -c bioconda bioconductor-curatedmetagenomicdata")
+BiocManager::install("waldronlab/curatedMetagenomicData", dependencies = TRUE, build_vignettes = TRUE)
+library(curatedMetagenomicData)
+# ------------------------------------------------------------------------------
 ## Get the toy data from curatedMetagenomicData
 toydata <- curatedMetagenomicData(
             "ThomasAM_2018a.relative_abundance"
@@ -31,6 +37,8 @@ CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 ## Keep only the genus level data
 CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
 
+BiocManager::install('GUniFrac')
+library(GUniFrac)
 ## Normalize the data using GMPR/TSS
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
 
@@ -79,6 +87,7 @@ CrcBiomeScreenObject <- qcByCmdscale(CrcBiomeScreenObject,
 
 ## Example: check balance in your classification labels
 checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)
+
 
 ## Train the models using Random Forest and XGBoost
 CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
