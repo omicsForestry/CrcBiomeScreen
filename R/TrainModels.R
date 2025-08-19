@@ -37,6 +37,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
       install.packages(pkg)
     }
   }
+  lapply(required_pkgs, library, character.only = TRUE)
 
   # For specific model types
   if ("RF" %in% model_type && !requireNamespace("ranger", quietly = TRUE)) {
