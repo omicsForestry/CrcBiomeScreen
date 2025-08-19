@@ -26,6 +26,7 @@
 #     install.packages(missing, dependencies = TRUE)
 #   }
 # }
+
 .onLoad <- function(libname, pkgname) {
   pkgs <- list(
     Matrix = "1.6-5",
@@ -34,7 +35,8 @@
     mgcv = "1.9-1",
     rstatix = "0.7.2"
   )
-  if (is.null(getOption("repos")) || getOption("repos") == "@CRAN@") {
+  repos <- getOption("repos")
+  if (is.null(repos) || any(repos == "@CRAN@") || length(repos) == 0) {
     options(repos = c(CRAN = "https://cran.rstudio.com/"))
   }
   for (p in names(pkgs)) {
