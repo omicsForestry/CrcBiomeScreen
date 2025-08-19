@@ -31,7 +31,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
                         TrueLabel = NULL,
                         num_cores = NULL) {
   # ---- Dependency checks ----
-  required_pkgs <- c("caret", "foreach", "parallel", "ranger")
+  required_pkgs <- c("caret", "foreach", "parallel", "ranger","xgboost")
   for(pkg in required_pkgs){
     if (!requireNamespace(pkg, quietly = TRUE)) {
       install.packages(pkg)
