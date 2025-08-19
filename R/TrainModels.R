@@ -31,17 +31,11 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
                         TrueLabel = NULL,
                         num_cores = NULL) {
   # ---- Dependency checks ----
-  if (!requireNamespace("caret", quietly = TRUE)) {
-    stop("The function TrainModels() requires the 'caret' package. Please install it with install.packages('caret').")
-  }
-  if (!requireNamespace("foreach", quietly = TRUE)) {
-    stop("The function TrainModels() requires the 'foreach' package. Please install it with install.packages('foreach').")
-  }
-  if (!requireNamespace("parallel", quietly = TRUE)) {
-    stop("The function TrainModels() requires the 'parallel' package. Please install it with install.packages('parallel').")
-  }
-  if (!requireNamespace("ranger", quietly = TRUE)) {
-    stop("Package 'ranger' is required for this function. Please install it with install.packages('ranger').")
+  required_pkgs <- c("caret", "foreach", "parallel", "ranger")
+  for(pkg in required_pkgs){
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      install.packages(pkg)
+    }
   }
 
   # For specific model types
