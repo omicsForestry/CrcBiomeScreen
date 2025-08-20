@@ -10,6 +10,7 @@
 * **tests/**: Testing functions
 
 ## Installation
+First, construct the environment:
 ```bash
 conda env create -f environment.yml
 conda activate CrcBiomeScreen
