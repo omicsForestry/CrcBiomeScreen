@@ -28,5 +28,4 @@ dependencies:
   - r-ggpubr
   - r-ggrepel
   - r-ggplotify
-  - r-biocmanager
   - bioconductor-curatedmetagenomicdata
