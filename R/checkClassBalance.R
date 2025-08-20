@@ -1,18 +1,4 @@
-#' Check the sample distribution of the dataset and
-#' give the suggestion if need the class weight or not
-#'
-#' @param labels The label for distribution
-#' @param threshold The threshold for the ratio (0.5) if it is the imbalanced dataset
-#' @param plot Choose to have the figures or not
-#'
-#' @importFrom tibble tibble
-#'
-#' @return A list including the details about this step
-#' @export
-#'
-#' @examples checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)
-#'
-checkClassBalance <- function(labels, threshold = 0.5, plot = TRUE) {
+checkClassBalance <- function(labels, threshold = 0.3, plot = TRUE) {
   # Convert to factor
   labels <- as.factor(labels)
   class_counts <- table(labels)

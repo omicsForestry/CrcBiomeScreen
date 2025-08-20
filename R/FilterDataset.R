@@ -1,16 +1,3 @@
-#' Filter the CrcBiomeScreenObject dataset based on a specific label
-#'
-#' @param CrcBiomeScreenObject A \code{CrcBiomeScreenObject} containing normalized microbiome data and sample metadata.
-#' @param label A character vector specifying the label(s) to filter the dataset by.
-#' @param condition_col A character string indicating the column in the SampleData that contains the condition labels (default is "study_condition").
-#'
-#' @return A \code{CrcBiomeScreenObject} with filtered data based on the specified label.
-#' @export
-#'
-#' @examples ValidationData_filtered <- FilterDataSet(ValidationData,
-#'                                                    label = c("CRC","control"),
-#'                                                    condition_col = "study_condition")
-#'
 FilterDataSet <- function(CrcBiomeScreenObject = NULL,
                           label = NULL,
                           condition_col = "study_condition") {
@@ -40,6 +27,7 @@ FilterDataSet <- function(CrcBiomeScreenObject = NULL,
   attr(FilteredData, "Filtered Size") <- nrow(data)
 
   CrcBiomeScreenObject <- FilteredData
+  # saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", "FilteredDataSet", ".rds"))
 
   return(CrcBiomeScreenObject)
 }

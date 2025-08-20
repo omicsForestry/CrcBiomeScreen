@@ -1,17 +1,6 @@
-# CrcBiomeScreen Vignette
-# Set up the environment and install the package
-conda create -n CrcBiomeScreen -c conda-forge r-base=4.3.3
-conda activate CrcBiomeScreen
-conda install -c conda-forge r-devtools r-mass r-matrix r-mgcv r-ggplot2 r-car r-rstatix r-ggpubr r-httpuv -y
-
-# ------------------------------------------------------------------------------
 rm(list = ls())
-library(devtools)
-devtools::install_github("iChronostasis/CrcBiomeScreen",force = TRUE)
-
 setwd("/home/CRCscreening/CRCscreening-Workflow/")
-library(CrcBiomeScreen)
-library(ggplot2)
+setwd("/mnt/scratch/ngzh5554/CRCscreening-Workflow")
 # Load required libraries
 # source("R/Environment.R")
 # source("R/main.R")
@@ -23,80 +12,51 @@ library(ggplot2)
 #             "ZellerG_2014.relative_abundance"
 #             , dryrun = FALSE, rownames = "short")
 
-# Start the CrcBiomeScreening workflow
-# If running in a conda environment, install curatedMetagenomicData via Bioconda
-system("conda install -y -c bioconda bioconductor-curatedmetagenomicdata")
-# BiocManager::install("waldronlab/curatedMetagenomicData", dependencies = TRUE, build_vignettes = TRUE)
-library(curatedMetagenomicData)
-# ------------------------------------------------------------------------------
-## Get the toy data from curatedMetagenomicData
 toydata <- curatedMetagenomicData(
             "ThomasAM_2018a.relative_abundance"
             , dryrun = FALSE, rownames = "short")
 
-## Create the CrcBiomeScreenObject
 CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
                                                   TaxaData = toydata[[1]]@rowLinks$nodeLab,
                                                   SampleData = toydata[[1]]@colData)
-## Split the taxa into multiple levels
 CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
-
-## Keep only the genus level data
 CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
 
-BiocManager::install('GUniFrac')
-library(GUniFrac)
-## Normalize the data using GMPR/TSS
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+# CrcBiomeScreenObject <- qcByCmdscale(CrcBiomeScreenObject,
+#                                               TaskName = "ToyData",
+#                                               normalize_method = "GMPR")
 
 # ------------------------------------------------------------------------------
-# Prepare the validation data
-
-## Load the validation data from curatedMetagenomicData
 ValidationData_curated <- curatedMetagenomicData(
             paste0("ZellerG_2014",".","relative_abundance")
             , dryrun = FALSE, rownames = "short")
 
-## Create the CrcBiomeScreenObject for validation data
 ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
                                                   TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
                                                   SampleData = ValidationData_curated[[1]]@colData)
-
-## Split the taxa into multiple levels
 ValidationData <- SplitTaxas(ValidationData)
-
-## Keep only the genus level data
 ValidationData <- KeepGenusLevel(ValidationData)
-
-## Normalize the validation data using GMPR/TSS
 ValidationData <- NormalizeData(ValidationData, method = "GMPR")
 
-## Keep only the taxa that are present in both training and validation data
 ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(ValidationData$NormalizedData) %in%
                                             colnames(CrcBiomeScreenObject$NormalizedData)]
 
 CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, colnames(CrcBiomeScreenObject$NormalizedData) %in%
                                             colnames(ValidationData$NormalizedData)]
 
-## Check the labels of the study condition in sample data
 table(CrcBiomeScreenObject$SampleData$study_condition)
 
 # ------------------------------------------------------------------------------
-# Modeling and Evaluation
-
-## Split the data into training and test sets by using the labels and set the partition
 CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject, label = c("control","CRC"), partition = 0.7)
 
-## Optinal: quality control by cmdscale
+# Optinal: quality control by cmdscale
 CrcBiomeScreenObject <- qcByCmdscale(CrcBiomeScreenObject,
                                     TaskName = "Normalize_ToyData_filtered_qc",
                                     normalize_method = "GMPR")
-
-## Example: check balance in your classification labels
+# Example: check balance in your classification labels
 checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)
 
-
-## Train the models using Random Forest and XGBoost
 CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
                                     model_type = "RF",
                                     TaskName = "ToyData_RF",
@@ -111,7 +71,6 @@ CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
                                     TrueLabel = "CRC",
                                     num_cores = 10)
 
-## Evaluate the models on the test set
 CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject,
                                        model_type = "RF",
                                        TaskName = "ToyData_RF_Test",
@@ -124,49 +83,51 @@ CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject,
                                        TrueLabel = "CRC",
                                        PlotAUC = TRUE)
 
-# ------------------------------------------------------------------------------
-# Validate the models on the validation data
-
-## Filter the validation data to keep only the samples with labels "CRC" and "control"
-ValidationData_filtered <- FilterDataSet(ValidationData,
-                                         label = c("CRC","control"),
-                                         condition_col = "study_condition")
-
-## Quality control the validation data by cmdscale
-ValidationData_filtered_qc <- qcByCmdscale(ValidationData_filtered,
-                                           TaskName = "Normalize_ValidationData_filtered_qc",
-                                           normalize_method = "GMPR")
-
-## Validate the models on the validation data using Random Forest and XGBoost
-CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
-                                            model_type = "RF",
-                                            ValidationData = ValidationData_filtered_qc,
-                                            TaskName = "ValidationData_RF_Validation",
-                                            TrueLabel = "CRC",
-                                            PlotAUC = TRUE)
-
-CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
-                                            model_type = "XGBoost",
-                                            ValidationData = ValidationData_filtered_qc,
-                                            TaskName = "ValidationData_XGBoost_Validation",
-                                            TrueLabel = "CRC",
-                                            PlotAUC = TRUE)
-# ------------------------------------------------------------------------------
-# Run the screening workflow by using one function
 CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
                                     normalize_method = "GMPR",
                                     model = "RF",
-                                    partition = 0.7,
                                     split.requirement =
                                     c(label = c("control","CRC"),
                                       condition_col = "study_condition"),
-                                    ClassBalance = TRUE,
-                                    n_cv = 10,
                                     TaskName = "GMPR_toydata",
                                     num_cores = 10,
-                                    ValidationData = ValidationData_filtered_qc,
-                                    TrueLabel = "CRC")
+                                    ValidationData = ValidationData,
+                                    TrueLabel = "Cancer")
 
+
+
+# ValidationData_curated <- curatedMetagenomicData(
+#             paste0("ZellerG_2014",".","relative_abundance")
+#             , dryrun = FALSE, rownames = "short")
+# # saveRDS(ValidationData_curated, "ValidationData.rds")
+# ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+#                                                   TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+#                                                   SampleData = ValidationData_curated[[1]]@colData)
+# ValidationData <- SplitTaxas(ValidationData)
+# ValidationData <- KeepGenusLevel(ValidationData)
+# ValidationData <- NormalizeData(ValidationData, method = "GMPR",TaskName = "Normalize_ValidationData")
+
+ValidationData_filtered <- FilterDataSet(ValidationData,
+                                 label = c("CRC","control"),
+                                 condition_col = "study_condition")
+
+ValidationData_filtered_qc <- qcByCmdscale(ValidationData_filtered,
+                                              TaskName = "Normalize_ValidationData_filtered_qc",
+                                              normalize_method = "GMPR")
+
+CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
+                                       model_type = "RF",
+                                       ValidationData = ValidationData_filtered_qc,
+                                       TaskName = "ValidationData_RF_Validation",
+                                       TrueLabel = "CRC",
+                                       PlotAUC = TRUE)
+
+CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
+                                       model_type = "XGBoost",
+                                       ValidationData = ValidationData,
+                                       TaskName = "ValidationData_XGBoost_Validation",
+                                       TrueLabel = "CRC",
+                                       PlotAUC = TRUE)
 
 
 

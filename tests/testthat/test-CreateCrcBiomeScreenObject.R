@@ -1,10 +1,4 @@
 test_that("CreateCrcBiomeScreenObject works correctly", {
-  if (!requireNamespace("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-
-  BiocManager::install("curatedMetagenomicData",force = TRUE)
-  library(curatedMetagenomicData)
-
   toydata <- curatedMetagenomicData(
     "ThomasAM_2018a.relative_abundance",
     dryrun = FALSE, rownames = "short"
