@@ -1,15 +1,35 @@
 # CrcBiomeScreen
 
-![Pipeline](https://github.com/user-attachments/assets/23d1a0f6-f01b-42b9-af23-8c823d709462)
+![Pipeline](https://github.com/user-attachments/assets/5434dac9-5392-4825-884e-06a56d232a1e)
 
 ## Description
- * Vignette.R : The toy sample for this workflow.
- * Environment.R : For setting up the environment for this workflow.
- * R folder : Multiple functions for processing and analyzing.
+* **Vignette.R**: Toy sample workflow
+* **Environment.R**: Environment setup
+* **R/**: Core functions
+* **dev/**: Development functions
+* **tests/**: Testing functions
+
+## Installation
+```bash
+conda env create -f environment.yml
+conda activate CrcBiomeScreen
+```
+
+Second, install the R packages:
+```R
+library(devtools)
+devtools::install_github("iChronostasis/CrcBiomeScreen", force = TRUE)
+```
+
+## Usage
+ * Run the vignette to see how to use this workflow.
+```R
+library(CrcBiomeScreen)
+vignette("CrcBiomeScreen")
+```
 
 ## Plan
- * Add the description and annotation in Vignette and function.➡️
- * In the future, more functions(modules) will put in this workflow.
+ * In the future, more functions(modules) will put in this workflow.➡️
    * CompareModels()
    * SelectImportanceFeatures()
    * SHAP values...
