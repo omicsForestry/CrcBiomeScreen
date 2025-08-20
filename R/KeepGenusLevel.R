@@ -1,21 +1,9 @@
-#' Keep the taxa data at genus level
-#'
-#' @param CrcBiomeScreenObject
-#'
-#' @importFrom dplyr mutate across summarise_all
-#' @importFrom tidyr separate %>%
-#' @importFrom tibble column_to_rownames
-#' @importFrom purrr %>%
-#' @return CrcBiomeScreenObject$GenusLevelData
-#' @export
-#'
-#' @examples CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
 KeepGenusLevel <- function(CrcBiomeScreenObject) {
   CrcBiomeScreenObject$GenusLevelData <-
     CrcBiomeScreenObject$AbsoluteAbundance %>%
     as.data.frame() %>%
     mutate(genus = CrcBiomeScreenObject$TaxaData$Genus) %>%
-    rstatix::group_by(genus) %>%
+    group_by(genus) %>%
     summarise_all(sum) %>%
     column_to_rownames("genus") %>%
     t() %>%

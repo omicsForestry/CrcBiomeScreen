@@ -8,9 +8,6 @@
 #' @param condition_col The column name in the SampleData that contains the study condition labels. Default is "study_condition".
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
 #'
-#' @importFrom tidyr separate
-#' @importFrom tibble tibble
-#'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `PredictResult` slot for the specified model type.
 #' @export
 #'
@@ -35,7 +32,6 @@ ValidateModelOnData <- function(
   }
   # Load the model
   if (model_type == "RF") {
-    rf.model <- CrcBiomeScreenObject$EvaluateResult$RF$RF.Model
     probs.ValidationData.rf <- predict(rf.model, data = ValidationData$NormalizedData, type = "response")$predictions
     probs.ValidationData.rf.prob <- probs.ValidationData.rf[, TrueLabel]
 
