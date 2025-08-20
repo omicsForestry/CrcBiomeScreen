@@ -8,7 +8,7 @@ conda install -c conda-forge r-devtools r-mass r-matrix r-mgcv r-ggplot2 r-car r
 rm(list = ls())
 library(devtools)
 devtools::install_github("iChronostasis/CrcBiomeScreen",force = TRUE)
-
+ 
 setwd("/home/CRCscreening/CRCscreening-Workflow/")
 library(CrcBiomeScreen)
 library(ggplot2)
