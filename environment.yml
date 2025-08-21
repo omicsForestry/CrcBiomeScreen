@@ -3,6 +3,7 @@ channels:
   - conda-forge
   - bioconda
   - defaults
+  - cramjaco
 dependencies:
   - r-base=4.3.3
   - r-devtools
@@ -28,4 +29,7 @@ dependencies:
   - r-ggpubr
   - r-ggrepel
   - r-ggplotify
+  - r-biocmanager
   - bioconductor-curatedmetagenomicdata
+  - r-gunifrac
+  - bioconductor-microbiomemarker
