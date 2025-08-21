@@ -1,35 +1,22 @@
 # CrcBiomeScreen Vignette
 # Set up the environment and install the package
-# conda create -n CrcBiomeScreen -c conda-forge r-base=4.3.3
-# conda activate CrcBiomeScreen
-# conda install -c conda-forge r-devtools r-mass r-matrix r-mgcv r-ggplot2 r-car r-rstatix r-ggpubr r-httpuv -y
-
+system("conda env create -f environment.yml")
+system("conda activate CrcBiomeScreen")
 # ------------------------------------------------------------------------------
 rm(list = ls())
 library(devtools)
 devtools::install_github("iChronostasis/CrcBiomeScreen",force = TRUE)
-setwd("/mnt/scratch/ngzh5554/Test_env") 
 setwd("/home/CRCscreening/CRCscreening-Workflow/")
+# ------------------------------------------------------------------------------
+# Start the CrcBiomeScreening workflow
+# Load required libraries
 library(CrcBiomeScreen)
 library(ggplot2)
-# Load required libraries
-# source("R/Environment.R")
-# source("R/main.R")
+library(dplyr)
 
-# Load the data_relative abundance
-# toydata <- readRDS("toy_data.rds")
-# ThomasaAM_a
-# toydata <- curatedMetagenomicData(
-#             "ZellerG_2014.relative_abundance"
-#             , dryrun = FALSE, rownames = "short")
-
-# Start the CrcBiomeScreening workflow
-# If running in a conda environment, install curatedMetagenomicData via Bioconda
-system("conda install -y -c bioconda bioconductor-curatedmetagenomicdata")
-# BiocManager::install("waldronlab/curatedMetagenomicData", dependencies = TRUE, build_vignettes = TRUE)
-library(curatedMetagenomicData)
 # ------------------------------------------------------------------------------
 ## Get the toy data from curatedMetagenomicData
+library(curatedMetagenomicData)
 toydata <- curatedMetagenomicData(
             "ThomasAM_2018a.relative_abundance"
             , dryrun = FALSE, rownames = "short")
@@ -44,10 +31,12 @@ CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 ## Keep only the genus level data
 CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
 
-BiocManager::install('GUniFrac')
-library(GUniFrac)
 ## Normalize the data using GMPR/TSS
+library(GUniFrac)
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+
+library(microbiomeMarker)
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS")
 
 # ------------------------------------------------------------------------------
 # Prepare the validation data
@@ -83,7 +72,6 @@ table(CrcBiomeScreenObject$SampleData$study_condition)
 
 # ------------------------------------------------------------------------------
 # Modeling and Evaluation
-
 ## Split the data into training and test sets by using the labels and set the partition
 CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject, label = c("control","CRC"), partition = 0.7)
 
