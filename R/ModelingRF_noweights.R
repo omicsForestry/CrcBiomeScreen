@@ -6,6 +6,9 @@
 #' @param TrueLabel This label is the future prediction target
 #' @param num_cores Set the number of the cores in parallel computing
 #'
+#' @importFrom dplyr mutate across
+#' @importFrom foreach foreach %dopar% %do%
+#'
 #' @return CrcBiomeScreenObject
 #' @export
 #'
@@ -21,6 +24,20 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  TaskName = NULL,
                                  TrueLabel = NULL,
                                  num_cores = NULL) {
+  # ---- Dependency checks ----
+  load_Modeling_deps <- function() {
+    pkgs <- c("caret", "foreach", "doParallel", "parallel", "ranger", "pROC")
+    for (p in pkgs) {
+      if (!requireNamespace(p, quietly = TRUE)) {
+        stop(sprintf("The function ModelingRF() requires the '%s' package. Please install it with install.packages('%s').", p, p))
+      } else {
+        library(p, character.only = TRUE)
+      }
+    }
+    message("All required packages for ModelingRF_noweights() are loaded.")
+  }
+  load_Modeling_deps()
+  # ---- Main function logic ----
   set.seed(123)
   folds.rf <- createFolds(CrcBiomeScreenObject$ModelData$TrainLabel, k = k.rf)
 
@@ -28,7 +45,7 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   # num_cores <- 10
   # num_cores <- detectCores() - 20
   cl <- makePSOCKcluster(num_cores)
-  registerDoParallel(cl)
+  doParallel::registerDoParallel(cl)
 
   # tuneGrid for ranger
   grid.rf <- expand.grid(
@@ -40,7 +57,7 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   )
 
   # Using ranger random forest for faster implementation
-  grid.rf$AUC <- foreach(i = 1:nrow(grid.rf), .combine = c, .packages = c("ranger", "pROC")) %dopar% {
+  grid.rf$AUC <- foreach::foreach(i = 1:nrow(grid.rf), .combine = c, .packages = c("ranger", "pROC","foreach")) %dopar% {
     aucs <- sapply(1:k.rf, function(j) {
       val.indices <- folds.rf[[j]]
       val.data <- CrcBiomeScreenObject$ModelData$Training[val.indices, ]
@@ -77,8 +94,8 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   }
 
   # Stop the cluster
-  stopCluster(cl)
-  registerDoSEQ()
+  parallel::stopCluster(cl)
+  foreach::registerDoSEQ()
 
   # Choose the best parameters
   best.params.index.rf <- which.max(grid.rf$AUC)
