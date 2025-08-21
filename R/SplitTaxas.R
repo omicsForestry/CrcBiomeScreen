@@ -1,3 +1,15 @@
+#' Split the taxa information into different columns
+#'
+#' @param CrcBiomeScreenObject
+#'
+#' @importFrom dplyr mutate across
+#' @importFrom tidyr separate
+#' @importFrom tibble tibble
+#'
+#' @return CrcBiomeScreenObject$TaxaData
+#' @export
+#'
+#' @examples CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 SplitTaxas <- function(CrcBiomeScreenObject) {
   CrcBiomeScreenObject$TaxaData <-
     CrcBiomeScreenObject$TaxaData %>%

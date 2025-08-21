@@ -6,6 +6,9 @@
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
 #'
+#' @importFrom dplyr mutate across
+#' @importFrom pROC roc auc ci.auc coords ci.coords plot.roc
+#'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult` slot.
 #' @export
 #'
@@ -59,6 +62,8 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
 #'
+#' @importFrom pROC roc auc ci.auc coords ci.coords plot.roc
+#'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$RF` slot.
 #' @export
 #'
@@ -101,10 +106,11 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 
   # calculating the ROC Curve
   roc.curve.rf <- roc(test.actual.classes.rf, test.pred.prob.rf, levels = levels(as.factor(ModelData$TestLabel)))
+  auc.value.rf <- auc(roc.curve.rf)
   # Confidence Interval
-  ci.auc(roc.curve.rf, conf.level = 0.95, method = "delong")
+  pROC::ci.auc(roc.curve.rf, conf.level = 0.95, method = "delong")
   # Finding Optimal threshold using Youden's Index
-  coords.rf <- coords(roc.curve.rf, "best", ret = "all", best.method = "youden")
+  coords.rf <- pROC::coords(roc.curve.rf, "best", ret = "all", best.method = "youden")
   optimal.threshold.rf <- coords.rf$threshold
   optimal.threshold.rf
   label <- levels(as.factor(ModelData$TestLabel))
@@ -112,8 +118,8 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
   test.class.predictions.rf <- as.factor(ifelse(test.pred.prob.rf >= optimal.threshold.rf, TrueLabel,
     label[!label %in% TrueLabel]
   ))
-  # COnfusion Matrix
-  conf.matrix.rf <- confusionMatrix(test.class.predictions.rf, as.factor(ModelData$TestLabel), positive = TrueLabel)
+  # Confusion Matrix
+  conf.matrix.rf <- caret::confusionMatrix(test.class.predictions.rf, as.factor(ModelData$TestLabel), positive = TrueLabel)
   # F1-score
   f1_score.rf <- conf.matrix.rf$byClass["F1"]
 
@@ -156,6 +162,8 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
 #'
+#' @importFrom pROC roc auc ci.auc coords ci.coords plot.roc
+#'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$XGBoost` slot.
 #' @export
 #'
@@ -179,7 +187,7 @@ EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
   auc.value.xgb <- auc(roc.curve.xgb)
 
   # Optimal threshold using Youden's Index
-  coords.xgb <- coords(roc.curve.xgb, "best", ret = "all", best.method = "youden")
+  coords.xgb <- pROC::coords(roc.curve.xgb, "best", ret = "all", best.method = "youden")
   optimal.threshold.xgb <- coords.xgb$threshold
   label <- levels(as.factor(CrcBiomeScreenObject$ModelData$TestLabel))
   test.class.predictions.xgb <- as.factor(ifelse(test.pred.prob.xgb >= optimal.threshold.xgb, TrueLabel,
@@ -187,7 +195,7 @@ EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
   ))
 
   # Confusion Matrix
-  conf.matrix.xgb <- confusionMatrix(test.class.predictions.xgb, as.factor(CrcBiomeScreenObject$ModelData$TestLabel), positive = TrueLabel)
+  conf.matrix.xgb <- caret::confusionMatrix(test.class.predictions.xgb, as.factor(CrcBiomeScreenObject$ModelData$TestLabel), positive = TrueLabel)
   # F1-score
   f1_score.xgb <- conf.matrix.xgb$byClass["F1"]
 
