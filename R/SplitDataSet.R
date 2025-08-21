@@ -1,7 +1,33 @@
+#' Split the dataset into training and test sets
+#'
+#' @param CrcBiomeScreenObject From the CreateCrcBiomeScreenObject()
+#' @param label Divide the data set by the binary-label
+#' @param partition The ratio of dividing the data set
+#' @param condition_col The colname of label in SampleData
+#'
+#' @importFrom dplyr mutate across
+#' @importFrom tidyr separate
+#'
+#' @return CrcBiomeScreenObject$ModelData
+#' @export
+#'
+#' @examples CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject,
+#'                                                label = c("control","CRC"),
+#'                                                partition = 0.7,
+#'                                                condition_col = "study_condition")
+#'
 SplitDataSet <- function(CrcBiomeScreenObject = NULL,
                          label = NULL,
-                         partition = 0.7,
+                         partition = NULL,
                          condition_col = "study_condition") {
+  required_pkgs <- c("caret", "foreach", "parallel", "ranger","xgboost")
+  for(pkg in required_pkgs){
+    if (!requireNamespace(pkg, quietly = TRUE)) {
+      install.packages(pkg)
+    }
+  }
+  lapply(required_pkgs, library, character.only = TRUE)
+
   # Check if the required parameters are provided
   if (is.null(CrcBiomeScreenObject)) stop("CrcBiomeScreenObject cannot be NULL.")
   if (is.null(label)) stop("Label cannot be NULL.")
@@ -22,7 +48,7 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
 
   # Create training and test set indexes
   set.seed(123)
-  trainIndex <- createDataPartition(sample_condition, p = partition, list = FALSE)
+  trainIndex <- caret::createDataPartition(sample_condition, p = partition, list = FALSE)
 
   # Split the data
   train <- data[trainIndex, ]
@@ -52,7 +78,6 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
   attr(ModelData, "Test Size") <- nrow(test)
 
   CrcBiomeScreenObject$ModelData <- ModelData
-  saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", "SplitDataSet", ".rds"))
 
   return(CrcBiomeScreenObject)
 }
