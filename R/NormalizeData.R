@@ -27,6 +27,7 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL) {
            "remotes::install_github('yiluheihei/microbiomeMarker')",
            call. = FALSE)
     }
+    library(microbiomeMarker)
     Data <- as.data.frame(
       t(microbiomeMarker::normalize(t(Data), method = "TSS"))
     )
@@ -38,6 +39,7 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL) {
            "BiocManager::install('GUniFrac')",
            call. = FALSE)
     }
+    library(GUniFrac)
     size.factor <- GUniFrac::GMPR(t(Data))
     size.factor[is.na(size.factor)] <- mean(size.factor, na.rm = TRUE)
     Data <- Data / size.factor
