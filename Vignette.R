@@ -1,7 +1,4 @@
 # CrcBiomeScreen Vignette
-# Set up the environment and install the package
-system("conda env create -f environment.yml")
-system("conda activate CrcBiomeScreen")
 # ------------------------------------------------------------------------------
 rm(list = ls())
 library(devtools)
@@ -13,7 +10,6 @@ setwd("/home/CRCscreening/CRCscreening-Workflow/")
 library(CrcBiomeScreen)
 library(ggplot2)
 library(dplyr)
-
 # ------------------------------------------------------------------------------
 ## Get the toy data from curatedMetagenomicData
 library(curatedMetagenomicData)
@@ -32,10 +28,8 @@ CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
 
 ## Normalize the data using GMPR/TSS
-library(GUniFrac)
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
 
-library(microbiomeMarker)
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS")
 
 # ------------------------------------------------------------------------------
@@ -72,6 +66,10 @@ table(CrcBiomeScreenObject$SampleData$study_condition)
 
 # ------------------------------------------------------------------------------
 # Modeling and Evaluation
+CrcBiomeScreenObject <- FilterDataSet(CrcBiomeScreenObject,
+                                         label = c("CRC","control"),
+                                         condition_col = "study_condition")
+table(CrcBiomeScreenObject$SampleData$study_condition)
 ## Split the data into training and test sets by using the labels and set the partition
 CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject, label = c("control","CRC"), partition = 0.7)
 
@@ -154,6 +152,7 @@ CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
                                     num_cores = 10,
                                     ValidationData = ValidationData_filtered_qc,
                                     TrueLabel = "CRC")
+
 
 
 

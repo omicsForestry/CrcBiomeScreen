@@ -24,7 +24,7 @@ dependencies:
   - r-ape
   - r-caret=7.0.1
   - r-vegan
-  - r-xgboost
+  - r-xgboost=1.7.11.1
   - r-ggpubr
   - r-ggrepel
   - r-ggplotify
