@@ -22,9 +22,9 @@ dependencies:
   - r-future
   - r-future.apply
   - r-ape
-  - r-caret=7.0.1
+  - r-caret
   - r-vegan
-  - r-xgboost=1.7.11.1
+  - r-xgboost=1.7
   - r-ggpubr
   - r-ggrepel
   - r-ggplotify
