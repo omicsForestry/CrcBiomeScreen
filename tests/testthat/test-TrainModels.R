@@ -82,4 +82,3 @@ test_that("TrainModels works correctly", {
   saveRDS(result_RF_noweights, "result_RF_noweights.rds")
   saveRDS(result_XGBoost_noweights, "result_XGBoost_noweights.rds")
 })
-

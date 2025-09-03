@@ -12,17 +12,18 @@
 #' @export
 #'
 #' @examples CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject,
-#'                                                label = c("control","CRC"),
-#'                                                partition = 0.7,
-#'                                                condition_col = "study_condition")
+#'   label = c("control", "CRC"),
+#'   partition = 0.7,
+#'   condition_col = "study_condition"
+#' )
 #'
 SplitDataSet <- function(CrcBiomeScreenObject = NULL,
                          label = NULL,
                          partition = NULL,
                          condition_col = "study_condition") {
   # Load required packages
-  required_pkgs <- c("caret", "foreach", "parallel", "ranger","xgboost")
-  for(pkg in required_pkgs){
+  required_pkgs <- c("caret", "foreach", "parallel", "ranger", "xgboost")
+  for (pkg in required_pkgs) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
       install.packages(pkg)
     }

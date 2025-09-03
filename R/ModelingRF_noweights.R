@@ -13,11 +13,12 @@
 #' @export
 #'
 #' @examples CrcBiomeScreenObject <- ModelingRF_noweights(
-#'                                   CrcBiomeScreenObject = CrcBiomeScreenObject,
-#'                                   k.rf = n_cv,
-#'                                   TaskName = TaskName,
-#'                                   TrueLabel = TrueLabel,
-#'                                   num_cores = num_cores)
+#'   CrcBiomeScreenObject = CrcBiomeScreenObject,
+#'   k.rf = n_cv,
+#'   TaskName = TaskName,
+#'   TrueLabel = TrueLabel,
+#'   num_cores = num_cores
+#' )
 #'
 ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  k.rf = n_cv,
@@ -57,7 +58,7 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   )
 
   # Using ranger random forest for faster implementation
-  grid.rf$AUC <- foreach::foreach(i = 1:nrow(grid.rf), .combine = c, .packages = c("ranger", "pROC","foreach")) %dopar% {
+  grid.rf$AUC <- foreach::foreach(i = 1:nrow(grid.rf), .combine = c, .packages = c("ranger", "pROC", "foreach")) %dopar% {
     aucs <- sapply(1:k.rf, function(j) {
       val.indices <- folds.rf[[j]]
       val.data <- CrcBiomeScreenObject$ModelData$Training[val.indices, ]

@@ -1,9 +1,13 @@
 test_that("SplitTaxas works correctly", {
   # Construct test input data
-  rel_abund <- matrix(runif(9), nrow = 3, dimnames = list(c("k__Bacteria|p__Firmicutes|c__Clostridia",
-                                                            "k__Bacteria|p__Bacteroidetes|c__Bacteroidia",
-                                                            "k__Bacteria|p__Proteobacteria|c__Gammaproteobacteria"),
-                                                          c("sample1", "sample2", "sample3")))
+  rel_abund <- matrix(runif(9), nrow = 3, dimnames = list(
+    c(
+      "k__Bacteria|p__Firmicutes|c__Clostridia",
+      "k__Bacteria|p__Bacteroidetes|c__Bacteroidia",
+      "k__Bacteria|p__Proteobacteria|c__Gammaproteobacteria"
+    ),
+    c("sample1", "sample2", "sample3")
+  ))
 
   taxa_data <- rownames(rel_abund)
 
@@ -14,9 +18,11 @@ test_that("SplitTaxas works correctly", {
   )
 
   # Create the object
-  crc_obj <- CreateCrcBiomeScreenObject(RelativeAbundance = rel_abund,
-                                        TaxaData = taxa_data,
-                                        SampleData = sample_data)
+  crc_obj <- CreateCrcBiomeScreenObject(
+    RelativeAbundance = rel_abund,
+    TaxaData = taxa_data,
+    SampleData = sample_data
+  )
 
   # Now test SplitTaxas
   split_result <- SplitTaxas(crc_obj)

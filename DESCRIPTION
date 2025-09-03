@@ -46,6 +46,9 @@ Suggests:
     vegan,
     xgboost,
     gt,
-    testthat,
+    testthat (>= 3.0.0),
     BiocManager,
-    devtools
+    devtools,
+    knitr,
+    rmarkdown
+VignetteBuilder: knitr

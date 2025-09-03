@@ -15,11 +15,12 @@
 #' @export
 #'
 #' @examples CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
-#'                                                       model_type = "RF",
-#'                                                       ValidationData = ValidationData_filtered_qc,
-#'                                                       TaskName = "ValidationData_RF_Validation",
-#'                                                       TrueLabel = "CRC",
-#'                                                       PlotAUC = TRUE)
+#'   model_type = "RF",
+#'   ValidationData = ValidationData_filtered_qc,
+#'   TaskName = "ValidationData_RF_Validation",
+#'   TrueLabel = "CRC",
+#'   PlotAUC = TRUE
+#' )
 #'
 ValidateModelOnData <- function(
     CrcBiomeScreenObject = NULL,
@@ -29,7 +30,6 @@ ValidateModelOnData <- function(
     TrueLabel = NULL,
     condition_col = "study_condition",
     PlotAUC = NULL) {
-
   if (!condition_col %in% colnames(ValidationData$SampleData)) {
     stop(paste("Condition column", condition_col, "not found in SampleData."))
   }

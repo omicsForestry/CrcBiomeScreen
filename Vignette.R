@@ -147,7 +147,7 @@ CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
                                     TrueLabel = "CRC")
 
 
-
+usethis::use_vignette("vignette")
 
 
 

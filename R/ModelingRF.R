@@ -15,11 +15,12 @@
 #' @examples
 #' \dontrun{
 #' CrcBiomeScreenObject <- ModelingRF(
-#'                                   CrcBiomeScreenObject = CrcBiomeScreenObject,
-#'                                   k.rf = n_cv,
-#'                                   TaskName = TaskName,
-#'                                   TrueLabel = TrueLabel,
-#'                                   num_cores = num_cores)
+#'   CrcBiomeScreenObject = CrcBiomeScreenObject,
+#'   k.rf = n_cv,
+#'   TaskName = TaskName,
+#'   TrueLabel = TrueLabel,
+#'   num_cores = num_cores
+#' )
 #' }
 ModelingRF <- function(CrcBiomeScreenObject = NULL,
                        k.rf = n_cv,

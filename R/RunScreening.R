@@ -20,15 +20,18 @@
 #' @export
 #'
 #' @examples CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
-#'                                                normalize_method = "GMPR",
-#'                                                model = "RF",
-#'                                                split.requirement =
-#'                                                c(label = c("control","CRC"),
-#'                                                condition_col = "study_condition"),
-#'                                                TaskName = "GMPR_NHSBCSP",
-#'                                                num_cores = 10,
-#'                                                ValidationData = ValidationData,
-#'                                                TrueLabel = "Cancer")
+#'   normalize_method = "GMPR",
+#'   model = "RF",
+#'   split.requirement =
+#'     c(
+#'       label = c("control", "CRC"),
+#'       condition_col = "study_condition"
+#'     ),
+#'   TaskName = "GMPR_NHSBCSP",
+#'   num_cores = 10,
+#'   ValidationData = ValidationData,
+#'   TrueLabel = "Cancer"
+#' )
 #'
 RunScreening <- function(obj,
                          normalize_method = NULL, # c("TSS", "GMPR")
@@ -41,7 +44,6 @@ RunScreening <- function(obj,
                          ValidationData = NULL,
                          TrueLabel = NULL,
                          num_cores = NULL) {
-
   # obj <- NormalizeData(obj, method = normalize_method)
   obj <- SplitDataSet(obj, split.requirement, partition = partition)
 

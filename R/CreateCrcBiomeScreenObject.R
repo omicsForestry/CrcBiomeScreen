@@ -28,8 +28,7 @@ CreateCrcBiomeScreenObject <- function(
     AbsoluteAbundance = NULL,
     TaxaData = NULL,
     SampleData = NULL,
-    RelativeAbundance = NULL
-) {
+    RelativeAbundance = NULL) {
   # Check that at least one abundance matrix is provided
   if (is.null(RelativeAbundance) && is.null(AbsoluteAbundance)) {
     stop("Either RelativeAbundance or AbsoluteAbundance must be provided.")

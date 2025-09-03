@@ -17,11 +17,12 @@
 #' @export
 #'
 #' @examples CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
-#'                                               model_type = "RF",
-#'                                               TaskName = "ToyData_RF",
-#'                                               ClassBalance = TRUE,
-#'                                               TrueLabel = "CRC",
-#'                                               num_cores = 10)
+#'   model_type = "RF",
+#'   TaskName = "ToyData_RF",
+#'   ClassBalance = TRUE,
+#'   TrueLabel = "CRC",
+#'   num_cores = 10
+#' )
 #'
 TrainModels <- function(CrcBiomeScreenObject = NULL,
                         model_type = c("RF", "XGBoost"),
@@ -31,8 +32,8 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
                         TrueLabel = NULL,
                         num_cores = NULL) {
   # ---- Dependency checks ----
-  required_pkgs <- c("caret", "foreach", "parallel", "ranger","xgboost")
-  for(pkg in required_pkgs){
+  required_pkgs <- c("caret", "foreach", "parallel", "ranger", "xgboost")
+  for (pkg in required_pkgs) {
     if (!requireNamespace(pkg, quietly = TRUE)) {
       install.packages(pkg)
     }
