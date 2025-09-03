@@ -29,6 +29,4 @@ dependencies:
   - r-ggrepel
   - r-ggplotify
   - r-biocmanager
-  - bioconductor-curatedmetagenomicdata
-  - bioconductor-microbiomemarker
   - r-gunifrac

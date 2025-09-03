@@ -58,8 +58,7 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   # Prepare training data
   train_data <- CrcBiomeScreenObject$ModelData$Training
   label_train <- CrcBiomeScreenObject$ModelData$TrainLabel
-
-  # label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject$ModelData$TrainLabel))
+  label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject$ModelData$TrainLabel))
   # # Suppose Positive is majority class.  Upweight Negative by ratio:
   # w_pos <- 1
   # w_neg <- nrow(train_data[train_data$Class=="Positive",]) /
@@ -76,23 +75,23 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   weights <- ifelse(label_train == positive_class, w_pos, w_neg)
 
   # Define caret trainControl
-  ctrl <- caret::trainControl(
+  ctrl <- trainControl(
     method = "repeatedcv",
     number = k.rf,
     repeats = repeats,
     summaryFunction = twoClassSummary,
-    classProbs = TRUE,
-    allowParallel = TRUE
+    classProbs = TRUE
+    # allowParallel = TRUE
   )
 
   # model_weights <- model_weights[CrcBiomeScreenObject$ModelData$TrainLabel]
 
   train_data <- as.data.frame(train_data)
-  train_data$label_train <- label_train
+  train_data$label_train <- as.factor(label_train)
 
   set.seed(123)
   # Train the model using caret
-  model_fit <- caret::train(label_train ~ .,
+  model_fit <- train(label_train ~ .,
     data = train_data,
     method = "xgbTree",
     metric = "ROC",
