@@ -21,16 +21,11 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL) {
   Data <- CrcBiomeScreenObject$GenusLevelData
 
   if (method == "TSS") {
-    if (!requireNamespace("microbiomeMarker", quietly = TRUE)) {
-      stop("The 'TSS' method requires the 'microbiomeMarker' package.\n",
-           "Please install it with:\n",
-           "remotes::install_github('yiluheihei/microbiomeMarker')",
-           call. = FALSE)
-    }
-    library(microbiomeMarker)
-    Data <- as.data.frame(
-      t(microbiomeMarker::normalize(t(Data), method = "TSS"))
-    )
+    # Calculate the total number of counts in each sample
+    # total_counts = rowSums(Data)
+
+    # convert the absolute abundance to relative abundance
+    Data=Data/rowSums(Data)
 
   } else if (method == "GMPR") {
     if (!requireNamespace("GUniFrac", quietly = TRUE)) {
@@ -38,6 +33,7 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL) {
            "Please install it with:\n",
            "BiocManager::install('GUniFrac')",
            call. = FALSE)
+      BiocManager::install('GUniFrac')
     }
     library(GUniFrac)
     size.factor <- GUniFrac::GMPR(t(Data))

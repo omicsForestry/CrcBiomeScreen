@@ -20,6 +20,7 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
                          label = NULL,
                          partition = NULL,
                          condition_col = "study_condition") {
+  # Load required packages
   required_pkgs <- c("caret", "foreach", "parallel", "ranger","xgboost")
   for(pkg in required_pkgs){
     if (!requireNamespace(pkg, quietly = TRUE)) {

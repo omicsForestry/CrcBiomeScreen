@@ -11,12 +11,8 @@ library(CrcBiomeScreen)
 library(ggplot2)
 library(dplyr)
 # ------------------------------------------------------------------------------
-## Get the toy data from curatedMetagenomicData
-library(curatedMetagenomicData)
-toydata <- curatedMetagenomicData(
-            "ThomasAM_2018a.relative_abundance"
-            , dryrun = FALSE, rownames = "short")
-
+## Load the data from Dataset folder (from curatedMetagenomicData)
+load("Dataset/toydata.RData")
 ## Create the CrcBiomeScreenObject
 CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
                                                   TaxaData = toydata[[1]]@rowLinks$nodeLab,
@@ -35,11 +31,8 @@ CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS")
 # ------------------------------------------------------------------------------
 # Prepare the validation data
 
-## Load the validation data from curatedMetagenomicData
-ValidationData_curated <- curatedMetagenomicData(
-            paste0("ZellerG_2014",".","relative_abundance")
-            , dryrun = FALSE, rownames = "short")
-
+## Load the validation data from Dataset folder (from curatedMetagenomicData)
+load("Dataset/ValidationData_curated.RData")
 ## Create the CrcBiomeScreenObject for validation data
 ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
                                                   TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
