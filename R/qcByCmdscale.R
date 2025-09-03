@@ -38,9 +38,9 @@
 #' @examples
 #' # Perform QC with threshold = 1 SD
 #' CrcBiomeScreenObject <- qcByCmdscale(CrcBiomeScreenObject,
-#'                                      TaskName = "Normalize_ToyData_filtered_qc",
-#'                                      normalize_method = "GMPR")
-
+#'   TaskName = "Normalize_ToyData_filtered_qc",
+#'   normalize_method = "GMPR"
+#' )
 qcByCmdscale <- function(CrcBiomeScreenObject,
                          TaskName = NULL,
                          normalize_method = NULL,

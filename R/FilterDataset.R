@@ -8,8 +8,9 @@
 #' @export
 #'
 #' @examples ValidationData_filtered <- FilterDataSet(ValidationData,
-#'                                                    label = c("CRC","control"),
-#'                                                    condition_col = "study_condition")
+#'   label = c("CRC", "control"),
+#'   condition_col = "study_condition"
+#' )
 #'
 FilterDataSet <- function(CrcBiomeScreenObject = NULL,
                           label = NULL,

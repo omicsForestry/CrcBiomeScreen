@@ -11,9 +11,10 @@
 #' \dontrun{
 #' # Example only runs if suggested packages are installed
 #' if (requireNamespace("GUniFrac", quietly = TRUE) &&
-#'     requireNamespace("microbiomeMarker", quietly = TRUE)) {
+#'   requireNamespace("microbiomeMarker", quietly = TRUE)) {
 #'   CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject,
-#'                                         method = "GMPR")
+#'     method = "GMPR"
+#'   )
 #'   attributes(CrcBiomeScreenObject$NormalizedData)
 #' }
 #' }
@@ -25,21 +26,20 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL) {
     # total_counts = rowSums(Data)
 
     # convert the absolute abundance to relative abundance
-    Data=Data/rowSums(Data)
-
+    Data <- Data / rowSums(Data)
   } else if (method == "GMPR") {
     if (!requireNamespace("GUniFrac", quietly = TRUE)) {
       stop("The 'GMPR' method requires the 'GUniFrac' package.\n",
-           "Please install it with:\n",
-           "BiocManager::install('GUniFrac')",
-           call. = FALSE)
-      BiocManager::install('GUniFrac')
+        "Please install it with:\n",
+        "BiocManager::install('GUniFrac')",
+        call. = FALSE
+      )
+      BiocManager::install("GUniFrac")
     }
     library(GUniFrac)
     size.factor <- GUniFrac::GMPR(t(Data))
     size.factor[is.na(size.factor)] <- mean(size.factor, na.rm = TRUE)
     Data <- Data / size.factor
-
   } else {
     stop("Invalid method. Please choose either 'TSS' or 'GMPR'.")
   }

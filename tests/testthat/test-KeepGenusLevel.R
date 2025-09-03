@@ -1,9 +1,13 @@
 test_that("KeepGenusLevel works correctly", {
   # Construct test input data
-  rel_abund <- matrix(runif(9), nrow = 3, dimnames = list(c("k__Bacteria|p__Firmicutes|c__Clostridia|o__order1|f__family1|g__test",
-                                                            "k__Bacteria|p__Bacteroidetes|c__Bacteroidia|o__order2|f__family2|g__test1",
-                                                            "k__Bacteria|p__Proteobacteria|c__Gammaproteobacteria|o__order3|f__family3|g__test2"),
-                                                          c("sample1", "sample2", "sample3")))
+  rel_abund <- matrix(runif(9), nrow = 3, dimnames = list(
+    c(
+      "k__Bacteria|p__Firmicutes|c__Clostridia|o__order1|f__family1|g__test",
+      "k__Bacteria|p__Bacteroidetes|c__Bacteroidia|o__order2|f__family2|g__test1",
+      "k__Bacteria|p__Proteobacteria|c__Gammaproteobacteria|o__order3|f__family3|g__test2"
+    ),
+    c("sample1", "sample2", "sample3")
+  ))
 
   taxa_data <- rownames(rel_abund)
 
@@ -14,9 +18,11 @@ test_that("KeepGenusLevel works correctly", {
   )
 
   # Create the object
-  crc_obj <- CreateCrcBiomeScreenObject(RelativeAbundance = rel_abund,
-                                        TaxaData = taxa_data,
-                                        SampleData = sample_data)
+  crc_obj <- CreateCrcBiomeScreenObject(
+    RelativeAbundance = rel_abund,
+    TaxaData = taxa_data,
+    SampleData = sample_data
+  )
 
   # Now test SplitTaxas
   split_result <- SplitTaxas(crc_obj)

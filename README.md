@@ -7,20 +7,22 @@
 * **Environment.R**: Environment setup
 * **R/**: Core functions
 * **dev/**: Development functions
+* **Dataset/**: Toy datasets
 * **tests/**: Testing functions
 
 ## Installation
-First, construct the environment:
-```bash
-conda env create -f environment.yml
-conda activate CrcBiomeScreen
-```
-
-Second, install the R packages:
+### Install the R packages repository
 ```R
 library(devtools)
 devtools::install_github("iChronostasis/CrcBiomeScreen", force = TRUE)
 ```
+
+Or you could choose construct the environment by using the conda:
+```bash
+conda env create -f environment.yml
+conda activate CrcBiomeScreen
+```
+Then download the R package from github.
 
 ## Usage
  * Run the vignette to see how to use this workflow.
