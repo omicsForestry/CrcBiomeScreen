@@ -1,0 +1,35 @@
+test_that("EvaluateModel works correctly", {
+  # Load the CrcBiomeScreenObject
+  # CrcBiomeScreenObject <- readRDS("CrcBiomeScreenObject.rds")
+
+  # Define parameters
+  model_type <- c("RF", "XGBoost")
+  TaskName <- "TestEvaluation"
+  TrueLabel <- "CRC"
+  PlotAUC <- TRUE
+
+  # Call the EvaluateModel function for RF
+  result_RF <- EvaluateModel(
+    CrcBiomeScreenObject = CrcBiomeScreenObject,
+    model_type = model_type[1],
+    TaskName = TaskName,
+    TrueLabel = TrueLabel,
+    PlotAUC = PlotAUC
+  )
+
+  # Call the EvaluateModel function for XGBoost
+  result_XGBoost <- EvaluateModel(
+    CrcBiomeScreenObject = CrcBiomeScreenObject,
+    model_type = model_type[2],
+    TaskName = TaskName,
+    TrueLabel = TrueLabel,
+    PlotAUC = PlotAUC
+  )
+
+  # Check if the result is not NULL and contains expected elements
+  expect_true(!is.null(result_RF))
+  expect_true(!is.null(result_XGBoost))
+  expect_true("EvaluateResult" %in% names(result_RF))
+  expect_true("EvaluateResult" %in% names(result_XGBoost))
+
+})

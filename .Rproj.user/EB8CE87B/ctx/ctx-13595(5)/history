@@ -1,0 +1,512 @@
+ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+SampleData = ValidationData_curated[[1]]@colData)
+ValidationData <- SplitTaxas(ValidationData)
+ValidationData <- KeepGenusLevel(ValidationData)
+ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(ValidationData$NormalizedData) %in%
+colnames(CrcBiomeScreenObject$NormalizedData)]
+CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, colnames(CrcBiomeScreenObject$NormalizedData) %in%
+colnames(ValidationData$NormalizedData)]
+# ----------------------------------------------------------------------------
+CrcBiomeScreenObject <- RunScreening(obj = CrcBiomeScreenObject,
+normalize_method = "GMPR",
+model_type = "RF",
+partition = 0.7,
+split.requirement =
+c(label = c("control","CRC"),
+condition_col = "study_condition"),
+ClassBalance = TRUE,
+n_cv = 10,
+TaskName = "GMPR_toydata_RF",
+num_cores = 10,
+ValidationData = ValidationData,
+TrueLabel = "CRC")
+dim(  ValidationData$NormalizedData)\
+dim(  ValidationData$NormalizedData)
+dim(  CrcBiomeScreenObject$NormalizedData)
+obj <- NormalizeData(obj, method = normalize_method)
+obj = CrcBiomeScreenObject
+obj <- NormalizeData(obj, method = normalize_method)
+obj <- SplitDataSet(obj, split.requirement, partition = partition)
+obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassBalance = ClassBalance, n_cv = n_cv)
+dim(obj$NormalizedData)
+dim(ValidationData$NormalizedData)
+ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(ValidationData$NormalizedData) %in%
+colnames(CrcBiomeScreenObject$NormalizedData)]
+CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, colnames(CrcBiomeScreenObject$NormalizedData) %in%
+colnames(ValidationData$NormalizedData)]
+obj = CrcBiomeScreenObject
+normalize_method
+obj <- NormalizeData(obj, method = normalize_method)
+obj <- SplitDataSet(obj, split.requirement, partition = partition)
+model_type
+obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassBalance = ClassBalance, n_cv = n_cv)
+ClassBalance
+n_cv
+TrueLabel
+num_cores
+dim(obj$NormalizedData)
+dim(  CrcBiomeScreenObject$NormalizedData )
+CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, colnames(CrcBiomeScreenObject$NormalizedData) %in%
+colnames(ValidationData$NormalizedData)]
+obj = CrcBiomeScreenObject
+obj <- SplitDataSet(obj, split.requirement, partition = partition)
+obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassBalance = ClassBalance, n_cv = n_cv)
+split.requirement =
+c(label = c("control","CRC"),
+condition_col = "study_condition")
+obj <- SplitDataSet(obj, split.requirement, partition = partition)
+obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassBalance = ClassBalance, n_cv = n_cv)
+obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassBalance = ClassBalance, n_cv = n_cv)
+# Call the TrainModels function
+result_RF <- TrainModels(
+CrcBiomeScreenObject = CrcBiomeScreenObject,
+model_type = model_type[1],
+ClassBalance = ClassBalance,
+n_cv = n_cv,
+TaskName = TaskName,
+TrueLabel = TrueLabel,
+num_cores = num_cores
+)
+# Call the TrainModels function
+result_RF <- TrainModels(
+CrcBiomeScreenObject = CrcBiomeScreenObject,
+model_type = model_type[1],
+ClassBalance = ClassBalance,
+n_cv = n_cv,
+TaskName = TaskName,
+TrueLabel = TrueLabel,
+num_cores = num_cores
+)
+obj <- SplitDataSet(obj, split.requirement, partition = partition)
+# Call the TrainModels function
+result_RF <- TrainModels(
+CrcBiomeScreenObject = obj,
+model_type = model_type[1],
+ClassBalance = ClassBalance,
+n_cv = n_cv,
+TaskName = TaskName,
+TrueLabel = TrueLabel,
+num_cores = num_cores
+)
+dim(obj$NormalizedData)
+head(obj$NormalizedData)
+set.seed(123)
+folds.rf <- createFolds(CrcBiomeScreenObject$ModelData$TrainLabel, k = k.rf)
+k.rf=10
+set.seed(123)
+folds.rf <- createFolds(CrcBiomeScreenObject$ModelData$TrainLabel, k = k.rf)
+CrcBiomeScreenObject$ModelData$TrainLabel
+folds.rf <- createFolds(obj$ModelData$TrainLabel, k = k.rf)
+folds.rf
+obj$ModelData$Training
+dim(obj$ModelData$Training)
+dim(obj$ModelData$Test)
+CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
+TaxaData = toydata[[1]]@rowLinks$nodeLab,
+SampleData = toydata[[1]]@colData)
+CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+toydata <- curatedMetagenomicData(
+"ThomasAM_2018a.relative_abundance"
+, dryrun = FALSE, rownames = "short")
+CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
+TaxaData = toydata[[1]]@rowLinks$nodeLab,
+SampleData = toydata[[1]]@colData)
+CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+# ----------------------------------------------------------------------------
+ValidationData_curated <- curatedMetagenomicData(
+paste0("ZellerG_2014",".","relative_abundance")
+, dryrun = FALSE, rownames = "short")
+ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+SampleData = ValidationData_curated[[1]]@colData)
+ValidationData <- SplitTaxas(ValidationData)
+ValidationData <- KeepGenusLevel(ValidationData)
+ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(ValidationData$NormalizedData) %in%
+colnames(CrcBiomeScreenObject$NormalizedData)]
+CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, colnames(CrcBiomeScreenObject$NormalizedData) %in%
+colnames(ValidationData$NormalizedData)]
+obj = CrcBiomeScreenObject
+# obj <- NormalizeData(obj, method = normalize_method)
+obj <- SplitDataSet(obj, split.requirement, partition = partition)
+obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassBalance = ClassBalance, n_cv = n_cv)
+test_that("ValidateModelOnData works correctly", {
+# CrcBiomeScreenObject <- readRDS("tests/testthat/CrcBiomeScreenObject.rds")
+result_rf <- readRDS("tests/testthat/result_RF_evaluated.rds")
+result_XGBoost <- readRDS("tests/testthat/result_XGBoost_evaluated.rds")
+ValidationData_curated <- curatedMetagenomicData(
+paste0("ZellerG_2014",".","relative_abundance")
+, dryrun = FALSE, rownames = "short")
+ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+SampleData = ValidationData_curated[[1]]@colData)
+ValidationData <- SplitTaxas(ValidationData)
+ValidationData <- KeepGenusLevel(ValidationData)
+ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(ValidationData$NormalizedData) %in%
+colnames(result_rf$NormalizedData)]
+result_rf$NormalizedData <- result_rf$NormalizedData[, colnames(result_rf$NormalizedData) %in%
+colnames(ValidationData$NormalizedData)]
+result_XGBoost$NormalizedData <- result_XGBoost$NormalizedData[, colnames(result_XGBoost$NormalizedData) %in%
+colnames(ValidationData$NormalizedData)]
+# Define parameters
+model_type <- c("RF", "XGBoost")
+ClassBalance <- TRUE
+n_cv <- 10
+TaskName <- c("TestTask_RF","TestTask_XGBoost")
+TrueLabel <- "CRC"
+num_cores <- 5
+PlotAUC <- TRUE
+result_rf <- SplitDataSet(CrcBiomeScreenObject = result_rf,
+label = c("control","CRC"), partition = 0.7)
+result_RF <- TrainModels(
+CrcBiomeScreenObject = result_rf,
+model_type = model_type[1],
+ClassBalance = ClassBalance,
+n_cv = n_cv,
+TaskName = TaskName[1],
+TrueLabel = TrueLabel,
+num_cores = num_cores
+)
+result_RF <- EvaluateModel(
+CrcBiomeScreenObject = result_RF,
+model_type = model_type[1],
+TaskName = TaskName[1],
+TrueLabel = TrueLabel,
+PlotAUC = PlotAUC
+)
+result_XGBoost <- SplitDataSet(CrcBiomeScreenObject = result_XGBoost,
+label = c("control","CRC"), partition = 0.7)
+result_XGBoost <- TrainModels(
+CrcBiomeScreenObject = result_XGBoost,
+model_type = model_type[2],
+ClassBalance = ClassBalance,
+n_cv = n_cv,
+TaskName = TaskName[2],
+TrueLabel = TrueLabel,
+num_cores = num_cores
+)
+result_XGBoost <- EvaluateModel(
+CrcBiomeScreenObject = result_XGBoost,
+model_type = model_type[2],
+TaskName = TaskName[2],
+TrueLabel = TrueLabel,
+PlotAUC = PlotAUC
+)
+ValidationData_filtered <- FilterDataSet(ValidationData,
+label = c("CRC","control"),
+condition_col = "study_condition")
+ValidationData_filtered_qc <- qcByCmdscale(ValidationData_filtered,
+TaskName = "Normalize_ValidationData_filtered_qc",
+normalize_method = "GMPR")
+result_RF <- ValidateModelOnData(CrcBiomeScreenObject = result_RF,
+model_type = "RF",
+ValidationData = ValidationData_filtered_qc,
+TaskName = "ValidationData_RF_Validation",
+TrueLabel = "CRC",
+PlotAUC = TRUE)
+result_XGBoost <- ValidateModelOnData(result_XGBoost,
+model_type = "XGBoost",
+ValidationData = ValidationData_filtered_qc,
+TaskName = "ValidationData_XGBoost_Validation",
+TrueLabel = "CRC",
+PlotAUC = TRUE)
+expect_true(!is.null(result_RF$PredictResult$RF))
+expect_true(!is.null(result_XGBoost$PredictResult$XGBoost))
+})
+devtools::install()
+devtools::document()
+devtools::install()
+CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
+TaxaData = toydata[[1]]@rowLinks$nodeLab,
+SampleData = toydata[[1]]@colData)
+CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+SampleData = ValidationData_curated[[1]]@colData)
+ValidationData <- SplitTaxas(ValidationData)
+ValidationData <- KeepGenusLevel(ValidationData)
+ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(ValidationData$NormalizedData) %in%
+colnames(CrcBiomeScreenObject$NormalizedData)]
+CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, colnames(CrcBiomeScreenObject$NormalizedData) %in%
+colnames(ValidationData$NormalizedData)]
+ValidationData_filtered <- FilterDataSet(ValidationData,
+label = c("CRC","control"),
+condition_col = "study_condition")
+ValidationData_filtered_qc <- qcByCmdscale(ValidationData_filtered,
+TaskName = "Normalize_ValidationData_filtered_qc",
+normalize_method = "GMPR")
+# ----------------------------------------------------------------------------
+CrcBiomeScreenObject <- RunScreening(obj = CrcBiomeScreenObject,
+normalize_method = "GMPR",
+model_type = "RF",
+partition = 0.7,
+split.requirement =
+c(label = c("control","CRC"),
+condition_col = "study_condition"),
+ClassBalance = TRUE,
+n_cv = 10,
+TaskName = "GMPR_toydata_RF",
+num_cores = 10,
+ValidationData = ValidationData_filtered_qc,
+TrueLabel = "CRC")
+test_that("RunScreening works", {
+toydata <- curatedMetagenomicData(
+"ThomasAM_2018a.relative_abundance"
+, dryrun = FALSE, rownames = "short")
+CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
+TaxaData = toydata[[1]]@rowLinks$nodeLab,
+SampleData = toydata[[1]]@colData)
+CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+# ----------------------------------------------------------------------------
+ValidationData_curated <- curatedMetagenomicData(
+paste0("ZellerG_2014",".","relative_abundance")
+, dryrun = FALSE, rownames = "short")
+ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+SampleData = ValidationData_curated[[1]]@colData)
+ValidationData <- SplitTaxas(ValidationData)
+ValidationData <- KeepGenusLevel(ValidationData)
+ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(ValidationData$NormalizedData) %in%
+colnames(CrcBiomeScreenObject$NormalizedData)]
+CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, colnames(CrcBiomeScreenObject$NormalizedData) %in%
+colnames(ValidationData$NormalizedData)]
+ValidationData_filtered <- FilterDataSet(ValidationData,
+label = c("CRC","control"),
+condition_col = "study_condition")
+ValidationData_filtered_qc <- qcByCmdscale(ValidationData_filtered,
+TaskName = "Normalize_ValidationData_filtered_qc",
+normalize_method = "GMPR")
+# ----------------------------------------------------------------------------
+CrcBiomeScreenObject <- RunScreening(obj = CrcBiomeScreenObject,
+normalize_method = "GMPR",
+model_type = "RF",
+partition = 0.7,
+split.requirement =
+c(label = c("control","CRC"),
+condition_col = "study_condition"),
+ClassBalance = TRUE,
+n_cv = 10,
+TaskName = "GMPR_toydata_RF",
+num_cores = 10,
+ValidationData = ValidationData_filtered_qc,
+TrueLabel = "CRC")
+CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
+normalize_method = "GMPR",
+model = "XGBoost",
+partition = 0.7,
+ClassBalance = TRUE,
+n_cv = 10,
+split.requirement =
+c(label = c("control","CRC"),
+condition_col = "study_condition"),
+TaskName = "GMPR_toydata_XGBoost",
+num_cores = 10,
+ValidationData = ValidationData_filtered_qc,
+TrueLabel = "CRC")
+})
+test_that("RunScreening works", {
+toydata <- curatedMetagenomicData(
+"ThomasAM_2018a.relative_abundance"
+, dryrun = FALSE, rownames = "short")
+CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
+TaxaData = toydata[[1]]@rowLinks$nodeLab,
+SampleData = toydata[[1]]@colData)
+CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+# ----------------------------------------------------------------------------
+ValidationData_curated <- curatedMetagenomicData(
+paste0("ZellerG_2014",".","relative_abundance")
+, dryrun = FALSE, rownames = "short")
+ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+SampleData = ValidationData_curated[[1]]@colData)
+ValidationData <- SplitTaxas(ValidationData)
+ValidationData <- KeepGenusLevel(ValidationData)
+ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(ValidationData$NormalizedData) %in%
+colnames(CrcBiomeScreenObject$NormalizedData)]
+CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, colnames(CrcBiomeScreenObject$NormalizedData) %in%
+colnames(ValidationData$NormalizedData)]
+ValidationData_filtered <- FilterDataSet(ValidationData,
+label = c("CRC","control"),
+condition_col = "study_condition")
+ValidationData_filtered_qc <- qcByCmdscale(ValidationData_filtered,
+TaskName = "Normalize_ValidationData_filtered_qc",
+normalize_method = "GMPR")
+# ----------------------------------------------------------------------------
+CrcBiomeScreenObject <- RunScreening(obj = CrcBiomeScreenObject,
+normalize_method = "GMPR",
+model_type = "RF",
+partition = 0.7,
+split.requirement =
+c(label = c("control","CRC"),
+condition_col = "study_condition"),
+ClassBalance = TRUE,
+n_cv = 10,
+TaskName = "GMPR_toydata_RF",
+num_cores = 10,
+ValidationData = ValidationData_filtered_qc,
+TrueLabel = "CRC")
+CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
+normalize_method = "GMPR",
+model = "XGBoost",
+partition = 0.7,
+ClassBalance = TRUE,
+n_cv = 10,
+split.requirement =
+c(label = c("control","CRC"),
+condition_col = "study_condition"),
+TaskName = "GMPR_toydata_XGBoost",
+num_cores = 10,
+ValidationData = ValidationData_filtered_qc,
+TrueLabel = "CRC")
+expect_true(!is.null(CrcBiomeScreenObject$PredictResult$RF))
+expect_true(!is.null(CrcBiomeScreenObject$PredictResult$XGBoost))
+})
+# The environment setup script for the project
+# This script checks for the required R packages and installs any that are missing.
+# It also loads the necessary libraries for the analysis.
+# Define required R packages
+# packages <- c("stats","caret", "ranger", "progress", "doParallel", "future.apply",
+#               "doFuture", "future", "foreach", "progressr", "dplyr",
+#               "devtools", "glmnet", "pROC", "GUniFrac", "Matrix","microbiomeMarker",
+#               "curatedMetagenomicData","tidyr","dplyr","tibble","doParallel","foreach",
+#               "ggplot2","phyloseq","ggpubr","ggrepel","ggplotify","ggtree",
+#               "ape","BiocManager","microbiome","vegan","xgboost")
+packages <- c(
+"stats", "caret", "ranger", "progress", "doParallel", "future.apply",
+"doFuture", "future", "foreach", "progressr", "dplyr",
+"devtools", "pROC", "GUniFrac", "Matrix", "microbiomeMarker",
+"curatedMetagenomicData", "tidyr", "dplyr", "tibble", "doParallel", "foreach",
+"ggplot2", "phyloseq", "ggpubr", "ggrepel", "ggplotify", "ggtree",
+"ape", "BiocManager", "vegan", "xgboost"
+)
+lapply(packages, usethis::use_package, character.only = TRUE)
+packages
+library(usethis)
+lapply(packages, use_package, character.only = TRUE)
+# Load required libraries
+# This line loads each package in the packages vector using the library() function.
+# The character.only = TRUE argument allows for the package names to be passed as strings.
+# This is useful for dynamically loading packages based on the names in the vector.
+lapply(packages, library, character.only = TRUE)
+# Load required libraries
+# This line loads each package in the packages vector using the library() function.
+# The character.only = TRUE argument allows for the package names to be passed as strings.
+# This is useful for dynamically loading packages based on the names in the vector.
+lapply(packages, library, character.only = TRUE)
+usethis::use_package("dplyr",min_version = TRUE)
+lapply(unique(packages), usethis::use_package)
+length(unique(packages))
+packages <- c("stats","caret", "ranger", "progress", "doParallel", "future.apply",
+"doFuture", "future", "foreach", "progressr", "dplyr",
+"devtools", "glmnet", "pROC", "GUniFrac", "Matrix","microbiomeMarker",
+"curatedMetagenomicData","tidyr","dplyr","tibble","doParallel","foreach",
+"ggplot2","phyloseq","ggpubr","ggrepel","ggplotify","ggtree",
+"ape","BiocManager","microbiome","vegan","xgboost")
+length(unique(packages))
+# The environment setup script for the project
+# This script checks for the required R packages and installs any that are missing.
+# It also loads the necessary libraries for the analysis.
+# Define required R packages
+packages <- c("stats","caret", "ranger", "progress", "doParallel", "future.apply",
+"doFuture", "future", "foreach", "progressr", "dplyr",
+"devtools", "glmnet", "pROC", "GUniFrac", "Matrix","microbiomeMarker",
+"curatedMetagenomicData","tidyr","tibble","doParallel","foreach",
+"ggplot2","phyloseq","ggpubr","ggrepel","ggplotify","ggtree",
+"ape","BiocManager","microbiome","vegan","xgboost")
+lapply(unique(packages), usethis::use_package)
+imports <- c("stats", "caret", "ranger", "progress", "doParallel", "future.apply",
+"doFuture", "future", "foreach", "progressr", "dplyr", "pROC",
+"GUniFrac", "Matrix", "microbiomeMarker", "curatedMetagenomicData",
+"tidyr", "tibble", "xgboost", "vegan")
+suggests <- c("devtools", "testthat", "ggplot2", "phyloseq", "ggpubr", "ggrepel",
+"ggplotify", "ggtree", "ape", "gt", "BiocManager")
+lapply(unique(imports), usethis::use_package)
+lapply(unique(suggests), function(pkg) usethis::use_package(pkg, type = "Suggests"))
+lapply(unique(suggests), function(pkg) usethis::use_package(pkg, type = "Suggests"))
+lapply(unique(suggests), function(pkg) usethis::use_package(pkg, type = "Suggests"))
+R.version
+R.version
+usethis::use_package("R", min_version = "4.3.3")
+usethis::use_dependency("R", min_version = "4.3.3")
+use_dependency("R", min_version = "4.3.3")
+?use_dependency
+usethis::use_package("R", type = "Depends", min_version = "4.3.3")
+BiocManager
+?BiocManager
+?BiocManager::version
+BiocManager::version
+BiocManager::version()
+usethis::use_package("BiocManager", type = "Depends", min_version = "3.18")
+usethis::use_package("BiocManager", type = "import", min_version = "3.18")
+usethis::use_package("BiocManager", type = "Imports", min_version = "3.18")
+devtools::check()
+devtools::check()
+devtools::check()
+pkgbuild::check_build_tools(debug = TRUE)
+devtools::check()
+pkgbuild::check_build_tools(debug = TRUE)
+pkgbuild::check_build_tools(debug = TRUE)
+pkgbuild::check_build_tools(debug = TRUE)
+pkgbuild::check_build_tools(debug = TRUE)
+devtools::check()
+devtools::check()
+devtools::check(document = FALSE)
+pkgbuild::check_build_tools(debug = TRUE)
+pkgbuild::check_build_tools(debug = TRUE)
+pkgbuild::check_build_tools(debug = TRUE)
+devtools::check()
+pkgbuild::check_build_tools(debug = TRUE)
+xcode-select --install
+pkgbuild::check_build_tools(debug = TRUE)
+pkgbuild::check_build_tools(debug = TRUE)
+version
+install.packages("pkgbuild")
+pkgbuild::check_build_tools(debug = TRUE)
+install.packages("pkgbuild")
+pkgbuild::check_build_tools(debug = TRUE)
+# usethis::use_package("R", type = "Depends", min_version = "4.3.3")
+# usethis::use_package("BiocManager", type = "Imports", min_version = "3.18")
+install.packages("CrcBiomeScreen", type = "binary")
+devtools::install_bitbucket()
+devtools::install()
+BiocManager::available()
+devtools::install()
+devtools::install()
+# 检查包结构是否正确
+devtools::check()
+pkgbuild::check_build_tools(debug = TRUE)
+pkgbuild::check_build_tools(debug = TRUE)
+# 检查编译工具是否可用
+pkgbuild::has_build_tools(debug = TRUE)
+# 应该返回 TRUE
+pkgbuild::check_build_tools(debug = TRUE)
+pkgbuild::has_build_tools(debug = TRUE)
+pkgbuild::has_build_tools(debug = TRUE)
+# 如果仍有问题，尝试清理并重新检查
+devtools::clean_dll()
+devtools::check()
+devtools::check()
+brew --prefix boost
+pkgbuild::has_build_tools(debug = TRUE)
+devtools::check()
+Sys.setenv(BOOST_ROOT = "/opt/homebrew/opt/boost")
+Sys.setenv(BOOST_INCLUDEDIR = "/opt/homebrew/opt/boost/include")
+Sys.setenv(BOOST_LIBRARYDIR = "/opt/homebrew/opt/boost/lib")
+devtools::check()
+install.packages("Rcpp", type = "source")

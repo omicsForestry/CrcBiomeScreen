@@ -1,0 +1,5 @@
+"0","# Normalize using GMPR (Geometric Mean of Pairwise Ratios)"
+"0","CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = ""GMPR"")"
+"0",""
+"0","# Normalize using TSS (Total Sum Scaling)"
+"0","CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = ""TSS"")"

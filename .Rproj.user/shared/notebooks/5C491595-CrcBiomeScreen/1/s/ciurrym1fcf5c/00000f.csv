@@ -1,0 +1,50 @@
+"0","# Train Random Forest model"
+"0","CrcBiomeScreenObject <- TrainModels("
+"0","  CrcBiomeScreenObject,"
+"0","  model_type = ""RF"","
+"0","  TaskName = ""ToyData_RF"","
+"0","  ClassBalance = TRUE,"
+"0","  TrueLabel = ""CRC"","
+"0","  num_cores = 10"
+"0",")"
+"2","Loading required package: iterators
+"
+"2","Type 'citation(""pROC"")' for a citation.
+"
+"2","
+Attaching package: ‘pROC’
+
+"
+"2","The following objects are masked from ‘package:IRanges’:
+
+    cov, var
+
+"
+"2","The following objects are masked from ‘package:S4Vectors’:
+
+    cov, var
+
+"
+"2","The following object is masked from ‘package:BiocGenerics’:
+
+    var
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    cov, smooth, var
+
+"
+"2","All required packages for ModelingRF() are loaded.
+"
+"0","# Train XGBoost model"
+"0","CrcBiomeScreenObject <- TrainModels("
+"0","  CrcBiomeScreenObject,"
+"0","  model_type = ""XGBoost"","
+"0","  TaskName = ""ToyData_XGBoost"","
+"0","  ClassBalance = TRUE,"
+"0","  TrueLabel = ""CRC"","
+"0","  num_cores = 10"
+"0",")"
+"2","All required packages for ModelingXGBoost() are loaded.
+"

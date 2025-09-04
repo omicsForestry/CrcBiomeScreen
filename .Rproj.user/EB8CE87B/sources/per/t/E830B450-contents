@@ -1,0 +1,354 @@
+---
+title: "CrcBiomeScreen: Colorectal Cancer Microbiome Screening and Analysis"
+author: "Chengxin Li"
+date: "`r Sys.Date()`"
+output: 
+    BiocStyle::html_document:
+    toc: true
+    toc_float: true
+vignette: >
+  %\VignetteIndexEntry{CrcBiomeScreen}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>",
+  message = FALSE,
+  warning = FALSE,
+  fig.align = "center",
+  crop = NULL
+)
+```
+
+# Introduction
+
+Colorectal cancer (CRC) is one of the most common cancers worldwide, and the gut microbiome has been increasingly recognized as a key factor in CRC development and progression. The identification of microbiome-based biomarkers for CRC screening has great potential for early detection and improved patient outcomes.
+
+`CrcBiomeScreen` is an R package designed specifically for colorectal cancer microbiome screening and analysis. The package provides a comprehensive workflow that integrates data preprocessing, normalization, machine learning-based classification, and model validation to identify microbiome signatures associated with CRC.
+
+The main features of `CrcBiomeScreen` include:
+
+- **Data preprocessing**: Taxonomic level splitting and filtering
+- **Normalization methods**: Support for two normalization approaches including GMPR and TSS
+- **Machine learning models**: Random Forest and XGBoost classifiers
+- **Model validation**: Cross-validation and external validation capabilities
+- **Quality control**: Built-in quality control using multidimensional scaling
+- **Streamlined workflow**: One-function screening pipeline
+
+## Installation
+
+Install the development version of the package from GitHub:
+
+```{r, eval = FALSE}
+library(devtools)
+devtools::install_github("iChronostasis/CrcBiomeScreen", force = TRUE)
+```
+
+Load `CrcBiomeScreen` into the R session:
+
+```{r, eval = FALSE}
+library(CrcBiomeScreen)
+library(ggplot2)
+library(dplyr)
+```
+
+# Getting started
+
+The core workflow of `CrcBiomeScreen` involves several key steps: data loading and pre-processing, normalization, model training, evaluation, and validation. All functions are designed to work with the `CrcBiomeScreenObject`, which is the main data structure used throughout the package.
+
+## Data preparation
+
+First, we need to load the example data and create a `CrcBiomeScreenObject`:
+
+```{r, eval = FALSE}
+# Set working directory
+# setwd("/home/CRCscreening/CRCscreening-Workflow/")
+data(package = "CrcBiomeScreen")
+# Load the toy dataset from curatedMetagenomicData
+load("Dataset/toydata.RData")
+
+# Create the CrcBiomeScreenObject
+CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
+  TaxaData = toydata[[1]]@rowLinks$nodeLab,
+  SampleData = toydata[[1]]@colData
+)
+```
+
+## Taxonomic data processing
+
+The package provides functions to split taxonomic information into multiple levels and filter to specific taxonomic ranks:
+
+```{r, eval = FALSE}
+# Split the taxa into multiple levels
+CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+
+# Keep only the genus level data
+CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
+```
+
+## Data normalization
+
+`CrcBiomeScreen` supports multiple normalization methods. Here we demonstrate both GMPR and TSS normalization:
+
+```{r, eval = FALSE}
+# Normalize using GMPR (Geometric Mean of Pairwise Ratios)
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+
+# Normalize using TSS (Total Sum Scaling)
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS")
+```
+
+**Note**: GMPR normalization is generally recommended for microbiome data as it is more robust to compositional effects and outliers compared to TSS normalization.
+
+# Validation data preparation
+
+For robust model evaluation, it's important to prepare independent validation data:
+
+```{r, eval = FALSE}
+# Load validation data
+load("Dataset/ValidationData_curated.RData")
+
+# Create CrcBiomeScreenObject for validation data
+ValidationData <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+  TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+  SampleData = ValidationData_curated[[1]]@colData
+)
+
+# Process validation data similarly to training data
+ValidationData <- SplitTaxas(ValidationData)
+ValidationData <- KeepGenusLevel(ValidationData)
+ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+
+# Ensure consistent features between training and validation data
+ValidationData$NormalizedData <- ValidationData$NormalizedData[, 
+  colnames(ValidationData$NormalizedData) %in% colnames(CrcBiomeScreenObject$NormalizedData)]
+
+CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, 
+  colnames(CrcBiomeScreenObject$NormalizedData) %in% colnames(ValidationData$NormalizedData)]
+```
+
+# Model training and evaluation
+
+## Data filtering and splitting
+
+Before model training, we need to filter the data to include only CRC and control samples, then split into training and test sets:
+
+```{r, eval = FALSE}
+# Check the available labels in the data
+table(CrcBiomeScreenObject$SampleData$study_condition)
+
+# Filter data to keep only CRC and control samples
+CrcBiomeScreenObject <- FilterDataSet(
+  CrcBiomeScreenObject,
+  label = c("CRC", "control"),
+  condition_col = "study_condition"
+)
+
+# Verify the filtering results
+table(CrcBiomeScreenObject$SampleData$study_condition)
+
+# Split data into training (70%) and test (30%) sets
+CrcBiomeScreenObject <- SplitDataSet(
+  CrcBiomeScreenObject, 
+  label = c("control", "CRC"), 
+  partition = 0.7
+)
+```
+
+## Quality control
+
+Quality control using classical multidimensional scaling can help identify potential batch effects or outliers:
+
+```{r, eval = FALSE}
+# Perform quality control using cmdscale
+CrcBiomeScreenObject <- qcByCmdscale(
+  CrcBiomeScreenObject,
+  TaskName = "Normalize_ToyData_filtered_qc",
+  normalize_method = "GMPR"
+)
+
+# Check class balance in the training data
+checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)
+```
+
+## Model training
+
+`CrcBiomeScreen` supports two machine learning algorithms: Random Forest and XGBoost. Both models can be trained with class balancing to handle imbalanced datasets:
+
+```{r, eval = FALSE}
+# Train Random Forest model
+CrcBiomeScreenObject <- TrainModels(
+  CrcBiomeScreenObject,
+  model_type = "RF",
+  TaskName = "ToyData_RF",
+  ClassBalance = TRUE,
+  TrueLabel = "CRC",
+  num_cores = 10
+)
+
+# Train XGBoost model
+CrcBiomeScreenObject <- TrainModels(
+  CrcBiomeScreenObject,
+  model_type = "XGBoost",
+  TaskName = "ToyData_XGBoost",
+  ClassBalance = TRUE,
+  TrueLabel = "CRC",
+  num_cores = 10
+)
+```
+
+## Model evaluation
+
+Evaluate the trained models on the test set:
+
+```{r, eval = FALSE}
+# Evaluate Random Forest model
+CrcBiomeScreenObject <- EvaluateModel(
+  CrcBiomeScreenObject,
+  model_type = "RF",
+  TaskName = "ToyData_RF_Test",
+  TrueLabel = "CRC",
+  PlotAUC = TRUE
+)
+
+# Evaluate XGBoost model
+CrcBiomeScreenObject <- EvaluateModel(
+  CrcBiomeScreenObject,
+  model_type = "XGBoost",
+  TaskName = "ToyData_XGBoost_Test",
+  TrueLabel = "CRC",
+  PlotAUC = TRUE
+)
+```
+
+The evaluation will generate ROC curves and calculate performance metrics such as AUC, sensitivity, and specificity.
+
+# External validation
+
+To ensure the robustness and generalizability of the trained models, external validation on independent datasets is crucial:
+
+```{r, eval = FALSE}
+# Filter validation data
+ValidationData_filtered <- FilterDataSet(
+  ValidationData,
+  label = c("CRC", "control"),
+  condition_col = "study_condition"
+)
+
+# Quality control for validation data
+ValidationData_filtered_qc <- qcByCmdscale(
+  ValidationData_filtered,
+  TaskName = "Normalize_ValidationData_filtered_qc",
+  normalize_method = "GMPR"
+)
+
+# Validate Random Forest model on external data
+CrcBiomeScreenObject <- ValidateModelOnData(
+  CrcBiomeScreenObject,
+  model_type = "RF",
+  ValidationData = ValidationData_filtered_qc,
+  TaskName = "ValidationData_RF_Validation",
+  TrueLabel = "CRC",
+  PlotAUC = TRUE
+)
+
+# Validate XGBoost model on external data
+CrcBiomeScreenObject <- ValidateModelOnData(
+  CrcBiomeScreenObject,
+  model_type = "XGBoost",
+  ValidationData = ValidationData_filtered_qc,
+  TaskName = "ValidationData_XGBoost_Validation",
+  TrueLabel = "CRC",
+  PlotAUC = TRUE
+)
+```
+
+# Streamlined screening workflow
+
+For users who want to run the entire screening workflow in one step, `CrcBiomeScreen` provides the `RunScreening()` function:
+
+```{r, eval = FALSE}
+# Run complete screening workflow
+CrcBiomeScreenObject <- RunScreening(
+  CrcBiomeScreenObject,
+  model = "RF",
+  partition = 0.7,
+  split.requirement = c(
+    label = c("control", "CRC"),
+    condition_col = "study_condition"
+  ),
+  ClassBalance = TRUE,
+  n_cv = 10,
+  TaskName = "GMPR_toydata",
+  num_cores = 10,
+  ValidationData = ValidationData_filtered_qc,
+  TrueLabel = "CRC"
+)
+```
+
+This function performs the complete workflow including:
+- Data normalization
+- Data filtering and splitting
+- Model training with cross-validation
+- Model evaluation on test set
+- External validation (if ValidationData is provided)
+
+# Best practices and recommendations
+
+## Normalization method selection
+
+- **GMPR**: Recommended for most microbiome datasets, especially when dealing with compositional data and potential outliers
+- **TSS**: Simpler approach, suitable for well-balanced datasets without extreme outliers
+
+## Model selection
+
+- **Random Forest**: Generally robust and interpretable, good baseline choice
+- **XGBoost**: Often provides better performance but may require more careful hyperparameter tuning
+
+## Validation strategies
+
+- Always use external validation datasets when available
+- Consider cross-validation for model selection and hyperparameter tuning
+- Ensure consistent preprocessing between training and validation data
+
+## Class imbalance
+
+- Enable `ClassBalance = TRUE` when dealing with imbalanced datasets
+- Monitor both sensitivity and specificity, not just overall accuracy
+- Consider stratified sampling when splitting datasets
+
+# Troubleshooting
+
+## Common issues and solutions
+
+### Feature mismatch between datasets
+Ensure that both training and validation datasets have been processed identically and contain overlapping features.
+
+### Memory issues with large datasets
+- Reduce the number of features by applying more stringent filtering
+- Use fewer CPU cores (`num_cores` parameter) to reduce memory usage
+
+# Session information
+
+This vignette was created under the following conditions:
+
+```{r sessioninfo}
+sessionInfo()
+```
+
+# References
+
+If you use `CrcBiomeScreen` in your research, please cite:
+
+[Package citation information]
+
+For questions, bug reports, or feature requests, please visit the GitHub repository: https://github.com/iChronostasis/CrcBiomeScreen
+
+---
+
+**Note**: This vignette demonstrates the basic usage of `CrcBiomeScreen`. For more advanced usage and customization options, please refer to the function documentation and additional tutorials.

@@ -1,0 +1,5 @@
+"0","# Split the taxa into multiple levels"
+"0","CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)"
+"0",""
+"0","# Keep only the genus level data"
+"0","CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)"

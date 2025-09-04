@@ -1,0 +1,154 @@
+"0","# Set working directory"
+"0","# setwd(""/home/CRCscreening/CRCscreening-Workflow/"")"
+"0","# data(package = ""CrcBiomeScreen"")"
+"0","# Load the toy dataset from curatedMetagenomicData"
+"0","data(toydata, package = ""CrcBiomeScreen"")"
+"0",""
+"0","# Create the CrcBiomeScreenObject"
+"0","CrcBiomeScreenObject <- CreateCrcBiomeScreenObject("
+"0","  RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,"
+"0","  TaxaData = toydata[[1]]@rowLinks$nodeLab,"
+"0","  SampleData = toydata[[1]]@colData"
+"0",")"
+"2","Loading required package: S4Vectors
+"
+"2","Loading required package: stats4
+"
+"2","Loading required package: BiocGenerics
+"
+"2","
+Attaching package: ‘BiocGenerics’
+
+"
+"2","The following objects are masked from ‘package:dplyr’:
+
+    combine, intersect, setdiff, union
+
+"
+"2","The following objects are masked from ‘package:stats’:
+
+    IQR, mad, sd, var, xtabs
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    anyDuplicated, aperm, append, as.data.frame, basename, cbind,
+    colnames, dirname, do.call, duplicated, eval, evalq, Filter, Find,
+    get, grep, grepl, intersect, is.unsorted, lapply, Map, mapply,
+    match, mget, order, paste, pmax, pmax.int, pmin, pmin.int,
+    Position, rank, rbind, Reduce, rownames, sapply, setdiff, sort,
+    table, tapply, union, unique, unsplit, which.max, which.min
+
+"
+"2","
+Attaching package: ‘S4Vectors’
+
+"
+"2","The following objects are masked from ‘package:dplyr’:
+
+    first, rename
+
+"
+"2","The following object is masked from ‘package:utils’:
+
+    findMatches
+
+"
+"2","The following objects are masked from ‘package:base’:
+
+    expand.grid, I, unname
+
+"
+"2","Loading required package: TreeSummarizedExperiment
+"
+"2","Loading required package: SingleCellExperiment
+"
+"2","Loading required package: SummarizedExperiment
+"
+"2","Loading required package: MatrixGenerics
+"
+"2","Loading required package: matrixStats
+"
+"2","
+Attaching package: ‘matrixStats’
+
+"
+"2","The following object is masked from ‘package:dplyr’:
+
+    count
+
+"
+"2","
+Attaching package: ‘MatrixGenerics’
+
+"
+"2","The following objects are masked from ‘package:matrixStats’:
+
+    colAlls, colAnyNAs, colAnys, colAvgsPerRowSet, colCollapse,
+    colCounts, colCummaxs, colCummins, colCumprods, colCumsums,
+    colDiffs, colIQRDiffs, colIQRs, colLogSumExps, colMadDiffs,
+    colMads, colMaxs, colMeans2, colMedians, colMins, colOrderStats,
+    colProds, colQuantiles, colRanges, colRanks, colSdDiffs, colSds,
+    colSums2, colTabulates, colVarDiffs, colVars, colWeightedMads,
+    colWeightedMeans, colWeightedMedians, colWeightedSds,
+    colWeightedVars, rowAlls, rowAnyNAs, rowAnys, rowAvgsPerColSet,
+    rowCollapse, rowCounts, rowCummaxs, rowCummins, rowCumprods,
+    rowCumsums, rowDiffs, rowIQRDiffs, rowIQRs, rowLogSumExps,
+    rowMadDiffs, rowMads, rowMaxs, rowMeans2, rowMedians, rowMins,
+    rowOrderStats, rowProds, rowQuantiles, rowRanges, rowRanks,
+    rowSdDiffs, rowSds, rowSums2, rowTabulates, rowVarDiffs, rowVars,
+    rowWeightedMads, rowWeightedMeans, rowWeightedMedians,
+    rowWeightedSds, rowWeightedVars
+
+"
+"2","Loading required package: GenomicRanges
+"
+"2","Loading required package: IRanges
+"
+"2","
+Attaching package: ‘IRanges’
+
+"
+"2","The following objects are masked from ‘package:dplyr’:
+
+    collapse, desc, slice
+
+"
+"2","Loading required package: GenomeInfoDb
+"
+"2","Loading required package: Biobase
+"
+"2","Welcome to Bioconductor
+
+    Vignettes contain introductory material; view with
+    'browseVignettes()'. To cite Bioconductor, see
+    'citation(""Biobase"")', and for packages 'citation(""pkgname"")'.
+
+"
+"2","
+Attaching package: ‘Biobase’
+
+"
+"2","The following object is masked from ‘package:MatrixGenerics’:
+
+    rowMedians
+
+"
+"2","The following objects are masked from ‘package:matrixStats’:
+
+    anyMissing, rowMedians
+
+"
+"2","Loading required package: Biostrings
+"
+"2","Loading required package: XVector
+"
+"2","
+Attaching package: ‘Biostrings’
+
+"
+"2","The following object is masked from ‘package:base’:
+
+    strsplit
+
+"

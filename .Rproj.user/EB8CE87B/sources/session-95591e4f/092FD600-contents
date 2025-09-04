@@ -1,0 +1,81 @@
+test_that("ValidateModelOnData works correctly", {
+
+  # CrcBiomeScreenObject <- readRDS("tests/testthat/CrcBiomeScreenObject.rds")
+
+  result_rf <- readRDS("tests/testthat/result_RF_evaluated.rds")
+  result_XGBoost <- readRDS("tests/testthat/result_XGBoost_evaluated.rds")
+
+  ValidationData_curated <- curatedMetagenomicData(
+    paste0("ZellerG_2014",".","relative_abundance")
+    , dryrun = FALSE, rownames = "short")
+  ValidationData <- CreateCrcBiomeScreenObject(RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+                                               TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+                                               SampleData = ValidationData_curated[[1]]@colData)
+  ValidationData <- SplitTaxas(ValidationData)
+  ValidationData <- KeepGenusLevel(ValidationData)
+  ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+
+  ValidationData$NormalizedData <- ValidationData$NormalizedData[, colnames(ValidationData$NormalizedData) %in%
+                                                                   colnames(result_rf$NormalizedData)]
+
+  result_rf$NormalizedData <- result_rf$NormalizedData[, colnames(result_rf$NormalizedData) %in%
+                                                                               colnames(ValidationData$NormalizedData)]
+  # Define parameters
+  model_type <- c("RF", "XGBoost")
+  ClassBalance <- TRUE
+  n_cv <- 10
+  TaskName <- "TestTask"
+  TrueLabel <- "CRC"
+  num_cores <- 5
+  PlotAUC <- TRUE
+
+  result_rf <- SplitDataSet(CrcBiomeScreenObject = result_rf,
+                            label = c("control","CRC"), partition = 0.7)
+
+  result_RF <- TrainModels(
+    CrcBiomeScreenObject = result_rf,
+    model_type = model_type[1],
+    ClassBalance = ClassBalance,
+    n_cv = n_cv,
+    TaskName = TaskName,
+    TrueLabel = TrueLabel,
+    num_cores = num_cores
+  )
+
+  result_RF <- EvaluateModel(
+    CrcBiomeScreenObject = result_RF,
+    model_type = model_type[1],
+    TaskName = TaskName,
+    TrueLabel = TrueLabel,
+    PlotAUC = PlotAUC
+  )
+
+  result_XGBoost$NormalizedData <- result_XGBoost$NormalizedData[, colnames(result_XGBoost$NormalizedData) %in%
+                                                         colnames(ValidationData$NormalizedData)]
+
+  ValidationData_filtered <- FilterDataSet(ValidationData,
+                                           label = c("CRC","control"),
+                                           condition_col = "study_condition")
+
+  ValidationData_filtered_qc <- qcByCmdscale(ValidationData_filtered,
+                                             TaskName = "Normalize_ValidationData_filtered_qc",
+                                             normalize_method = "GMPR")
+
+  result_RF <- ValidateModelOnData(CrcBiomeScreenObject = result_RF,
+                                   model_type = "RF",
+                                   ValidationData = ValidationData_filtered_qc,
+                                   TaskName = "ValidationData_RF_Validation",
+                                   TrueLabel = "CRC",
+                                   PlotAUC = TRUE)
+
+  CrcBiomeScreenObject <- ValidateModelOnData(result_XGBoost,
+                                              model_type = "XGBoost",
+                                              ValidationData = ValidationData,
+                                              TaskName = "ValidationData_XGBoost_Validation",
+                                              TrueLabel = "CRC",
+                                              PlotAUC = TRUE)
+
+
+  expect_true(!is.null(CrcBiomeScreenObject$PredictResult$RF))
+  expect_true(!is.null(CrcBiomeScreenObject$PredictResult$XGBoost))
+})
