@@ -8,7 +8,7 @@ output:
     toc: true
     toc_float: true
 vignette: >
-  %\VignetteIndexEntry{CrcBiomeScreen: Colorectal Cancer Microbiome Screening and Analysis}
+  %\VignetteIndexEntry{CrcBiomeScreen}
   %\VignetteEngine{knitr::rmarkdown}
   %\VignetteEncoding{UTF-8}
 ---
