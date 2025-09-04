@@ -1,0 +1,85 @@
+#' Install all dependencies for CrcBiomeScreen
+
+install_dependencies <- function() {
+  cat("Installing CrcBiomeScreen dependencies...\n")
+
+  # 1. Install the BiocManager
+  if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+  }
+
+  # 2. Define the packages to install
+  bioc_packages <- c(
+    "curatedMetagenomicData",
+    "phyloseq",
+    "ggtree",
+    "GUniFrac"
+  )
+
+  cran_packages <- c(
+    "ape", "caret", "dplyr", "doFuture", "doParallel",
+    "foreach", "future", "future.apply", "ggplot2",
+    "ggplotify", "ggpubr", "ggrepel", "glmnet", "Matrix",
+    "microbiome", "pROC", "progress", "progressr",
+    "ranger", "stats", "tibble", "tidyr", "vegan", "xgboost",
+    "gt", "testthat", "devtools"
+  )
+
+  github_packages <- c(
+    "yiluheihei/microbiomeMarker"
+  )
+
+  # 3. Install CRAN packages
+  cat("Installing CRAN packages...\n")
+  missing_cran <- cran_packages[!sapply(cran_packages, requireNamespace, quietly = TRUE)]
+  if (length(missing_cran) > 0) {
+    install.packages(missing_cran)
+  }
+
+  # 4. Install Bioconductor packages
+  cat("Installing Bioconductor packages...\n")
+  missing_bioc <- bioc_packages[!sapply(bioc_packages, requireNamespace, quietly = TRUE)]
+  if (length(missing_bioc) > 0) {
+    BiocManager::install(missing_bioc, update = FALSE, ask = FALSE)
+  }
+
+  # 5. Install GitHub packages
+  cat("Installing GitHub packages...\n")
+  if (!requireNamespace("remotes", quietly = TRUE)) {
+    install.packages("remotes")
+  }
+
+  for (pkg in github_packages) {
+    pkg_name <- basename(pkg)
+    if (!requireNamespace(pkg_name, quietly = TRUE)) {
+      remotes::install_github(pkg)
+    }
+  }
+
+  cat("All dependencies installed successfully!\n")
+}
+
+#' Check if all dependencies are available
+#' @export
+check_dependencies <- function() {
+  all_packages <- c(
+    "ape", "caret", "curatedMetagenomicData", "dplyr", "doFuture",
+    "doParallel", "foreach", "future", "future.apply", "ggplot2",
+    "ggplotify", "ggpubr", "ggrepel", "ggtree", "glmnet", "GUniFrac",
+    "Matrix", "microbiome", "microbiomeMarker", "phyloseq", "pROC",
+    "progress", "progressr", "ranger", "stats", "tibble", "tidyr",
+    "vegan", "xgboost"
+  )
+
+  missing <- all_packages[!sapply(all_packages, requireNamespace, quietly = TRUE)]
+
+  if (length(missing) == 0) {
+    cat("✓ All dependencies are available!\n")
+    return(TRUE)
+  } else {
+    cat("✗ Missing packages:\n")
+    cat(paste("  -", missing, collapse = "\n"))
+    cat("\n\nRun CrcBiomeScreen::install_dependencies() to install them.\n")
+    return(FALSE)
+  }
+}
