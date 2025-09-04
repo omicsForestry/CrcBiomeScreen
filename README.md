@@ -21,6 +21,7 @@ conda activate CrcBiomeScreen
 
 ```r
 library(CrcBiomeScreen)
+devtools::install(build_vignettes = TRUE, force = TRUE)
 vignette("CrcBiomeScreen")
 ```
 
