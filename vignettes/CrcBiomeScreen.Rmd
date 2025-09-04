@@ -66,9 +66,10 @@ First, we need to load the example data and create a `CrcBiomeScreenObject`:
 ```{r, eval = FALSE}
 # Set working directory
 # setwd("/home/CRCscreening/CRCscreening-Workflow/")
+# List available datasets in the package
 data(package = "CrcBiomeScreen")
 # Load the toy dataset from curatedMetagenomicData
-load("Dataset/toydata.RData")
+data(toydata, package = "CrcBiomeScreen")
 
 # Create the CrcBiomeScreenObject
 CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
@@ -110,7 +111,7 @@ For robust model evaluation, it's important to prepare independent validation da
 
 ```{r, eval = FALSE}
 # Load validation data
-load("Dataset/ValidationData_curated.RData")
+data("ValidationData_curated")
 
 # Create CrcBiomeScreenObject for validation data
 ValidationData <- CreateCrcBiomeScreenObject(
@@ -277,6 +278,22 @@ For users who want to run the entire screening workflow in one step, `CrcBiomeSc
 CrcBiomeScreenObject <- RunScreening(
   CrcBiomeScreenObject,
   model = "RF",
+  partition = 0.7,
+  split.requirement = c(
+    label = c("control", "CRC"),
+    condition_col = "study_condition"
+  ),
+  ClassBalance = TRUE,
+  n_cv = 10,
+  TaskName = "GMPR_toydata",
+  num_cores = 10,
+  ValidationData = ValidationData_filtered_qc,
+  TrueLabel = "CRC"
+)
+
+CrcBiomeScreenObject <- RunScreening(
+  CrcBiomeScreenObject,
+  model = "XGBoost",
   partition = 0.7,
   split.requirement = c(
     label = c("control", "CRC"),
