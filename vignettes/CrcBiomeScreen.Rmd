@@ -43,8 +43,9 @@ The main features of `CrcBiomeScreen` include:
 Install the development version of the package from GitHub:
 
 ```{r, eval = FALSE}
-library(devtools)
-devtools::install_github("iChronostasis/CrcBiomeScreen", force = TRUE)
+install.packages(c("remotes", "BiocManager","ggplot2","dplyr"))
+
+remotes::install_github("iChronostasis/CrcBiomeScreen", force = TRUE)
 ```
 
 Load `CrcBiomeScreen` into the R session:
