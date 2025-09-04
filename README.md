@@ -29,7 +29,7 @@ Then download the R package from github.
 ```R
 library(CrcBiomeScreen)
 devtools::install(build_vignettes = TRUE)
-vignette("CrcBiomeScreen.Rmd", package = "CrcBiomeScreen")
+vignette("CrcBiomeScreen")
 ```
 
 ## Plan

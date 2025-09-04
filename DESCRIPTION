@@ -50,7 +50,8 @@ Suggests:
     BiocManager,
     devtools,
     knitr,
-    rmarkdown
+    rmarkdown,
+    BiocStyle
 VignetteBuilder: knitr
 
 

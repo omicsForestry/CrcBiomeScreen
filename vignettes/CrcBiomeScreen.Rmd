@@ -3,8 +3,8 @@ title: "CrcBiomeScreen: Colorectal Cancer Microbiome Screening and Analysis"
 author: "Chengxin Li"
 date: "`r Sys.Date()`"
 output: 
-  # BiocStyle::html_document:
-    rmarkdown::html_vignette:
+    BiocStyle::html_document:
+    # rmarkdown::html_vignette:
     toc: true
     toc_float: true
 vignette: >
