@@ -2,38 +2,37 @@
 
 ![Pipeline](https://github.com/user-attachments/assets/5434dac9-5392-4825-884e-06a56d232a1e)
 
-## Description
-* **Vignette.R**: Toy sample workflow
-* **Environment.R**: Environment setup
-* **R/**: Core functions
-* **dev/**: Development functions
-* **Dataset/**: Toy datasets
-* **tests/**: Testing functions
+An R package for colorectal cancer screening and microbiome analysis.
 
 ## Installation
-### Install the R packages repository
-```R
-library(devtools)
-devtools::install_github("iChronostasis/CrcBiomeScreen", force = TRUE)
-devtools::install(build_vignettes = TRUE)
+
+```r
+# Install from GitHub
+devtools::install_github("iChronostasis/CrcBiomeScreen", build_vignettes = TRUE)
 ```
 
-Or you could choose construct the environment by using the conda:
+Or use conda environment:
 ```bash
 conda env create -f environment.yml
 conda activate CrcBiomeScreen
 ```
-Then download the R package from github.
 
 ## Usage
- * Run the vignette to see how to use this workflow.
-```R
+
+```r
 library(CrcBiomeScreen)
 vignette("CrcBiomeScreen")
 ```
 
-## Plan
- * In the future, more functions(modules) will put in this workflow.➡️
-   * CompareModels()
-   * SelectImportanceFeatures()
-   * SHAP values...
+## Package Structure
+
+- **R/**: Core functions
+- **data/**: Example datasets  
+- **vignettes/**: Usage examples
+- **tests/**: Testing functions
+
+## Roadmap
+
+- CompareModels()
+- SelectImportanceFeatures()  
+- SHAP values analysis
