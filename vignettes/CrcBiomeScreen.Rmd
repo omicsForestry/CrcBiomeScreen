@@ -334,13 +334,6 @@ Ensure that both training and validation datasets have been processed identicall
 ### Memory issues with large datasets
 - Reduce the number of features by applying more stringent filtering
 - Use fewer CPU cores (`num_cores` parameter) to reduce memory usage
-- Consider using TSS normalization instead of GMPR for very large datasets
-
-### Poor model performance
-- Check data quality and preprocessing steps
-- Verify class balance in your dataset
-- Consider adjusting model parameters or trying different normalization methods
-- Ensure adequate sample size for training
 
 # Session information
 
