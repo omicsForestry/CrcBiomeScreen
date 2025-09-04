@@ -1,5 +1,5 @@
-#' @titile Create the CrcBiomeScreenObject for analysis
-#' @description This function creates the CrcBiomeScreenObject to contain the data for analysis.
+#' Create the CrcBiomeScreenObject for analysis
+#' This function creates the CrcBiomeScreenObject to contain the data for analysis.
 #' @param AbsoluteAbundance A numeric matrix or data frame containing absolute abundance data
 #' @param TaxaData A data frame containing taxonomic information for each feature
 #' @param SampleData A data frame containing sample metadata

@@ -23,9 +23,10 @@ and Geometric Mean of Pairwise Ratios (GMPR)
 \dontrun{
 # Example only runs if suggested packages are installed
 if (requireNamespace("GUniFrac", quietly = TRUE) &&
-    requireNamespace("microbiomeMarker", quietly = TRUE)) {
+  requireNamespace("microbiomeMarker", quietly = TRUE)) {
   CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject,
-                                        method = "GMPR")
+    method = "GMPR"
+  )
   attributes(CrcBiomeScreenObject$NormalizedData)
 }
 }

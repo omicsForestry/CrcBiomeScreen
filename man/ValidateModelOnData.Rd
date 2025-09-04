@@ -37,10 +37,11 @@ Evaluate the model on the validation data
 }
 \examples{
 CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
-                                                      model_type = "RF",
-                                                      ValidationData = ValidationData_filtered_qc,
-                                                      TaskName = "ValidationData_RF_Validation",
-                                                      TrueLabel = "CRC",
-                                                      PlotAUC = TRUE)
+  model_type = "RF",
+  ValidationData = ValidationData_filtered_qc,
+  TaskName = "ValidationData_RF_Validation",
+  TrueLabel = "CRC",
+  PlotAUC = TRUE
+)
 
 }
