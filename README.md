@@ -8,7 +8,8 @@ An R package for colorectal cancer screening and microbiome analysis.
 
 ```r
 # Install from GitHub
-devtools::install_github("iChronostasis/CrcBiomeScreen", build_vignettes = TRUE,force = TRUE)
+install.packages(c("remotes", "BiocManager","ggplot2","dplyr"))
+remotes::install_github("iChronostasis/CrcBiomeScreen",force = TRUE)
 ```
 
 Or use conda environment:
@@ -21,6 +22,16 @@ conda activate CrcBiomeScreen
 
 ```r
 library(CrcBiomeScreen)
+```
+
+### Run Vignette
+```r
+# Install BiocStyle for vignette rendering
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+BiocManager::install("BiocStyle")
+library(BiocStyle)
+remotes::install_github("iChronostasis/CrcBiomeScreen", build_vignettes = TRUE, force = TRUE)
 vignette("CrcBiomeScreen")
 ```
 
