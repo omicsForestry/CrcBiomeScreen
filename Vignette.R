@@ -2,7 +2,7 @@
 # ------------------------------------------------------------------------------
 rm(list = ls())
 library(devtools)
-devtools::install_github("iChronostasis/CrcBiomeScreen",force = TRUE)
+devtools::install_github("iChronostasis/CrcBiomeScreen",force = TRUE,build_vignettes = TRUE)
 setwd("/home/CRCscreening/CRCscreening-Workflow/")
 # ------------------------------------------------------------------------------
 # Start the CrcBiomeScreening workflow

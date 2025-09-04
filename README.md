@@ -28,6 +28,7 @@ Then download the R package from github.
  * Run the vignette to see how to use this workflow.
 ```R
 library(CrcBiomeScreen)
+devtools::install(build_vignettes = TRUE)
 vignette("CrcBiomeScreen.Rmd", package = "CrcBiomeScreen")
 ```
 
