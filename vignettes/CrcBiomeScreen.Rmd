@@ -1,6 +1,6 @@
 ---
 title: "CrcBiomeScreen: Colorectal Cancer Microbiome Screening and Analysis"
-author: "Your Name"
+author: "Chengxin Li"
 date: "`r Sys.Date()`"
 output: 
   BiocStyle::html_document:
