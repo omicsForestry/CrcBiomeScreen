@@ -49,6 +49,7 @@ with outliers highlighted in red.
 \examples{
 # Perform QC with threshold = 1 SD
 CrcBiomeScreenObject <- qcByCmdscale(CrcBiomeScreenObject,
-                                     TaskName = "Normalize_ToyData_filtered_qc",
-                                     normalize_method = "GMPR")
+  TaskName = "Normalize_ToyData_filtered_qc",
+  normalize_method = "GMPR"
+)
 }

@@ -34,7 +34,6 @@
 #' )
 #'
 RunScreening <- function(obj,
-                         normalize_method = NULL, # c("TSS", "GMPR")
                          model_type = NULL, # c("RF", "XGBoost")
                          split.requirement = NULL, # c(label = c("control","CRC"),  condition_col = "study_condition")
                          TaskName = TaskName,

@@ -32,7 +32,7 @@ Colorectal cancer (CRC) is one of the most common cancers worldwide, and the gut
 The main features of `CrcBiomeScreen` include:
 
 - **Data preprocessing**: Taxonomic level splitting and filtering
-- **Normalization methods**: Support for multiple normalization approaches including GMPR and TSS
+- **Normalization methods**: Support for two normalization approaches including GMPR and TSS
 - **Machine learning models**: Random Forest and XGBoost classifiers
 - **Model validation**: Cross-validation and external validation capabilities
 - **Quality control**: Built-in quality control using multidimensional scaling
@@ -57,7 +57,7 @@ library(dplyr)
 
 # Getting started
 
-The core workflow of `CrcBiomeScreen` involves several key steps: data loading and preprocessing, normalization, model training, evaluation, and validation. All functions are designed to work with the `CrcBiomeScreenObject`, which is the main data structure used throughout the package.
+The core workflow of `CrcBiomeScreen` involves several key steps: data loading and pre-processing, normalization, model training, evaluation, and validation. All functions are designed to work with the `CrcBiomeScreenObject`, which is the main data structure used throughout the package.
 
 ## Data preparation
 
@@ -65,8 +65,8 @@ First, we need to load the example data and create a `CrcBiomeScreenObject`:
 
 ```{r, eval = FALSE}
 # Set working directory
-setwd("/home/CRCscreening/CRCscreening-Workflow/")
-
+# setwd("/home/CRCscreening/CRCscreening-Workflow/")
+data(package = "CrcBiomeScreen")
 # Load the toy dataset from curatedMetagenomicData
 load("Dataset/toydata.RData")
 
@@ -276,7 +276,6 @@ For users who want to run the entire screening workflow in one step, `CrcBiomeSc
 # Run complete screening workflow
 CrcBiomeScreenObject <- RunScreening(
   CrcBiomeScreenObject,
-  normalize_method = "GMPR",
   model = "RF",
   partition = 0.7,
   split.requirement = c(

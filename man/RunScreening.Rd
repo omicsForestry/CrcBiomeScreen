@@ -6,7 +6,6 @@
 \usage{
 RunScreening(
   obj,
-  normalize_method = NULL,
   model_type = NULL,
   split.requirement = NULL,
   TaskName = TaskName,
@@ -20,8 +19,6 @@ RunScreening(
 }
 \arguments{
 \item{obj}{A \code{CrcBiomeScreenObject} containing normalized microbiome data, sample metadata, etc.}
-
-\item{normalize_method}{Normalization method to be used, default is "TSS"}
 
 \item{model_type}{Model type to be used, default is "RF"}
 
@@ -40,6 +37,8 @@ RunScreening(
 \item{TrueLabel}{The true label for the classification task, which is used to evaluate the model's performance}
 
 \item{num_cores}{Set the number of cores for parallel computing, default is NULL}
+
+\item{normalize_method}{Normalization method to be used, default is "TSS"}
 }
 \value{
 A \code{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
@@ -49,14 +48,17 @@ Run the screening process for the microbiome data
 }
 \examples{
 CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
-                                               normalize_method = "GMPR",
-                                               model = "RF",
-                                               split.requirement =
-                                               c(label = c("control","CRC"),
-                                               condition_col = "study_condition"),
-                                               TaskName = "GMPR_NHSBCSP",
-                                               num_cores = 10,
-                                               ValidationData = ValidationData,
-                                               TrueLabel = "Cancer")
+  normalize_method = "GMPR",
+  model = "RF",
+  split.requirement =
+    c(
+      label = c("control", "CRC"),
+      condition_col = "study_condition"
+    ),
+  TaskName = "GMPR_NHSBCSP",
+  num_cores = 10,
+  ValidationData = ValidationData,
+  TrueLabel = "Cancer"
+)
 
 }

@@ -53,5 +53,6 @@ Suggests:
     rmarkdown,
     BiocStyle
 VignetteBuilder: knitr
+LazyData: true
 
 

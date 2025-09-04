@@ -37,10 +37,11 @@ Train the different models
 }
 \examples{
 CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
-                                              model_type = "RF",
-                                              TaskName = "ToyData_RF",
-                                              ClassBalance = TRUE,
-                                              TrueLabel = "CRC",
-                                              num_cores = 10)
+  model_type = "RF",
+  TaskName = "ToyData_RF",
+  ClassBalance = TRUE,
+  TrueLabel = "CRC",
+  num_cores = 10
+)
 
 }
