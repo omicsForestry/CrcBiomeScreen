@@ -69,6 +69,7 @@ First, we need to load the example data and create a `CrcBiomeScreenObject`:
 # setwd("/home/CRCscreening/CRCscreening-Workflow/")
 # List available datasets in the package
 data(package = "CrcBiomeScreen")
+
 # Load the toy dataset from curatedMetagenomicData
 data(toydata, package = "CrcBiomeScreen")
 
@@ -78,6 +79,17 @@ CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
   TaxaData = toydata[[1]]@rowLinks$nodeLab,
   SampleData = toydata[[1]]@colData
 )
+
+# Load the simple toy dataset from curatedMetagenomicData
+data(simple_toydata, package = "CrcBiomeScreen")
+
+# Create the CrcBiomeScreenObject
+CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = simple_toydata,
+  TaxaData = rownames(simple_toydata),
+  SampleData = colnames(simple_toydata)
+)
+
 ```
 
 ## Taxonomic data processing
