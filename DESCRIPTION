@@ -25,7 +25,8 @@ Imports:
     progressr,
     stats,
     tibble,
-    tidyr
+    tidyr,
+    TreeSummarizedExperiment
 Suggests:
     rstatix,
     ggplot2,
