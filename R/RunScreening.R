@@ -44,7 +44,7 @@ RunScreening <- function(obj,
                          TrueLabel = NULL,
                          num_cores = NULL) {
   # obj <- NormalizeData(obj, method = normalize_method)
-  obj <- SplitDataSet(obj, split.requirement, partition = partition)
+  obj <- SplitDataSet(obj, label = split.requirement$label, condition_col = split.requirement$condition_col, partition = partition)
 
   obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassBalance = ClassBalance, n_cv = n_cv)
   obj <- EvaluateModel(obj, model_type = model_type, TaskName = paste0(TaskName, "_Test"), TrueLabel = TrueLabel, PlotAUC = TRUE)

@@ -40,7 +40,8 @@ FilterDataSet <- function(CrcBiomeScreenObject = NULL,
   attr(FilteredData, "Timestamp") <- Sys.time()
   attr(FilteredData, "Filtered Size") <- nrow(data)
 
-  CrcBiomeScreenObject <- FilteredData
+  CrcBiomeScreenObject$NormalizedData <- FilteredData$NormalizedData
+  CrcBiomeScreenObject$SampleData <- FilteredData$SampleData
 
   return(CrcBiomeScreenObject)
 }
