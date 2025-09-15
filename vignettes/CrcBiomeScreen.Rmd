@@ -83,11 +83,11 @@ CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
 # Load the simple toy dataset from curatedMetagenomicData
 data(simple_toydata, package = "CrcBiomeScreen")
 
-# Create the CrcBiomeScreenObject
+# Create the CrcBiomeScreenObject for simple toy data
 CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = simple_toydata,
-  TaxaData = rownames(simple_toydata),
-  SampleData = colnames(simple_toydata)
+  AbsoluteAbundance = simple_toydata[,-(1:2)],
+  TaxaData = colnames(simple_toydata[,1]),
+  SampleData = simple_toydata[,(1:2)]
 )
 
 ```

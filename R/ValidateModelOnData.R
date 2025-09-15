@@ -1,4 +1,4 @@
-#' Evaluate the model on the validation data
+#' Predict the validation data by using the trained model in CrcBiomeScreenObject
 #'
 #' @param CrcBiomeScreenObject A CrcBiomeScreenObject containing the model and data to be evaluated.
 #' @param model_type The type of model to be evaluated, either "RF" for Random Forest or "XGBoost".
@@ -38,7 +38,7 @@ ValidateModelOnData <- function(
     rf.model <- CrcBiomeScreenObject$EvaluateResult$RF$RF.Model
     probs.ValidationData.rf <- predict(rf.model, data = ValidationData$NormalizedData, type = "response")$predictions
     probs.ValidationData.rf.prob <- probs.ValidationData.rf[, TrueLabel]
-
+    rownames(probs.ValidationData.rf) <- rownames(ValidationData$NormalizedData)
     # Actual labels
     actual.classes.rf <- as.factor(ValidationData$SampleData$study_condition)
 
@@ -53,6 +53,8 @@ ValidateModelOnData <- function(
     }
     CrcBiomeScreenObject$PredictResult[["RF"]][[TaskName]] <-
       list(
+        # Store the probabilities here
+        predictions = probs.ValidationData.rf, 
         roc.curve = roc.curve.rf,
         AUC = auc(roc.curve.rf)
       )
@@ -73,8 +75,14 @@ ValidateModelOnData <- function(
       dev.off()
     }
 
+    predictions_df <- data.frame(
+      SampleID = rownames(ValidationData$NormalizedData),
+      Prediction = test.pred.prob.xgb
+    )
+    
     CrcBiomeScreenObject$PredictResult[["XGBoost"]][[TaskName]] <-
       list(
+        predictions = predictions_df,
         roc.curve = roc.curve.xgb,
         AUC = auc(roc.curve.xgb)
       )
