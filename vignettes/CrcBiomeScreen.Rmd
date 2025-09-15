@@ -82,26 +82,56 @@ CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
 
 # Load the simple toy dataset from curatedMetagenomicData
 data(simple_toydata, package = "CrcBiomeScreen")
-
+colnames(simple_toydata)
 # Create the CrcBiomeScreenObject for simple toy data
 CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
-  AbsoluteAbundance = simple_toydata[,-(1:2)],
-  TaxaData = colnames(simple_toydata[,1]),
-  SampleData = simple_toydata[,(1:2)]
+  AbsoluteAbundance = simple_toydata[,-c(1:2,646:647)],
+  TaxaData = colnames(simple_toydata[,-c(1:2,646:647)]),
+  SampleData = simple_toydata[,c(1:2,646:647)]
 )
 
 ```
 
 ## Taxonomic data processing
 
-The package provides functions to split taxonomic information into multiple levels and filter to specific taxonomic ranks:
+The package offers robust functions to process raw taxonomic strings, splitting them into multiple hierarchical levels and allowing you to filter to a specific taxonomic rank. This ensures your data is clean and ready for downstream analysis.
+
+### Supported formats  
+Currently, the function supports multiple formats of taxonomic strings, including **MetaPhlAn**, **QIIME**, **SILVA**, etc.  
+Users do not need to manually specify the delimiter (`;`, `.`, `|`, `_`), since the function automatically detects the correct separator.  
+
+### Original taxa column  
+For reproducibility and traceability, the output contains an additional column `OriginalTaxa` that preserves the original input string.  
+
+### Special handling of *uncultured* and *unclassified*  
+If a taxonomic entry at a given rank is `"uncultured"` or `"unclassified"`, the function appends this label to the higher-level taxa.  
+
+For example:
+
+| Input                                                                                   | Processed output (Genus)          |
+|-----------------------------------------------------------------------------------------|-----------------------------------|
+| `D_0__Bacteria.D_1__Firmicutes.D_2__Clostridia.D_3__Ruminococcaceae.D_4__uncultured`   | `Ruminococcaceae_uncultured`      |
+| `k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Enterobacteriales; f__Enterobacteriaceae; g__unclassified` | `Enterobacteriaceae_unclassified` |
+
+### Choosing a Taxonomic Level
+
+You don't have to be limited to just the genus level. Use the `KeepTaxonomicLevel()` function to select the rank you need, whether it's **family**, **genus**, or **species**. The function will automatically group taxa at the specified level. For traceability, the output will always contain an `OriginalTaxa` column.
+
+### Handling Data Without Taxonomic Strings
+
+For data like **ASVs** or **OTUs** that do not contain taxonomic information in their names, you can use the `LoadTaxaTable()` function to import a separate table that maps each sequence ID to its full taxonomic lineage. This provides maximum flexibility for any type of input data. The use of this function can be seen in the documentation of the function. 
+
+### Example  
 
 ```{r, eval = FALSE}
 # Split the taxa into multiple levels
 CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 
 # Keep only the genus level data
-CrcBiomeScreenObject <- KeepGenusLevel(CrcBiomeScreenObject)
+CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
+
+# Inspect processed data
+head(CrcBiomeScreenObject$TaxaData)
 ```
 
 ## Data normalization
@@ -135,7 +165,7 @@ ValidationData <- CreateCrcBiomeScreenObject(
 
 # Process validation data similarly to training data
 ValidationData <- SplitTaxas(ValidationData)
-ValidationData <- KeepGenusLevel(ValidationData)
+ValidationData <- KeepTaxonomicLevel(ValidationData,level = "Genus")
 ValidationData <- NormalizeData(ValidationData, method = "GMPR")
 
 # Ensure consistent features between training and validation data
@@ -282,51 +312,103 @@ CrcBiomeScreenObject <- ValidateModelOnData(
 )
 ```
 
-# Streamlined screening workflow
+# Prediction & Evaluation
 
-For users who want to run the entire screening workflow in one step, `CrcBiomeScreen` provides the `RunScreening()` function:
+Once you've trained a model, you'll want to apply it to new data and assess its performance. Our package offers a streamlined, two-step process for this: first, generate predictions on your new dataset, and then, if true labels are available, evaluate the model's accuracy. This modular approach allows for flexibility, whether you're predicting outcomes for unknown samples or measuring model quality on a validation set.
+
+## Step 1: Predict on New Data
+Use the PredictCrcBiomeScreen() function to generate prediction probabilities for your new dataset. This function takes your trained CrcBiomeScreenObject and the new data, returning the raw prediction scores for each sample.
 
 ```{r, eval = FALSE}
-# Run complete screening workflow
+# Assuming 'CrcBiomeScreenObject' contains a trained XGBoost model
+# and 'MyNewData' is your new dataset (e.g., another CrcBiomeScreenObject or a data frame).
+
+# Generate predictions for the new dataset
+predictions <- PredictCrcBiomeScreen(
+    CrcBiomeScreenObject, 
+    newdata = ValidationData_filtered_qc$NormalizedData, # Use the appropriate data slot from your new data
+    model_type = "XGBoost"
+)
+# Inspect the predictions
+head(predictions)
+```
+
+## Step 2: Evaluate Model Performance
+If your new dataset includes known true labels, you can evaluate the model's performance using the EvaluateCrcBiomeScreen() function. This function takes the predictions generated in the previous step and the true_labels to calculate key metrics like the AUC and plot the ROC curve.
+
+```{r, eval = FALSE}
+# Assuming 'MyNewData' has a 'study_condition' column in its SampleData
+# and the true positive label is "CRC".
+
+# Evaluate the predictions
+evaluation_results <- EvaluateCrcBiomeScreen(
+    predictions = predictions,
+    true_labels = ValidationData_filtered_qc$SampleData$study_condition, # Provide the actual true labels
+    TrueLabel = "CRC", # Specify the positive class label
+    TaskName = "MyNewDatasetEvaluation" # A name for the output plot/files
+)
+
+# View the evaluation results
+print(evaluation_results$AUC)
+```
+
+### Streamlined Screening Workflow
+
+For users who want to run the entire screening workflow in one step, `CrcBiomeScreen` provides the `RunScreening()` function. This function encapsulates the complete process from data preparation to model validation, offering a comprehensive and easy-to-use solution.
+
+```{r, eval = FALSE}
+# Run the complete screening workflow
 CrcBiomeScreenObject <- RunScreening(
+  # Input data
   CrcBiomeScreenObject,
+  
+  # Model and data splitting
   model = "RF",
   partition = 0.7,
-  split.requirement = c(
+  split.requirement = list(
     label = c("control", "CRC"),
     condition_col = "study_condition"
   ),
   ClassBalance = TRUE,
+  
+  # Cross-validation and parallelization
   n_cv = 10,
-  TaskName = "GMPR_toydata",
   num_cores = 10,
+  
+  # Task and output naming
+  TaskName = "RF_GMPR_toydata",
+  
+  # External validation
   ValidationData = ValidationData_filtered_qc,
   TrueLabel = "CRC"
 )
 
+# Example with XGBoost model
 CrcBiomeScreenObject <- RunScreening(
   CrcBiomeScreenObject,
   model = "XGBoost",
   partition = 0.7,
-  split.requirement = c(
+  split.requirement = list(
     label = c("control", "CRC"),
     condition_col = "study_condition"
   ),
   ClassBalance = TRUE,
   n_cv = 10,
-  TaskName = "GMPR_toydata",
   num_cores = 10,
+  TaskName = "XGBoost_GMPR_toydata",
   ValidationData = ValidationData_filtered_qc,
   TrueLabel = "CRC"
 )
 ```
 
-This function performs the complete workflow including:
-- Data normalization
-- Data filtering and splitting
-- Model training with cross-validation
-- Model evaluation on test set
-- External validation (if ValidationData is provided)
+This function performs the complete workflow, including:
+
+  * **Data normalization**: Standardizes data to a common scale.
+  * **Data filtering and splitting**: Prepares the data for modeling by selecting and partitioning it into training and testing sets.
+  * **Model training with cross-validation**: Trains the specified model (`RF` or `XGBoost`) using k-fold cross-validation to ensure robustness.
+  * **Model evaluation on the test set**: Assesses the model's performance on a held-out test set to get an unbiased estimate of its predictive power.
+  * **External validation** (if `ValidationData` is provided): Applies the trained model to an entirely independent dataset to confirm its generalizability and real-world applicability. This step also stores the individual sample predictions and evaluation metrics in the `CrcBiomeScreenObject`.
+  
 
 # Best practices and recommendations
 

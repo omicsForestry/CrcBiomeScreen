@@ -10,11 +10,12 @@
 #'
 #' @examples
 #' toydata <- curatedMetagenomicData("ThomasAM_2018a.relative_abundance"
-#'                                  , dryrun = FALSE, rownames = "short")
+#'                                 , dryrun = FALSE, rownames = "short")
 #'
-#'CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
-#'                                                  TaxaData = toydata[[1]]@rowLinks$nodeLab,
-
+#' CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
+#'                                                   TaxaData = toydata[[1]]@rowLinks$nodeLab,
+#'                                                   SampleData = toydata[[1]]@colData)
+#'
 CreateCrcBiomeScreenObject <- function(AbsoluteAbundance = NULL, TaxaData = NULL, SampleData = NULL, RelativeAbundance = NULL) {
   # If AbsoluteAbundance is NULL, check if RelativeAbundance is provided
   if (!is.null(RelativeAbundance) && is.null(AbsoluteAbundance)) {
@@ -23,7 +24,7 @@ CreateCrcBiomeScreenObject <- function(AbsoluteAbundance = NULL, TaxaData = NULL
     }
     if (!"number_reads" %in% colnames(SampleData)) {
       print("To convert RelativeAbundance to AbsoluteAbundance requires the total number of reads in each sample.")
-    }else{
+    } else {
       AbsoluteAbundance <- RelativeAbundance %>%
         t() %>%
         data.frame() %>%
@@ -31,14 +32,14 @@ CreateCrcBiomeScreenObject <- function(AbsoluteAbundance = NULL, TaxaData = NULL
         t() %>%
         data.frame()
     }
-    }
+  }
+  
   # Set up the object
   obj <- list(
     AbsoluteAbundance = AbsoluteAbundance,
     TaxaData = TaxaData,
     SampleData = SampleData,
     RelativeAbundance = RelativeAbundance,
-    GenusLevelData = NULL,
     ValidationData = NULL,
     ModelData = NULL,
     ModelResult = NULL,
@@ -48,7 +49,7 @@ CreateCrcBiomeScreenObject <- function(AbsoluteAbundance = NULL, TaxaData = NULL
     ),
     PredictResult = NULL
   )
-
+  
   # Set up the name of the class
   class(obj) <- "CrcBiomeScreenObject"
   return(obj)
