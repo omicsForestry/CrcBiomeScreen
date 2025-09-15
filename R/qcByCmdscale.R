@@ -69,48 +69,53 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
   # Print outlier sample IDs
   message("Outlier sample IDs detected:")
   print(outliers)
-
-  # Ensure IsOutlier is a factor for color mapping
-  plot_df <- data.frame(
-    SampleID = sampleID,
-    Dim1 = x,
-    Dim2 = y,
-    IsOutlier = factor(is_outlier, levels = c(FALSE, TRUE))
-  )
-  plot_df$IsOutlier <- factor(plot_df$IsOutlier, levels = c(FALSE, TRUE))
-  # Output file
-  pdf_name <- paste0("cmdscale_", TaskName, "_", normalize_method, ".pdf")
-
-  # Create plot
-  p <- ggplot2::ggplot(plot_df, aes(x = Dim1, y = Dim2)) +
-    geom_point(color = "grey50", size = 2) +
-    geom_point(
-      data = subset(plot_df, IsOutlier == TRUE),
-      ggplot2::aes(x = Dim1, y = Dim2),
-      color = "red", size = 2, shape = 1, stroke = 1.2
-    ) +
-    geom_text(aes(label = SampleID, color = IsOutlier), size = 3, vjust = -0.6) +
-    ggplot2::scale_color_manual(values = c(`FALSE` = "black", `TRUE` = "red")) +
-    labs(
-      title = paste0("cmdscale_", TaskName, " (", normalize_method, ")"),
-      x = "PCoA 1", y = "PCoA 2"
-    ) +
-    theme_minimal() +
-    theme(legend.position = "none")
-
-  # Save PDF
-  ggsave(pdf_name, plot = p, width = 12, height = 5)
-
-  # Add attributes to the object
-  attr(outliers, "OutlierSamples") <- length(outliers)
-  attr(outliers, "QC") <- TaskName
-
+  
+  if(!is.null(outliers)){
+    message(paste("Number of outliers detected:", length(outliers)))
+    # Ensure IsOutlier is a factor for color mapping
+    plot_df <- data.frame(
+      SampleID = sampleID,
+      Dim1 = x,
+      Dim2 = y,
+      IsOutlier = factor(is_outlier, levels = c(FALSE, TRUE))
+    )
+    plot_df$IsOutlier <- factor(plot_df$IsOutlier, levels = c(FALSE, TRUE))
+    # Output file
+    pdf_name <- paste0("cmdscale_", TaskName, "_", normalize_method, ".pdf")
+    
+    # Create plot
+    p <- ggplot2::ggplot(plot_df, aes(x = Dim1, y = Dim2)) +
+      geom_point(color = "grey50", size = 2) +
+      geom_point(
+        data = subset(plot_df, IsOutlier == TRUE),
+        ggplot2::aes(x = Dim1, y = Dim2),
+        color = "red", size = 2, shape = 1, stroke = 1.2
+      ) +
+      geom_text(aes(label = SampleID, color = IsOutlier), size = 3, vjust = -0.6) +
+      ggplot2::scale_color_manual(values = c(`FALSE` = "black", `TRUE` = "red")) +
+      labs(
+        title = paste0("cmdscale_", TaskName, " (", normalize_method, ")"),
+        x = "PCoA 1", y = "PCoA 2"
+      ) +
+      theme_minimal() +
+      theme(legend.position = "none")
+    
+    # Save PDF
+    ggsave(pdf_name, plot = p, width = 12, height = 5)
+    
+  } else {
+    message("No outliers detected.")
+  }
+  
   # Step 5: Update the object
   CrcBiomeScreenObject$OrginalNormalizedData <- study_data
   CrcBiomeScreenObject$NormalizedData <- study_data[!is_outlier, , drop = FALSE]
   CrcBiomeScreenObject$SampleData <- CrcBiomeScreenObject$SampleData[!is_outlier, , drop = FALSE]
-  CrcBiomeScreenObject$OutlierSamples <- outliers
-
+  if(!is.null(outliers)){
+    attr(outliers, "QC") <- TaskName
+    attr(outliers, "OutlierSamples") <- length(outliers)
+    CrcBiomeScreenObject$OutlierSamples <- outliers
+  }
 
   return(CrcBiomeScreenObject)
 }

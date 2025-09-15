@@ -20,7 +20,7 @@ PredictCrcBiomeScreen <- function(
   } else if (model_type == "XGBoost") {
     xgb.model <- CrcBiomeScreenObject$ModelResult$XGBoost$model
     # Test the model
-    test.pred.prob.xgb <- predict(xgb.model, newdata = ValidationData$NormalizedData, type = "prob")
+    test.pred.prob.xgb <- predict(xgb.model, newdata = newdata, type = "prob")
     predictions <- test.pred.prob.xgb
     rownames(predictions) <- rownames(newdata)
   }

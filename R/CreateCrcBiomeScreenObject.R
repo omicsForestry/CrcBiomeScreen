@@ -40,6 +40,7 @@ CreateCrcBiomeScreenObject <- function(AbsoluteAbundance = NULL, TaxaData = NULL
     TaxaData = TaxaData,
     SampleData = SampleData,
     RelativeAbundance = RelativeAbundance,
+    NormalizeData = NULL,
     ValidationData = NULL,
     ModelData = NULL,
     ModelResult = NULL,
