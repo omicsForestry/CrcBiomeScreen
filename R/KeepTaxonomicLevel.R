@@ -4,8 +4,9 @@
 #'
 #' @param CrcBiomeScreenObject A list or object containing 'AbsoluteAbundance' and 'TaxaData'.
 #' @param level The taxonomic level to aggregate to (e.g., "Family", "Genus", "Species").
+#'
 #' @return The CrcBiomeScreenObject with a new data frame aggregated at the specified level.
-
+#' @export
 KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
   # Ensure the user-provided level is valid
   valid_levels <- colnames(CrcBiomeScreenObject$TaxaData)
