@@ -2,7 +2,7 @@
 % Please edit documentation in R/SplitTaxas.R
 \name{SplitTaxas}
 \alias{SplitTaxas}
-\title{Split the taxa information into different columns}
+\title{Split and clean taxonomy strings}
 \usage{
 SplitTaxas(CrcBiomeScreenObject)
 }
@@ -13,7 +13,10 @@ SplitTaxas(CrcBiomeScreenObject)
 CrcBiomeScreenObject$TaxaData
 }
 \description{
-Split the taxa information into different columns
+This function automatically detects the taxonomy string format (e.g., MetaPhlAn, QIIME, SILVA, GTDB),
+splits the string into standard taxonomic ranks (Kingdom to Species),
+retains the original taxonomy string in a new column (\code{OriginalTaxa}),
+and refines labels such as "uncultured" or "unclassified" by appending the parent rank.
 }
 \examples{
 CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)

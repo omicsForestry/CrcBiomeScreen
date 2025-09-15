@@ -2,7 +2,7 @@
 % Please edit documentation in R/ValidateModelOnData.R
 \name{ValidateModelOnData}
 \alias{ValidateModelOnData}
-\title{Evaluate the model on the validation data}
+\title{Predict the validation data by using the trained model in CrcBiomeScreenObject}
 \usage{
 ValidateModelOnData(
   CrcBiomeScreenObject = NULL,
@@ -33,7 +33,7 @@ ValidateModelOnData(
 A CrcBiomeScreenObject with the evaluation results stored in the \code{PredictResult} slot for the specified model type.
 }
 \description{
-Evaluate the model on the validation data
+Predict the validation data by using the trained model in CrcBiomeScreenObject
 }
 \examples{
 CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,

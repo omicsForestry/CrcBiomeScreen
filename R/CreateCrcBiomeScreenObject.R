@@ -16,6 +16,22 @@
 #'                                                  TaxaData = toydata[[1]]@rowLinks$nodeLab,
 
 CreateCrcBiomeScreenObject <- function(AbsoluteAbundance = NULL, TaxaData = NULL, SampleData = NULL, RelativeAbundance = NULL) {
+  # If AbsoluteAbundance is NULL, check if RelativeAbundance is provided
+  if (!is.null(RelativeAbundance) && is.null(AbsoluteAbundance)) {
+    if (is.null(SampleData)) {
+      stop("SampleData is required to convert RelativeAbundance to AbsoluteAbundance.")
+    }
+    if (!"number_reads" %in% colnames(SampleData)) {
+      print("To convert RelativeAbundance to AbsoluteAbundance requires the total number of reads in each sample.")
+    }else{
+      AbsoluteAbundance <- RelativeAbundance %>%
+        t() %>%
+        data.frame() %>%
+        mutate(across(seq_len(dim(RelativeAbundance)[2]), ~ (. * SampleData$number_reads / 100))) %>%
+        t() %>%
+        data.frame()
+    }
+    }
   # Set up the object
   obj <- list(
     AbsoluteAbundance = AbsoluteAbundance,
