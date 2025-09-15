@@ -395,6 +395,42 @@ CrcBiomeScreenObject <- qcByCmdscale(
 # Check class balance in the training data
 checkClassBalance(CrcBiomeScreenObject$SampleData$study_condition)
 
+# Load validation data
+data("ValidationData_curated")
+
+# Create CrcBiomeScreenObject for validation data
+ValidationData <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
+  TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
+  SampleData = ValidationData_curated[[1]]@colData
+)
+
+# Process validation data similarly to training data
+ValidationData <- SplitTaxas(ValidationData)
+ValidationData <- KeepTaxonomicLevel(ValidationData,level = "Genus")
+ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+
+# Ensure consistent features between training and validation data
+ValidationData$NormalizedData <- ValidationData$NormalizedData[, 
+  colnames(ValidationData$NormalizedData) %in% colnames(CrcBiomeScreenObject$NormalizedData)]
+
+CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, 
+  colnames(CrcBiomeScreenObject$NormalizedData) %in% colnames(ValidationData$NormalizedData)]
+
+# Filter validation data
+ValidationData_filtered <- FilterDataSet(
+  ValidationData,
+  label = c("CRC", "control"),
+  condition_col = "study_condition"
+)
+
+# Quality control for validation data
+ValidationData_filtered_qc <- qcByCmdscale(
+  ValidationData_filtered,
+  TaskName = "Normalize_ValidationData_filtered_qc",
+  normalize_method = "GMPR"
+)
+
 # Run the complete screening workflow
 CrcBiomeScreenObject <- RunScreening(
   # Input data
