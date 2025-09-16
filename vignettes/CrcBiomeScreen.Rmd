@@ -80,15 +80,15 @@ CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
   SampleData = toydata[[1]]@colData
 )
 
-# Load the simple toy dataset from curatedMetagenomicData
-data(simple_toydata, package = "CrcBiomeScreen")
-
-# Create the CrcBiomeScreenObject for simple toy data
-CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
-  AbsoluteAbundance = simple_toydata[,-c(1:2,646:647)],
-  TaxaData = colnames(simple_toydata[,-c(1:2,646:647)]),
-  SampleData = simple_toydata[,c(1:2,646:647)]
-)
+# # Load the simple toy dataset from curatedMetagenomicData
+# data(simple_toydata, package = "CrcBiomeScreen")
+# 
+# # Create the CrcBiomeScreenObject for simple toy data
+# CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
+#   AbsoluteAbundance = simple_toydata[,-c(1:2,646:647)],
+#   TaxaData = colnames(simple_toydata[,-c(1:2,646:647)]),
+#   SampleData = simple_toydata[,c(1:2,646:647)]
+# )
 ```
 
 ## Taxonomic data processing
@@ -139,10 +139,10 @@ head(CrcBiomeScreenObject$TaxaData)
 
 ```{r, eval = FALSE}
 # Normalize using GMPR (Geometric Mean of Pairwise Ratios)
-CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR", level = "Genus")
 
 # Normalize using TSS (Total Sum Scaling)
-CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS")
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", level = "Genus")
 ```
 
 **Note**: GMPR normalization is generally recommended for microbiome data as it is more robust to compositional effects and outliers compared to TSS normalization.
@@ -165,7 +165,7 @@ ValidationData <- CreateCrcBiomeScreenObject(
 # Process validation data similarly to training data
 ValidationData <- SplitTaxas(ValidationData)
 ValidationData <- KeepTaxonomicLevel(ValidationData,level = "Genus")
-ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+ValidationData <- NormalizeData(ValidationData, method = "GMPR",level = "Genus")
 
 # Ensure consistent features between training and validation data
 ValidationData$NormalizedData <- ValidationData$NormalizedData[, 

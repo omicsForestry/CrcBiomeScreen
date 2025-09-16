@@ -5,7 +5,7 @@
 \title{Normalise the absolute data to relative data by using Total Sum Scaling
 and Geometric Mean of Pairwise Ratios (GMPR)}
 \usage{
-NormalizeData(CrcBiomeScreenObject = NULL, method = NULL)
+NormalizeData(CrcBiomeScreenObject = NULL, method = NULL, level = NULL)
 }
 \arguments{
 \item{CrcBiomeScreenObject}{From the CreateCrcBiomeScreenObject()}
