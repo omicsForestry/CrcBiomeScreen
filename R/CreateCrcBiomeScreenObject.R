@@ -24,7 +24,6 @@
 #'   \item{\strong{ModelResult}}{A list storing the trained model objects (e.g., `randomForest` or `xgboost` objects). Populated by `TrainModel`.}
 #'   \item{\strong{EvaluateResult}}{A list storing performance metrics (e.g., AUC, ROC curve) for the models on the test set. Populated by `EvaluateModel`.}
 #'   \item{\strong{PredictResult}}{A list storing prediction probabilities and evaluation metrics for external validation sets. Populated by `ValidateModelOnData`.}
-#'   \item{\strong{TrainingPredictions}}{A list storing out-of-bag (OOB) or cross-validation predictions for the training data. Populated by `TrainModel`.}
 #' }
 #'
 #' @examples

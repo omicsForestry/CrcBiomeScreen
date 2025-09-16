@@ -376,7 +376,7 @@ CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
 head(CrcBiomeScreenObject$TaxaData)
 
 # Normalize using GMPR (Geometric Mean of Pairwise Ratios)
-CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR")
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR", level = "Genus")
 
 # Filter data to keep only CRC and control samples
 CrcBiomeScreenObject <- FilterDataSet(
@@ -408,7 +408,7 @@ ValidationData <- CreateCrcBiomeScreenObject(
 # Process validation data similarly to training data
 ValidationData <- SplitTaxas(ValidationData)
 ValidationData <- KeepTaxonomicLevel(ValidationData,level = "Genus")
-ValidationData <- NormalizeData(ValidationData, method = "GMPR")
+ValidationData <- NormalizeData(ValidationData, method = "GMPR",level = "Genus")
 
 # Ensure consistent features between training and validation data
 ValidationData$NormalizedData <- ValidationData$NormalizedData[, 
