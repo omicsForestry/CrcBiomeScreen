@@ -41,6 +41,7 @@ vignette("CrcBiomeScreen")
 - **data/**: Example datasets  
 - **vignettes/**: Usage examples
 - **tests/**: Testing functions
+- **man/** : Documentation files
 
 ## Roadmap
 
