@@ -1,6 +1,6 @@
 # CrcBiomeScreen
 
-![Pipeline](https://github.com/user-attachments/assets/5434dac9-5392-4825-884e-06a56d232a1e)
+![Pipeline](https://github.com/user-attachments/assets/e699a579-207c-4bd3-833d-e2f2ec9f2750)
 
 An R package for colorectal cancer screening and microbiome analysis.
 
