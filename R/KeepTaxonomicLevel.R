@@ -18,7 +18,7 @@ KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
   # this allows dplyr to correctly use the column name specified by the user
   level_sym <- rlang::sym(level)
   
-  CrcBiomeScreenObject$LevelData <-
+  LevelData <-
     CrcBiomeScreenObject$AbsoluteAbundance %>%
     as.data.frame() %>%
     # Use !!level_sym to dynamically select the taxonomic column
@@ -30,7 +30,7 @@ KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
     as.data.frame()
   
   # Change the key name in the returned object to make it more generic
-  names(CrcBiomeScreenObject)[names(CrcBiomeScreenObject) == "LevelData"] <- paste0(level, "LevelData")
+  CrcBiomeScreenObject$TaxaLevelData[[paste0(level, "LevelData")]] <- LevelData
   
   return(CrcBiomeScreenObject)
 }

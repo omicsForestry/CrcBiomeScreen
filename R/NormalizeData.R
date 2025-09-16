@@ -18,8 +18,8 @@
 #'   attributes(CrcBiomeScreenObject$NormalizedData)
 #' }
 #' }
-NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL) {
-  Data <- CrcBiomeScreenObject$GenusLevelData
+NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NULL) {
+  Data <- CrcBiomeScreenObject$TaxaLevelData[[paste0(level, "LevelData")]]
 
   if (method == "TSS") {
     # Calculate the total number of counts in each sample
