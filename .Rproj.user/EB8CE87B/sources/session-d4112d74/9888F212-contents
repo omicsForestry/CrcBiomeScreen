@@ -1,5 +1,0 @@
-test_that("Create the CrcBiomeScreenObject", {
-  expect_equal(CreateCrcBiomeScreenObject(RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
-                                                                  TaxaData = toydata[[1]]@rowLinks$nodeLab,
-                                                                  SampleData = toydata[[1]]@colData), CrcBiomeScreenObject)
-})
