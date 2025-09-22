@@ -26,10 +26,10 @@ Imports:
     stats,
     tibble,
     tidyr,
-    TreeSummarizedExperiment
+    TreeSummarizedExperiment,
+    ggplot2
 Suggests:
     rstatix,
-    ggplot2,
     Matrix,
     MASS,
     mgcv,
