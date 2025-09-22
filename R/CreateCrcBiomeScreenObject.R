@@ -5,7 +5,8 @@
 #' @param TaxaData A data frame containing taxonomic information for each feature
 #' @param SampleData A data frame containing sample metadata
 #' @param RelativeAbundance A numeric matrix or data frame containing relative abundance data
-#'
+#' @importFrom %>% dplyr
+#' 
 #' @return An object with data
 #' @export
 #'
