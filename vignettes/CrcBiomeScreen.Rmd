@@ -43,8 +43,8 @@ The main features of `CrcBiomeScreen` include:
 Install the development version of the package from GitHub:
 
 ```{r, eval = FALSE}
-install.packages(c("remotes", "BiocManager","ggplot2","dplyr"))
-
+# install.packages(c("remotes", "BiocManager","ggplot2","dplyr"))
+install.packages(c("remotes"))
 remotes::install_github("iChronostasis/CrcBiomeScreen", force = TRUE)
 ```
 
@@ -52,8 +52,6 @@ Load `CrcBiomeScreen` into the R session:
 
 ```{r, eval = FALSE}
 library(CrcBiomeScreen)
-library(ggplot2)
-library(dplyr)
 ```
 
 # Getting started
@@ -62,7 +60,11 @@ The core workflow of `CrcBiomeScreen` involves several key steps: data loading a
 
 ## Data preparation
 
-First, we need to load the example data and create a `CrcBiomeScreenObject`:
+First, we need to load the example data and create a `CrcBiomeScreenObject` This object is the primary input for all downstream functions in the package.
+
+We offer two methods for preparing your data. You only need to use one of the following examples, depending on the format of your input data.
+
+The first example below, which uses the Thomas_2018_RelativeAbundance dataset, is the one we will be using for the subsequent steps in this vignette. It represents a typical use case with a more complex dataset. The second example with NHSBCSP_screeningData is included to show an alternative input format for simpler datasets, demonstrating that the function can handle various data structures.
 
 ```{r, eval = FALSE}
 # Set working directory
@@ -71,24 +73,24 @@ First, we need to load the example data and create a `CrcBiomeScreenObject`:
 data(package = "CrcBiomeScreen")
 
 # Load the toy dataset from curatedMetagenomicData
-data(toydata, package = "CrcBiomeScreen")
+data(Thomas_2018_RelativeAbundance, package = "CrcBiomeScreen")
 
 # Create the CrcBiomeScreenObject
 CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
-  TaxaData = toydata[[1]]@rowLinks$nodeLab,
-  SampleData = toydata[[1]]@colData
+  RelativeAbundance = Thomas_2018_RelativeAbundance[[1]]@assays@data@listData$relative_abundance,
+  TaxaData = Thomas_2018_RelativeAbundance[[1]]@rowLinks$nodeLab,
+  SampleData = Thomas_2018_RelativeAbundance[[1]]@colData
 )
 
-# # Load the simple toy dataset from curatedMetagenomicData
-# data(simple_toydata, package = "CrcBiomeScreen")
-# 
-# # Create the CrcBiomeScreenObject for simple toy data
-# CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
-#   AbsoluteAbundance = simple_toydata[,-c(1:2,646:647)],
-#   TaxaData = colnames(simple_toydata[,-c(1:2,646:647)]),
-#   SampleData = simple_toydata[,c(1:2,646:647)]
-# )
+# Load the simple toy dataset from curatedMetagenomicData
+data(NHSBCSP_screeningData, package = "CrcBiomeScreen")
+
+# Create the CrcBiomeScreenObject for simple toy data
+CrcBiomeScreenObject_NHSBCSP_screeningData <- CreateCrcBiomeScreenObject(
+  AbsoluteAbundance = NHSBCSP_screeningData[,-c(1:2,646:647)],
+  TaxaData = colnames(NHSBCSP_screeningData[,-c(1:2,646:647)]),
+  SampleData = NHSBCSP_screeningData[,c(1:2,646:647)]
+)
 ```
 
 ## Taxonomic data processing
