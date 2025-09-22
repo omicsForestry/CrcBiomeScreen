@@ -6,39 +6,81 @@
 #' @param level The taxonomic level to aggregate to (e.g., "Family", "Genus", "Species").
 #'
 #' @importFrom magrittr %>%
+#' 
 #' @return The CrcBiomeScreenObject with a new data frame aggregated at the specified level.
 #' @export
 #' 
+#' 
 KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
-  # Ensure the user-provided level is valid
-  valid_levels <- colnames(CrcBiomeScreenObject$TaxaData)
-  if (!level %in% valid_levels) {
-    stop(paste("Invalid taxonomic level provided. Please choose from:", paste(valid_levels, collapse = ", ")))
+  taxa_df <- as.data.frame(CrcBiomeScreenObject$TaxaData, stringsAsFactors = FALSE)
+  if (!("OriginalTaxa" %in% colnames(taxa_df))) stop("Run SplitTaxas() first: TaxaData must contain OriginalTaxa.")
+  valid_levels <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
+  if (!level %in% valid_levels) stop("Invalid level.")
+  
+  # For each taxa (a row in TaxaData), select the group name: first try the target level, if NA, fall back to the previous level, and finally fall back to OriginalTaxa
+  pick_group <- function(row) {
+    idx <- match(level, valid_levels)
+    for (i in idx:1) {
+      val <- row[[ valid_levels[i] ]]
+      if (!is.na(val) && nzchar(as.character(val))) return(as.character(val))
+    }
+    
+    if (!is.na(row[["OriginalTaxa"]]) && nzchar(as.character(row[["OriginalTaxa"]]))) {
+      return(as.character(row[["OriginalTaxa"]]))
+    }
+    return(NA_character_)
   }
   
-  # Use rlang::sym() and !! to convert the string 'level' into a variable name
-  level_sym <- rlang::sym(level)
+  group_vec <- apply(taxa_df[, c(valid_levels, "OriginalTaxa")], 1, pick_group)
+  # Remove the _repeated suffixes
+  group_vec <- gsub("(_uncultured)+$", "_uncultured", group_vec)
+  group_vec <- gsub("(_unclassified)+$", "_unclassified", group_vec)
+  group_vec <- gsub("(_unknown)+$", "_unknown", group_vec)
   
-  LevelData <-
-    CrcBiomeScreenObject$AbsoluteAbundance %>%
-    as.data.frame() %>%
-    dplyr::mutate(tax_level = CrcBiomeScreenObject$TaxaData[[level]]) %>%
-    rstatix::group_by(tax_level) %>%
-    dplyr::summarise_all(sum) %>%
-    tibble::column_to_rownames("tax_level") %>%
-    t() %>%
-    as.data.frame()
+  ab <- as.matrix(CrcBiomeScreenObject$AbsoluteAbundance)
+  if (ncol(ab) != length(group_vec)) stop("Column count of abundance does not match number of taxa entries.")
   
-  ## ---- Clean up repeated suffixes ----
-  rownames(LevelData) <- gsub("(_uncultured)+$", "_uncultured", rownames(LevelData))
-  rownames(LevelData) <- gsub("(_unclassified)+$", "_unclassified", rownames(LevelData))
-  rownames(LevelData) <- gsub("(_unknown)+$", "_unknown", rownames(LevelData))
+  grouped <- rowsum(t(ab), group = group_vec, na.rm = TRUE)  # result: rows = groups, cols = samples
+  LevelData <- t(grouped)                                   # 转为 rows = samples, cols = groups
+  LevelData <- as.data.frame(LevelData, stringsAsFactors = FALSE)
+  if (!is.null(rownames(ab))) rownames(LevelData) <- rownames(ab)
   
-  # Save into the object
   CrcBiomeScreenObject$TaxaLevelData[[paste0(level, "LevelData")]] <- LevelData
-  
   return(CrcBiomeScreenObject)
 }
+
+
+
+# KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
+#   # Ensure the user-provided level is valid
+#   valid_levels <- colnames(CrcBiomeScreenObject$TaxaData)
+#   if (!level %in% valid_levels) {
+#     stop(paste("Invalid taxonomic level provided. Please choose from:", 
+#                paste(valid_levels, collapse = ", ")))
+#   }
+#   
+#   level_sym <- rlang::sym(level)
+#   
+#   LevelData <-
+#     CrcBiomeScreenObject$AbsoluteAbundance %>%
+#     as.data.frame() %>%
+#     dplyr::mutate(tax_level = CrcBiomeScreenObject$TaxaData[[level]]) %>%
+#     rstatix::group_by(tax_level) %>%
+#     dplyr::summarise_all(sum) %>%
+#     tibble::column_to_rownames("tax_level") %>%
+#     t() %>%
+#     as.data.frame()
+#   
+#   # Remove _uncultured/_unclassified/unknown repeatedly at the end of the names
+#   rownames(LevelData) <- gsub("(_uncultured)+$", "_uncultured", rownames(LevelData))
+#   rownames(LevelData) <- gsub("(_unclassified)+$", "_unclassified", rownames(LevelData))
+#   rownames(LevelData) <- gsub("(_unknown)+$", "_unknown", rownames(LevelData))
+#   
+#   CrcBiomeScreenObject$TaxaLevelData[[paste0(level, "LevelData")]] <- LevelData
+#   
+#   return(CrcBiomeScreenObject)
+# }
+
 
 # KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
 #   # Ensure the user-provided level is valid

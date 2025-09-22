@@ -43,7 +43,6 @@ The main features of `CrcBiomeScreen` include:
 Install the development version of the package from GitHub:
 
 ```{r, eval = FALSE}
-# install.packages(c("remotes", "BiocManager","ggplot2","dplyr"))
 install.packages(c("remotes"))
 remotes::install_github("iChronostasis/CrcBiomeScreen", force = TRUE)
 ```
