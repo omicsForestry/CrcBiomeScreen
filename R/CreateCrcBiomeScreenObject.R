@@ -6,7 +6,7 @@
 #' @param SampleData A data frame containing sample metadata
 #' @param RelativeAbundance A numeric matrix or data frame containing relative abundance data
 #' @importFrom dplyr %>% mutate across
-#' 
+#' @importFrom magrittr %>%
 #' @return An object with data
 #' @export
 #'
