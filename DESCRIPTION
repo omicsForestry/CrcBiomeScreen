@@ -27,7 +27,8 @@ Imports:
     tibble,
     tidyr,
     TreeSummarizedExperiment,
-    ggplot2
+    ggplot2,
+    GUniFrac
 Suggests:
     rstatix,
     Matrix,
@@ -39,7 +40,6 @@ Suggests:
     ggrepel,
     ggtree,
     glmnet,
-    GUniFrac,
     Matrix,
     microbiome,
     phyloseq,

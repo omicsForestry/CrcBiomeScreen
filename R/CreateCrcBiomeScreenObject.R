@@ -1,4 +1,4 @@
-#' @titile Create the CrcBiomeScreenObject for analysis
+#' @title Create the CrcBiomeScreenObject for analysis
 #' @description This function creates the CrcBiomeScreenObject to contain the data for analysis.
 #' @param AbsoluteAbundance A numeric matrix or data frame containing absolute abundance data
 #' @param TaxaData A data frame containing taxonomic information for each feature
@@ -6,7 +6,7 @@
 #' @param RelativeAbundance A numeric matrix or data frame containing relative abundance data
 #' 
 #' @importFrom magrittr %>%
-#' @import dplyr across mutate
+#' @importFrom dplyr across mutate
 #' 
 #' @return An object with data
 #' @export
