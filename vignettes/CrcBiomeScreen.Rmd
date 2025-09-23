@@ -325,7 +325,7 @@ Use the PredictCrcBiomeScreen() function to generate prediction probabilities fo
 # and 'MyNewData' is your new dataset (e.g., another CrcBiomeScreenObject or a data frame).
 
 # Generate predictions for the new dataset
-predictions <- PredictCrcBiomeScreen(
+ValidationData_filtered_qc$PredictResult <- PredictCrcBiomeScreen(
     CrcBiomeScreenObject, 
     newdata = ValidationData_filtered_qc$NormalizedData, # Use the appropriate data slot from your new data
     model_type = "XGBoost"
