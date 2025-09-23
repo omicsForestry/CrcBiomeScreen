@@ -136,6 +136,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 
   CrcBiomeScreenObject$EvaluateResult$RF <-
     list(
+      predictions = test.predictions.rf,
       roc.curve = roc.curve.rf,
       AUC = auc.value.rf,
       F1 = f1_score.rf,
@@ -221,6 +222,7 @@ EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
   # Save results
   CrcBiomeScreenObject$EvaluateResult$XGBoost <-
     list(
+      predictions = test.pred.prob.xgb,
       roc.curve = roc.curve.xgb,
       AUC = auc.value.xgb,
       F1 = f1_score.xgb,
