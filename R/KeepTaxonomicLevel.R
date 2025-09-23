@@ -13,7 +13,6 @@
 #' 
 KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
   taxa_df <- as.data.frame(CrcBiomeScreenObject$TaxaData, stringsAsFactors = FALSE)
-  if (!("OriginalTaxa" %in% colnames(taxa_df))) stop("Run SplitTaxas() first: TaxaData must contain OriginalTaxa.")
   valid_levels <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
   if (!level %in% valid_levels) stop("Invalid level.")
   
@@ -31,20 +30,18 @@ KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
     return(NA_character_)
   }
   
-  group_vec <- apply(taxa_df[, c(valid_levels, "OriginalTaxa")], 1, pick_group)
+  group_vec <- apply(taxa_df[, valid_levels], 1, pick_group)
   # Remove the _repeated suffixes
   group_vec <- gsub("(_uncultured)+$", "_uncultured", group_vec)
   group_vec <- gsub("(_unclassified)+$", "_unclassified", group_vec)
   group_vec <- gsub("(_unknown)+$", "_unknown", group_vec)
   
   ab <- as.matrix(CrcBiomeScreenObject$AbsoluteAbundance)
-  if (ncol(ab) != length(group_vec)) stop("Column count of abundance does not match number of taxa entries.")
+  if (nrow(ab) != length(group_vec)) stop("Column count of abundance does not match number of taxa entries.")
   
-  grouped <- rowsum(t(ab), group = group_vec, na.rm = TRUE)  # result: rows = groups, cols = samples
-  LevelData <- t(grouped)                                   # 转为 rows = samples, cols = groups
+  grouped <- rowsum(ab, group = group_vec, na.rm = TRUE)  # result: rows = groups, cols = samples  
   LevelData <- as.data.frame(LevelData, stringsAsFactors = FALSE)
-  if (!is.null(rownames(ab))) rownames(LevelData) <- rownames(ab)
-  
+
   CrcBiomeScreenObject$TaxaLevelData[[paste0(level, "LevelData")]] <- LevelData
   return(CrcBiomeScreenObject)
 }
