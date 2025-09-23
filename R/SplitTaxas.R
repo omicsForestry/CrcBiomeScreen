@@ -87,7 +87,7 @@
 # }
 SplitTaxas <- function(CrcBiomeScreenObject) {
   taxa_vec <- as.character(CrcBiomeScreenObject$TaxaData)
-  
+
   # detect QIIME D_ style
   if (any(grepl("D_\\d+__", taxa_vec))) {
     taxa_vec2 <- gsub("\\.(?=__|D_\\d+__)", "|", taxa_vec, perl = TRUE)
@@ -106,11 +106,11 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
   }
   
   # split into ranks
-  taxa_df <- tibble::tibble(OriginalTaxa = taxa_vec, .rows = length(taxa_vec)) %>%
+  suppressWarnings(taxa_df <- tibble::tibble(OriginalTaxa = taxa_vec, .rows = length(taxa_vec)) %>%
     dplyr::mutate(tmp = taxa_vec2) %>%
     tidyr::separate(tmp,
                     into = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"),
-                    sep = sep, fill = "right", remove = TRUE)
+                    sep = sep, fill = "right", remove = TRUE))
   
   # cleanup prefixes
   remove_prefix <- function(x) {
