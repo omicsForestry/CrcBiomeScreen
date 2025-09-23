@@ -3,7 +3,7 @@ test_that("SplitTaxas and KeepTaxonomicLevel handle uncultured/unclassified/unkn
     "D_0__Bacteria.D_1__Firmicutes.D_2__Clostridia.D_3__uncultured.D_4__uncultured",
     "D_0__Bacteria.D_1__Proteobacteria.D_2__Gammaproteobacteria.D_3__Enterobacterales.D_4__Enterobacteriaceae.D_5__unclassified",
     "D_0__Bacteria.D_1__Actinobacteria.D_2__Actinobacteria.D_3__unknown",
-    "D_0__Bacteria.D_1__Actinobacteria.D_2__Actinobacteria.D_3__test_microbiome.D_4__unknown"
+    "D_0__Bacteria.D_1__Actinobacteria.D_2__Actinobacteria.D_3__test_microbiome.D_4__testgenus.D_4__unknown"
   )
   
   ab <- data.frame(
@@ -16,7 +16,7 @@ test_that("SplitTaxas and KeepTaxonomicLevel handle uncultured/unclassified/unkn
   colnames(ab) <- taxa_vec
   CrcBiomeScreenObject <- list(
     TaxaData = taxa_vec,            # order must match ab columns (t1,t2,t3)
-    AbsoluteAbundance = ab,
+    AbsoluteAbundance = as.data.frame(t(ab)),
     TaxaLevelData = list()
   )
 
