@@ -8,7 +8,8 @@ qcByCmdscale(
   CrcBiomeScreenObject,
   TaskName = NULL,
   normalize_method = NULL,
-  threshold_sd = 1
+  threshold_sd = 1,
+  plot = TRUE
 )
 }
 \arguments{
