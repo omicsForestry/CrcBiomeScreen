@@ -303,7 +303,7 @@ ValidationData_filtered_qc <- ValidateModelOnData(
 )
 
 # Validate XGBoost model on external data
-CrcBiomeScreenObject <- ValidateModelOnData(
+ValidationData_filtered_qc <- ValidateModelOnData(
   CrcBiomeScreenObject,
   model_type = "XGBoost",
   ValidationData = ValidationData_filtered_qc,
@@ -434,7 +434,7 @@ ValidationData_filtered_qc <- qcByCmdscale(
 )
 
 # Run the complete screening workflow
-CrcBiomeScreenObject <- RunScreening(
+ValidationData_filtered_qc <- RunScreening(
   # Input data
   obj = CrcBiomeScreenObject,
   # Model and data splitting
@@ -459,7 +459,7 @@ CrcBiomeScreenObject <- RunScreening(
 )
 
 # Example with XGBoost model
-CrcBiomeScreenObject <- RunScreening(
+ValidationData_filtered_qc <- RunScreening(
   CrcBiomeScreenObject,
   model = "XGBoost",
   partition = 0.7,
