@@ -164,8 +164,10 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
                                             gsub("(_uncultured)+$", "_uncultured",
                                                  gsub("(_unclassified)+$", "_unclassified",
                                                       gsub("(_unknown)+$", "_unknown", .))))))
-  
+
   CrcBiomeScreenObject$TaxaData <- as.data.frame(taxa_df, stringsAsFactors = FALSE)
+  rownames(CrcBiomeScreenObject$TaxaData) <- taxa_df$OriginalTaxa
+  CrcBiomeScreenObject$TaxaData <- CrcBiomeScreenObject$TaxaData[,-1]
   return(CrcBiomeScreenObject)
 }
 
