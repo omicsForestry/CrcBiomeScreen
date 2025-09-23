@@ -16,6 +16,17 @@ KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
   valid_levels <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
   if (!level %in% valid_levels) stop("Invalid level.")
   
+    LevelData <-
+      CrcBiomeScreenObject$AbsoluteAbundance %>%
+      as.data.frame() %>%
+      # Use !!level_sym to dynamically select the taxonomic column
+      dplyr::mutate(tax_level = CrcBiomeScreenObject$TaxaData[[level]]) %>%
+      rstatix::group_by(tax_level) %>%
+      dplyr::summarise_all(sum) %>%
+      tibble::column_to_rownames("tax_level") %>%
+      t() %>%
+      as.data.frame()
+  
   # For each taxa (a row in TaxaData), select the group name: first try the target level, if NA, fall back to the previous level, and finally fall back to OriginalTaxa
   pick_group <- function(row) {
     idx <- match(level, valid_levels)
