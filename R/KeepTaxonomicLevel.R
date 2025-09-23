@@ -20,7 +20,7 @@ KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
     CrcBiomeScreenObject$AbsoluteAbundance %>%
     as.data.frame() %>%
     dplyr::mutate(tax_level = CrcBiomeScreenObject$TaxaData[[level]]) %>%
-    dplyr::filter(!is.na(tax_level)) %>% # 在这里添加
+    dplyr::filter(!is.na(tax_level)) %>%
     rstatix::group_by(tax_level) %>%
     dplyr::summarise_all(sum) %>%
     tibble::column_to_rownames("tax_level") %>%
