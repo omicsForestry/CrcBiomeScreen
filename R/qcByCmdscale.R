@@ -44,7 +44,8 @@
 qcByCmdscale <- function(CrcBiomeScreenObject,
                          TaskName = NULL,
                          normalize_method = NULL,
-                         threshold_sd = 1) {
+                         threshold_sd = 1,
+                         plot = TRUE) {
   # Extract normalized data and sample IDs
   study_data <- CrcBiomeScreenObject$NormalizedData
   sampleID <- rownames(CrcBiomeScreenObject$SampleData)
@@ -80,6 +81,8 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
       IsOutlier = factor(is_outlier, levels = c(FALSE, TRUE))
     )
     plot_df$IsOutlier <- factor(plot_df$IsOutlier, levels = c(FALSE, TRUE))
+    
+    if(plot == TRUE){
     # Output file
     pdf_name <- paste0("cmdscale_", TaskName, "_", normalize_method, ".pdf")
     
@@ -102,7 +105,7 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
     
     # Save PDF
     ggsave(pdf_name, plot = p, width = 12, height = 5)
-    
+    }
   } else {
     message("No outliers detected.")
   }
