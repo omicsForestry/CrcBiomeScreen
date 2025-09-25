@@ -326,13 +326,14 @@ Use the PredictCrcBiomeScreen() function to generate prediction probabilities fo
 # and 'MyNewData' is your new dataset (e.g., another CrcBiomeScreenObject or a data frame).
 
 # Generate predictions for the new dataset
-ValidationData_filtered_qc$PredictResult <- PredictCrcBiomeScreen(
+ValidationData_filtered_qc$PredictResult$XGBoost <- PredictCrcBiomeScreen(
     CrcBiomeScreenObject, 
     newdata = ValidationData_filtered_qc$NormalizedData, # Use the appropriate data slot from your new data
     model_type = "XGBoost"
 )
 # Inspect the predictions
-head(predictions)
+head(ValidationData_filtered_qc$PredictResult$XGBoost)
+predictions <- ValidationData_filtered_qc$PredictResult$XGBoost
 ```
 
 ## Step 2: Evaluate Model Performance
@@ -343,7 +344,7 @@ If your new dataset includes known true labels, you can evaluate the model's per
 # and the true positive label is "CRC".
 
 # Evaluate the predictions
-evaluation_results <- EvaluateCrcBiomeScreen(
+ValidationData_filtered_qc$PredictResult$XGBoost <- EvaluateCrcBiomeScreen(
     predictions = predictions,
     true_labels = ValidationData_filtered_qc$SampleData$study_condition, # Provide the actual true labels
     TrueLabel = "CRC", # Specify the positive class label
