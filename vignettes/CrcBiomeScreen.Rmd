@@ -108,10 +108,10 @@ If a taxonomic entry at a given rank is `"uncultured"` or `"unclassified"`, the 
 
 For example:
 
-| Input                                                                                   | Processed output (Genus)          |
-|-----------------------------------------------------------------------------------------|-----------------------------------|
-| `D_0__Bacteria.D_1__Firmicutes.D_2__Clostridia.D_3__Ruminococcaceae.D_4__uncultured`   | `Ruminococcaceae_uncultured`      |
-| `k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Enterobacteriales; f__Enterobacteriaceae; g__unclassified` | `Enterobacteriaceae_unclassified` |
+| Input (Start...End) | Processed Output (Genus) |
+| :--- | :--- |
+| `D_...D_3__Ruminococcaceae.D_4__uncultured` | `Ruminococcaceae_uncultured` |
+| `k__...f__Enterobacteriaceae; g__unclassified` | `Enterobacteriaceae_unclassified` |
 
 ### Choosing a Taxonomic Level
 
