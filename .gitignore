@@ -1,12 +1,11 @@
-# .Rproj.user
-# .Rhistory
-# .RData
-# .Ruserdata
-# /doc/
-# /Meta/
-# RStudio project files
-*.Rproj
+# RStudio project file
+CrcBiomeScreen.Rproj
 
 # macOS system files
 .DS_Store
-**/.DS_Store
+
+# R-related temporary/system files (optional, but good practice)
+.Rhistory
+.RData
+.Rprofile
+.Rproj.user/
