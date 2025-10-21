@@ -1,0 +1,12 @@
+# .Rproj.user
+# .Rhistory
+# .RData
+# .Ruserdata
+# /doc/
+# /Meta/
+# RStudio project files
+*.Rproj
+
+# macOS system files
+.DS_Store
+**/.DS_Store
