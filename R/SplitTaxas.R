@@ -1,8 +1,8 @@
 #' Split and clean taxonomy strings
 #'
 #' This function automatically detects the taxonomy string format (e.g., MetaPhlAn, QIIME, SILVA, GTDB),
-#' splits the string into standard taxonomic ranks (Kingdom to Species), 
-#' retains the original taxonomy string in a new column (`OriginalTaxa`), 
+#' splits the string into standard taxonomic ranks (Kingdom to Species),
+#' retains the original taxonomy string in a new column (`OriginalTaxa`),
 #' and refines labels such as "uncultured" or "unclassified" by appending the parent rank.
 #'
 #' @param CrcBiomeScreenObject
@@ -36,14 +36,14 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
   } else {
     taxa_vec2 <- taxa_vec; sep <- "\\|"; style <- "fallback"
   }
-  
+
   # split into ranks
-  suppressWarnings(taxa_df <- tibble::tibble(OriginalTaxa = taxa_vec, .rows = length(taxa_vec)) %>%
+  taxa_df <- tibble::tibble(OriginalTaxa = taxa_vec, .rows = length(taxa_vec)) %>%
     dplyr::mutate(tmp = taxa_vec2) %>%
     tidyr::separate(tmp,
                     into = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"),
-                    sep = sep, fill = "right", remove = TRUE))
-  
+                    sep = sep, fill = "right", remove = TRUE)
+
   # cleanup prefixes
   remove_prefix <- function(x) {
     if (is.na(x) || x == "" || x == "__") return(NA_character_)
@@ -55,8 +55,8 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
     if (x == "" || x == "__") return(NA_character_)
     return(x)
   }
-  taxa_df <- taxa_df %>% mutate(across(Kingdom:Species, ~ sapply(., remove_prefix, USE.NAMES = FALSE)))
-  
+  taxa_df <- taxa_df %>% mutate(across(Kingdom:Species, ~ vapply(., remove_prefix, USE.NAMES = FALSE)))
+
   # handle bad labels: attach to parent but avoid duplicate suffixes
   bad_labels <- c("uncultured","unclassified","unknown")
   clean_parent <- function(x) {
@@ -71,7 +71,7 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
     x <- sub("(_uncultured|_unclassified|_unknown)$", "", x)
     return(x)
   }
-  
+
   for (i in 2:length(c("Kingdom","Phylum","Class","Order","Family","Genus","Species"))) {
     lvl <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")[i]
     parent <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")[i-1]
@@ -89,7 +89,7 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
       }
     }
   }
-  
+
   # final cleanup: collapse repeated suffixes like _uncultured_uncultured -> _uncultured
   taxa_df <- taxa_df %>%
     mutate(across(Kingdom:Species, ~ ifelse(is.na(.), NA_character_,

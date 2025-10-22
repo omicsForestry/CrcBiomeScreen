@@ -25,21 +25,8 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  TaskName = NULL,
                                  TrueLabel = NULL,
                                  num_cores = NULL) {
-  # ---- Dependency checks ----
-  load_Modeling_deps <- function() {
-    pkgs <- c("caret", "foreach", "doParallel", "parallel", "ranger", "pROC")
-    for (p in pkgs) {
-      if (!requireNamespace(p, quietly = TRUE)) {
-        stop(sprintf("The function ModelingRF() requires the '%s' package. Please install it with install.packages('%s').", p, p))
-      } else {
-        library(p, character.only = TRUE)
-      }
-    }
-    message("All required packages for ModelingRF_noweights() are loaded.")
-  }
-  load_Modeling_deps()
+
   # ---- Main function logic ----
-  set.seed(123)
   folds.rf <- createFolds(CrcBiomeScreenObject$ModelData$TrainLabel, k = k.rf)
 
   # Calculate the number of cores
@@ -58,8 +45,8 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   )
 
   # Using ranger random forest for faster implementation
-  grid.rf$AUC <- foreach::foreach(i = 1:nrow(grid.rf), .combine = c, .packages = c("ranger", "pROC", "foreach")) %dopar% {
-    aucs <- sapply(1:k.rf, function(j) {
+  grid.rf$AUC <- foreach::foreach(i = seq_len(grid.rf), .combine = c, .packages = c("ranger", "pROC", "foreach")) %dopar% {
+    aucs <- vapply(seq_len(k.rf), function(j) {
       val.indices <- folds.rf[[j]]
       val.data <- CrcBiomeScreenObject$ModelData$Training[val.indices, ]
       train.fold.data <- as.data.frame(CrcBiomeScreenObject$ModelData$Training[-val.indices, ])

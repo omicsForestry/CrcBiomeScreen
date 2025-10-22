@@ -4,20 +4,16 @@
 #' @param CrcBiomeScreenObject From the CreateCrcBiomeScreenObject()
 #' @param method "TSS" or "GMPR"
 #'
+#'
 #' @return Updated CrcBiomeScreenObject with NormalizedData
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Example only runs if suggested packages are installed
-#' if (requireNamespace("GUniFrac", quietly = TRUE) &&
-#'   requireNamespace("microbiomeMarker", quietly = TRUE)) {
-#'   CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject,
-#'     method = "GMPR"
-#'   )
-#'   attributes(CrcBiomeScreenObject$NormalizedData)
-#' }
-#' }
+#' # Normalize using GMPR (Geometric Mean of Pairwise Ratios)
+#' CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR", level = "Genus")
+#' # Normalize using TSS (Total Sum Scaling)
+#' CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", level = "Genus")
+
 NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NULL) {
   Data <- CrcBiomeScreenObject$TaxaLevelData[[paste0(level, "LevelData")]]
 
@@ -34,9 +30,8 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NU
         "BiocManager::install('GUniFrac')",
         call. = FALSE
       )
-      BiocManager::install("GUniFrac")
     }
-    library(GUniFrac)
+
     size.factor <- GUniFrac::GMPR(t(Data))
     size.factor[is.na(size.factor)] <- mean(size.factor, na.rm = TRUE)
     Data <- Data / size.factor

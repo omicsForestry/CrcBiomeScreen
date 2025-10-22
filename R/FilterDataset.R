@@ -18,7 +18,7 @@ FilterDataSet <- function(CrcBiomeScreenObject = NULL,
   if (is.null(CrcBiomeScreenObject)) stop("CrcBiomeScreenObject cannot be NULL.")
   if (is.null(label)) stop("Label cannot be NULL.")
   if (!condition_col %in% colnames(CrcBiomeScreenObject$SampleData)) {
-    stop(paste("Condition column", condition_col, "not found in SampleData."))
+    stop(sprintf("Condition column", condition_col, "not found in SampleData."))
   }
 
   # Filter the data based on the specified label

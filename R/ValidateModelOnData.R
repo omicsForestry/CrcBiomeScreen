@@ -31,7 +31,7 @@ ValidateModelOnData <- function(
     condition_col = "study_condition",
     PlotAUC = NULL) {
   if (!condition_col %in% colnames(ValidationData$SampleData)) {
-    stop(paste("Condition column", condition_col, "not found in SampleData."))
+    stop(sprintf("Condition column", condition_col, "not found in SampleData."))
   }
   # Load the model
   if (model_type == "RF") {
@@ -54,7 +54,7 @@ ValidateModelOnData <- function(
     CrcBiomeScreenObject$PredictResult[["RF"]][[TaskName]] <-
       list(
         # Store the probabilities here
-        predictions = probs.ValidationData.rf, 
+        predictions = probs.ValidationData.rf,
         roc.curve = roc.curve.rf,
         AUC = auc(roc.curve.rf)
       )
@@ -79,7 +79,7 @@ ValidateModelOnData <- function(
       SampleID = rownames(ValidationData$NormalizedData),
       Prediction = test.pred.prob.xgb
     )
-    
+
     CrcBiomeScreenObject$PredictResult[["XGBoost"]][[TaskName]] <-
       list(
         predictions = predictions_df,

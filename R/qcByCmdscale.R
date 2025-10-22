@@ -69,10 +69,10 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
 
   # Print outlier sample IDs
   message("Outlier sample IDs detected:")
-  print(outliers)
-  
+  message(outliers)
+
   if(!is.null(outliers)){
-    message(paste("Number of outliers detected:", length(outliers)))
+    message(sprintf("Number of outliers detected:", length(outliers)))
     # Ensure IsOutlier is a factor for color mapping
     plot_df <- data.frame(
       SampleID = sampleID,
@@ -81,11 +81,11 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
       IsOutlier = factor(is_outlier, levels = c(FALSE, TRUE))
     )
     plot_df$IsOutlier <- factor(plot_df$IsOutlier, levels = c(FALSE, TRUE))
-    
+
     if(plot == TRUE){
     # Output file
     pdf_name <- paste0("cmdscale_", TaskName, "_", normalize_method, ".pdf")
-    
+
     # Create plot
     p <- ggplot2::ggplot(plot_df, aes(x = Dim1, y = Dim2)) +
       geom_point(color = "grey50", size = 2) +
@@ -102,14 +102,14 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
       ) +
       theme_minimal() +
       theme(legend.position = "none")
-    
+
     # Save PDF
     ggsave(pdf_name, plot = p, width = 12, height = 5)
     }
   } else {
     message("No outliers detected.")
   }
-  
+
   # Step 5: Update the object
   CrcBiomeScreenObject$OrginalNormalizedData <- study_data
   CrcBiomeScreenObject$NormalizedData <- study_data[!is_outlier, , drop = FALSE]

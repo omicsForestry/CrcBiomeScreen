@@ -24,17 +24,8 @@ This function allows users to load their own taxonomic assignments for ASV/OTU d
 The input table should map sequence IDs to their full taxonomic lineage.
 }
 \examples{
-# Assuming you have a toy data object and a taxa table like this:
-# CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(...)
-# my_taxa_table <- data.frame(
-#   ASV_ID = c("ASV1", "ASV2", "ASV3"),
-#   Taxonomy = c("k__Bacteria;p__Firmicutes;g__GenusA",
-#                "k__Bacteria;p__Bacteroidetes;g__GenusB",
-#                "k__Bacteria;p__Firmicutes;g__GenusC")
-# )
-# CrcBiomeScreenObject <- LoadTaxaTable(CrcBiomeScreenObject,
-#                                       taxa_table = my_taxa_table,
-#                                       id_column = "ASV_ID",
-#                                       taxa_column = "Taxonomy")
-
+CrcBiomeScreenObject <- LoadTaxaTable(CrcBiomeScreenObject,
+                                       taxa_table = my_taxa_table,
+                                       id_column = "ASV_ID",
+                                       taxa_column = "Taxonomy")
 }

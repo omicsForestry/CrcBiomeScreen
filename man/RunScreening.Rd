@@ -60,5 +60,4 @@ CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
   ValidationData = ValidationData,
   TrueLabel = "Cancer"
 )
-
 }
