@@ -49,7 +49,7 @@ remotes::install_github("iChronostasis/CrcBiomeScreen", force = TRUE)
 
 Load `CrcBiomeScreen` into the R session:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 library(CrcBiomeScreen)
 ```
 
@@ -65,11 +65,11 @@ We offer two methods for preparing your data. You only need to use one of the fo
 
 The first example below, which uses the Thomas_2018_RelativeAbundance dataset, is the one we will be using for the subsequent steps in this vignette. It represents a typical use case with a more complex dataset. The second example with NHSBCSP_screeningData is included to show an alternative input format for simpler datasets, demonstrating that the function can handle various data structures.
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Set working directory
 # setwd("/home/CRCscreening/CRCscreening-Workflow/")
 # List available datasets in the package
-data(package = "CrcBiomeScreen")
+# data(package = "CrcBiomeScreen")
 
 # Load the toy dataset from curatedMetagenomicData
 data(Thomas_2018_RelativeAbundance, package = "CrcBiomeScreen")
@@ -108,10 +108,10 @@ If a taxonomic entry at a given rank is `"uncultured"` or `"unclassified"`, the 
 
 For example:
 
-| Input (Start...End) | Processed Output (Genus) |
-| :--- | :--- |
-| `D_...D_3__Ruminococcaceae.D_4__uncultured` | `Ruminococcaceae_uncultured` |
-| `k__...f__Enterobacteriaceae; g__unclassified` | `Enterobacteriaceae_unclassified` |
+| Input                                                                                   | Processed output (Genus)          |
+|-----------------------------------------------------------------------------------------|-----------------------------------|
+| `D_0__Bacteria.D_1__Firmicutes.D_2__Clostridia.D_3__Ruminococcaceae.D_4__uncultured`   | `Ruminococcaceae_uncultured`      |
+| `k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Enterobacteriales; f__Enterobacteriaceae; g__unclassified` | `Enterobacteriaceae_unclassified` |
 
 ### Choosing a Taxonomic Level
 
@@ -123,7 +123,7 @@ For data like **ASVs** or **OTUs** that do not contain taxonomic information in 
 
 ### Example  
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Split the taxa into multiple levels
 CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 
@@ -138,7 +138,7 @@ head(CrcBiomeScreenObject$TaxaData)
 
 `CrcBiomeScreen` supports multiple normalization methods. Here we demonstrate both GMPR and TSS normalization:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Normalize using GMPR (Geometric Mean of Pairwise Ratios)
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR", level = "Genus")
 
@@ -152,7 +152,7 @@ CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", leve
 
 For robust model evaluation, it's important to prepare independent validation data:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Load validation data
 data("ZellerG_2014_RelativeAbundance")
 
@@ -182,7 +182,7 @@ CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[,
 
 Before model training, we need to filter the data to include only CRC and control samples, then split into training and test sets:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Check the available labels in the data
 table(CrcBiomeScreenObject$SampleData$study_condition)
 
@@ -208,7 +208,7 @@ CrcBiomeScreenObject <- SplitDataSet(
 
 Quality control using classical multidimensional scaling can help identify potential batch effects or outliers:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Perform quality control using cmdscale
 CrcBiomeScreenObject <- qcByCmdscale(
   CrcBiomeScreenObject,
@@ -225,7 +225,7 @@ checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)
 
 `CrcBiomeScreen` supports two machine learning algorithms: Random Forest and XGBoost. Both models can be trained with class balancing to handle imbalanced datasets:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Train Random Forest model
 CrcBiomeScreenObject <- TrainModels(
   CrcBiomeScreenObject,
@@ -251,7 +251,7 @@ CrcBiomeScreenObject <- TrainModels(
 
 Evaluate the trained models on the test set:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Evaluate Random Forest model
 CrcBiomeScreenObject <- EvaluateModel(
   CrcBiomeScreenObject,
@@ -277,7 +277,7 @@ The evaluation will generate ROC curves and calculate performance metrics such a
 
 To ensure the robustness and generalizability of the trained models, external validation on independent datasets is crucial:
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Filter validation data
 ValidationData_filtered <- FilterDataSet(
   ValidationData,
@@ -321,7 +321,7 @@ Once you've trained a model, you'll want to apply it to new data and assess its 
 ## Step 1: Predict on New Data
 Use the PredictCrcBiomeScreen() function to generate prediction probabilities for your new dataset. This function takes your trained CrcBiomeScreenObject and the new data, returning the raw prediction scores for each sample.
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Assuming 'CrcBiomeScreenObject' contains a trained XGBoost model
 # and 'MyNewData' is your new dataset (e.g., another CrcBiomeScreenObject or a data frame).
 
@@ -339,7 +339,7 @@ predictions <- ValidationData_filtered_qc$PredictResult$XGBoost
 ## Step 2: Evaluate Model Performance
 If your new dataset includes known true labels, you can evaluate the model's performance using the EvaluateCrcBiomeScreen() function. This function takes the predictions generated in the previous step and the true_labels to calculate key metrics like the AUC and plot the ROC curve.
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # Assuming 'MyNewData' has a 'study_condition' column in its SampleData
 # and the true positive label is "CRC".
 
@@ -539,7 +539,5 @@ If you use `CrcBiomeScreen` in your research, please cite:
 [Package citation information]
 
 For questions, bug reports, or feature requests, please visit the GitHub repository: https://github.com/iChronostasis/CrcBiomeScreen
-
----
 
 **Note**: This vignette demonstrates the basic usage of `CrcBiomeScreen`. For more advanced usage and customization options, please refer to the function documentation and additional tutorials.

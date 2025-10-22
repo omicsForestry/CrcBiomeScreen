@@ -8,6 +8,7 @@
 #'
 #' @importFrom dplyr mutate across
 #' @importFrom pROC roc auc ci.auc coords ci.coords plot.roc
+#' @importFrom withr with_seed
 #'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult` slot.
 #' @export
@@ -27,7 +28,7 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
   if (is.null(CrcBiomeScreenObject$EvaluateResult)) {
     CrcBiomeScreenObject$EvaluateResult <- list()
   }
-  set.seed(123)
+  withr::with_seed(123, {
   if ("RF" %in% model_type) {
     CrcBiomeScreenObject <-
       EvaluateRF(
@@ -47,6 +48,7 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
   } else {
     stop("Invalid model type. Please choose either 'RF' or 'XGBoost'.")
   }
+  })
   # Save the result into the CrcBiomeScreenObject
   # CrcBiomeScreenObject$ModelResult <- results
   saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))

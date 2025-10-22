@@ -34,11 +34,9 @@ The packaging function for XGBoost modeling without using class weights
 }
 \examples{
 CrcBiomeScreenObject <- ModelingXGBoost_noweights(
-  CrcBiomeScreenObject = CrcBiomeScreenObject,
-  k.rf = n_cv,
-  TaskName = TaskName,
-  TrueLabel = TrueLabel,
-  num_cores = num_cores
-)
-
+                                  CrcBiomeScreenObject = CrcBiomeScreenObject,
+                                  k.rf = n_cv,
+                                  TaskName = TaskName,
+                                  TrueLabel = TrueLabel,
+                                  num_cores = num_cores)
 }

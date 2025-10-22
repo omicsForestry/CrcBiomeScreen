@@ -10,7 +10,8 @@ checkClassBalance(labels, threshold = 0.5, plot = TRUE)
 \arguments{
 \item{labels}{The label for distribution}
 
-\item{threshold}{The threshold for the ratio (0.5) if it is the imbalanced dataset}
+\item{threshold}{The threshold for the ratio (0.5) if it is the
+imbalanced dataset}
 
 \item{plot}{Choose to have the figures or not}
 }

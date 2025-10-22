@@ -7,11 +7,17 @@
 #' @return A data frame containing sample-specific predictions.
 #' @export
 #'
+#' @examples
+#' ValidationData_filtered_qc$PredictResult$XGBoost <- PredictCrcBiomeScreen(
+#' CrcBiomeScreenObject,
+#' newdata = ValidationData_filtered_qc$NormalizedData, # Use the appropriate data slot from your new data
+#' model_type = "XGBoost")
+
 PredictCrcBiomeScreen <- function(
     CrcBiomeScreenObject,
     newdata,
     model_type = c("RF", "XGBoost")) {
-  
+
   if (model_type == "RF") {
     model <- CrcBiomeScreenObject$EvaluateResult$RF$RF.Model
     probs.ValidationData.rf <- predict(model, data = newdata, type = "response")$predictions
@@ -24,7 +30,7 @@ PredictCrcBiomeScreen <- function(
     predictions <- test.pred.prob.xgb
     rownames(predictions) <- rownames(newdata)
   }
-  
+
   return(predictions)
 }
 

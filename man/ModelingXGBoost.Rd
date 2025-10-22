@@ -40,5 +40,4 @@ CrcBiomeScreenObject <- ModelingXGBoost(
   TrueLabel = TrueLabel,
   num_cores = num_cores
 )
-
 }

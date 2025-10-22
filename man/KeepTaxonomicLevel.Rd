@@ -17,3 +17,7 @@ The CrcBiomeScreenObject with a new data frame aggregated at the specified level
 \description{
 This function aggregates abundance data to a specified taxonomic level.
 }
+\examples{
+# Keep only the genus level data
+CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
+}

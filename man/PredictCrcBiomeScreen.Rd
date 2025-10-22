@@ -23,3 +23,9 @@ A data frame containing sample-specific predictions.
 \description{
 Predict the class and probabilities for new data
 }
+\examples{
+ValidationData_filtered_qc$PredictResult$XGBoost <- PredictCrcBiomeScreen(
+CrcBiomeScreenObject,
+newdata = ValidationData_filtered_qc$NormalizedData, # Use the appropriate data slot from your new data
+model_type = "XGBoost")
+}

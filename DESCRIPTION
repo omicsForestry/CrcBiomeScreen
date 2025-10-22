@@ -1,11 +1,28 @@
 Package: CrcBiomeScreen
-Title: What the Package Does (One Line, Title Case)
-Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"))
-Description: What the package does (one paragraph).
-License: `use_mit_license()`, `use_gpl3_license()` or friends to pick a
-    license
+Title: An R package for colorectal cancer screening and microbiome analysis.
+Version: 0.99.0
+Authors@R: c(person("Chengxin", "Li",
+                  email = "ngzh5554@leeds.ac.uk",
+                  role = c("cre", "aut"),
+                  comment = c(ORCID = "0009-0004-0840-9027")),
+            person("Henry", "Wood",
+                  email = "h.m.wood@leeds.ac.uk",
+                  role = c("aut")),
+            person("Arief", "Gusnanto",
+                  email = "a.gusnanto@leeds.ac.uk",
+                  role = c("aut")))
+Description: A developed and benchmarked reproducible machine learning framework
+  for microbiome-based colorectal cancer (CRC) screening. By systematically 
+  evaluating normalization strategies, taxonomic resolutions, and class imbalance
+  handling. This R package allows users to apply the full pipeline or selectively 
+  run specific components depending on their analytical needs. It establishes a 
+  scalable foundation for developing interpretable microbiome-based screening 
+  tools to support early CRC detection. This approach could be easily implemented 
+  in a national screening programme, to improve early detection rates for 
+  this disease.
+License: MIT + file LICENSE
+biocViews: Software, Microbiome, Metagenomics, Classification, Normalization,
+  Visualization
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
 RoxygenNote: 7.3.2
@@ -13,7 +30,6 @@ Config/testthat/edition: 3
 Depends: 
     R (>= 4.3.0)
 Imports:
-    ape,
     dplyr,
     doFuture,
     doParallel,
@@ -28,7 +44,10 @@ Imports:
     tidyr,
     TreeSummarizedExperiment,
     ggplot2,
-    GUniFrac
+    GUniFrac,
+    magrittr,
+    parallel,
+    withr
 Suggests:
     rstatix,
     Matrix,
@@ -54,6 +73,6 @@ Suggests:
     rmarkdown,
     BiocStyle
 VignetteBuilder: knitr
-LazyData: true
-
-
+LazyData: false
+URL: https://github.com/iChronostasis/CrcBiomeScreen
+BugReports: https://github.com/iChronostasis/CrcBiomeScreen/issues

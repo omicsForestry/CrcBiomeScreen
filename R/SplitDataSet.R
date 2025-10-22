@@ -21,14 +21,6 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
                          label = NULL,
                          partition = NULL,
                          condition_col = "study_condition") {
-  # Load required packages
-  required_pkgs <- c("caret", "foreach", "parallel", "ranger", "xgboost")
-  for (pkg in required_pkgs) {
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      install.packages(pkg)
-    }
-  }
-  lapply(required_pkgs, library, character.only = TRUE)
 
   # Check if the required parameters are provided
   if (is.null(CrcBiomeScreenObject)) stop("CrcBiomeScreenObject cannot be NULL.")
@@ -37,7 +29,7 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
     stop("Partition must be a value between 0 and 1.")
   }
   if (!condition_col %in% colnames(CrcBiomeScreenObject$SampleData)) {
-    stop(paste("Condition column", condition_col, "not found in SampleData."))
+    stop(sprintf("Condition column", condition_col, "not found in SampleData."))
   }
 
   # Select the data based on the label
@@ -49,8 +41,8 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
   if (nrow(data) == 0) stop("No data found for the specified label.")
 
   # Create training and test set indexes
-  set.seed(123)
-  trainIndex <- caret::createDataPartition(sample_condition, p = partition, list = FALSE)
+  withr::with_seed(123, {
+  trainIndex <- caret::createDataPartition(sample_condition, p = partition, list = FALSE)})
 
   # Split the data
   train <- data[trainIndex, ]

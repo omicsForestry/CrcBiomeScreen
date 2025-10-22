@@ -32,7 +32,7 @@
 #'   ValidationData = ValidationData,
 #'   TrueLabel = "Cancer"
 #' )
-#'
+
 RunScreening <- function(obj,
                          model_type = NULL, # c("RF", "XGBoost")
                          split.requirement = NULL, # c(label = c("control","CRC"),  condition_col = "study_condition")

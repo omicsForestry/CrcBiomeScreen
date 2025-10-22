@@ -21,28 +21,14 @@
 #'   TrueLabel = TrueLabel,
 #'   num_cores = num_cores
 #' )
-#'
+
 ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
                             k.rf = 10,
                             repeats = 5,
                             TaskName = NULL,
                             TrueLabel = NULL,
                             num_cores = num_cores) {
-  # ---- Dependency checks ----
-  load_Modeling_deps <- function() {
-    pkgs <- c("caret", "foreach", "doParallel", "parallel", "ranger", "pROC")
-    for (p in pkgs) {
-      if (!requireNamespace(p, quietly = TRUE)) {
-        stop(sprintf("The function ModelingRF() requires the '%s' package. Please install it with install.packages('%s').", p, p))
-      } else {
-        library(p, character.only = TRUE)
-      }
-    }
-    message("All required packages for ModelingXGBoost() are loaded.")
-  }
-  load_Modeling_deps()
   # ---- Main function logic ----
-  set.seed(123)
   # Parallel setup（memory friendly）
   cl <- makePSOCKcluster(num_cores)
   doParallel::registerDoParallel(cl)
@@ -90,7 +76,7 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   train_data <- as.data.frame(train_data)
   train_data$label_train <- as.factor(label_train)
 
-  set.seed(123)
+  withr::with_seed(123, {
   # Train the model using caret
   model_fit <- train(label_train ~ .,
     data = train_data,
@@ -100,7 +86,7 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
     tuneGrid = tune_grid,
     weights = weights,
     verbose = TRUE
-  )
+  )})
 
   parallel::stopCluster(cl)
   foreach::registerDoSEQ()

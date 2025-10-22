@@ -12,6 +12,14 @@
 #' @importFrom parallel makePSOCKcluster
 #' @importFrom tibble tibble
 #' @importFrom foreach %dopar%
+#' @importFrom doParallel registerDoParallel stopImplicitCluster
+#' @import doFuture
+#' @import future doFuture future.apply
+#' @import progress progressr
+#' @import stats
+#' @import TreeSummarizedExperiment
+#' @importFrom withr with_seed
+#'
 #'
 #' @return CrcBiomeScreenObject
 #' @export
@@ -31,15 +39,6 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
                         TaskName = NULL,
                         TrueLabel = NULL,
                         num_cores = NULL) {
-  # ---- Dependency checks ----
-  required_pkgs <- c("caret", "foreach", "parallel", "ranger", "xgboost")
-  for (pkg in required_pkgs) {
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      install.packages(pkg)
-    }
-  }
-  lapply(required_pkgs, library, character.only = TRUE)
-
   # For specific model types
   if ("RF" %in% model_type && !requireNamespace("ranger", quietly = TRUE)) {
     stop("The RF model in TrainModels() requires the 'ranger' package. Please install it with install.packages('ranger').")
@@ -54,6 +53,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   }
 
   # ---- Run RF model ----
+  withr::with_seed(123, {
   if ("RF" %in% model_type) {
     if (ClassBalance) {
       CrcBiomeScreenObject <- ModelingRF(
@@ -73,8 +73,10 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
       )
     }
   }
+  })
 
   # ---- Run XGBoost model ----
+  withr::with_seed(123, {
   if ("XGBoost" %in% model_type) {
     if (ClassBalance) {
       CrcBiomeScreenObject <- ModelingXGBoost(
@@ -94,6 +96,6 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
       )
     }
   }
-
+  })
   return(CrcBiomeScreenObject)
 }
