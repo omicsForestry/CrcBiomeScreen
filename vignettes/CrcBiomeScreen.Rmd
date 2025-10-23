@@ -233,7 +233,7 @@ CrcBiomeScreenObject <- TrainModels(
   TaskName = "ToyData_RF",
   ClassBalance = TRUE,
   TrueLabel = "CRC",
-  num_cores = 10
+  num_cores = 1
 )
 
 # Train XGBoost model
@@ -243,7 +243,7 @@ CrcBiomeScreenObject <- TrainModels(
   TaskName = "ToyData_XGBoost",
   ClassBalance = TRUE,
   TrueLabel = "CRC",
-  num_cores = 10
+  num_cores = 1
 )
 ```
 
