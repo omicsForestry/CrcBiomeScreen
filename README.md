@@ -9,7 +9,7 @@ An R package for colorectal cancer screening and microbiome analysis.
 ```r
 # Install from GitHub
 install.packages(c("remotes"))
-remotes::install_github("iChronostasis/CrcBiomeScreen", force = TRUE)
+remotes::install_github("omicsForestry/CrcBiomeScreen", force = TRUE)
 ```
 
 Or use conda environment:
@@ -31,7 +31,7 @@ if (!requireNamespace("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
 BiocManager::install("BiocStyle")
 library(BiocStyle)
-remotes::install_github("iChronostasis/CrcBiomeScreen", build_vignettes = TRUE, force = TRUE)
+remotes::install_github("omicsForestry/CrcBiomeScreen", build_vignettes = TRUE, force = TRUE)
 vignette("CrcBiomeScreen")
 ```
 
