@@ -55,7 +55,7 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
     if (x == "" || x == "__") return(NA_character_)
     return(x)
   }
-  taxa_df <- taxa_df %>% mutate(across(Kingdom:Species, ~ vapply(., remove_prefix, USE.NAMES = FALSE)))
+  taxa_df <- taxa_df %>% mutate(across(Kingdom:Species, ~vapply(., remove_prefix, FUN.VALUE = character(1))))
 
   # handle bad labels: attach to parent but avoid duplicate suffixes
   bad_labels <- c("uncultured","unclassified","unknown")

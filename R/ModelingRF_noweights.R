@@ -8,6 +8,7 @@
 #'
 #' @importFrom dplyr mutate across
 #' @importFrom foreach foreach %dopar% %do%
+#' @importFrom caret createFolds
 #'
 #' @return CrcBiomeScreenObject
 #' @export
@@ -27,7 +28,7 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  num_cores = NULL) {
 
   # ---- Main function logic ----
-  folds.rf <- createFolds(CrcBiomeScreenObject$ModelData$TrainLabel, k = k.rf)
+  folds.rf <- caret::createFolds(CrcBiomeScreenObject$ModelData$TrainLabel, k = k.rf)
 
   # Calculate the number of cores
   # num_cores <- 10
@@ -45,7 +46,7 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   )
 
   # Using ranger random forest for faster implementation
-  grid.rf$AUC <- foreach::foreach(i = seq_len(grid.rf), .combine = c, .packages = c("ranger", "pROC", "foreach")) %dopar% {
+  grid.rf$AUC <- foreach::foreach(i = seq_len(nrow(grid.rf)), .combine = c, .packages = c("ranger", "pROC", "foreach")) %dopar% {
     aucs <- vapply(seq_len(k.rf), function(j) {
       val.indices <- folds.rf[[j]]
       val.data <- CrcBiomeScreenObject$ModelData$Training[val.indices, ]
@@ -75,7 +76,7 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
       val.Label <- CrcBiomeScreenObject$ModelData$TrainLabel[val.indices]
       roc.obj <- roc(val.Label, predictions[, TrueLabel])
       auc(roc.obj)
-    })
+    }, FUN.VALUE = numeric(1))
 
     # AUC on the current fold
     mean(aucs)

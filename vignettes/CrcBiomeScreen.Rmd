@@ -344,7 +344,7 @@ If your new dataset includes known true labels, you can evaluate the model's per
 # and the true positive label is "CRC".
 
 # Evaluate the predictions
-ValidationData_filtered_qc$PredictResult$XGBoost <- EvaluateCrcBiomeScreen(
+evaluation_results <- EvaluateCrcBiomeScreen(
     predictions = predictions,
     true_labels = ValidationData_filtered_qc$SampleData$study_condition, # Provide the actual true labels
     TrueLabel = "CRC", # Specify the positive class label

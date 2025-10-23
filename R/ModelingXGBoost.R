@@ -10,6 +10,7 @@
 #' @importFrom dplyr mutate across
 #' @importFrom foreach %dopar%
 #' @importFrom doParallel registerDoParallel
+#' @importFrom caret train trainControl twoClassSummary
 #'
 #' @return CrcBiomeScreenObject
 #' @export
@@ -62,11 +63,11 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   weights <- ifelse(label_train == positive_class, w_pos, w_neg)
 
   # Define caret trainControl
-  ctrl <- trainControl(
+  ctrl <- caret::trainControl(
     method = "repeatedcv",
     number = k.rf,
     repeats = repeats,
-    summaryFunction = twoClassSummary,
+    summaryFunction = getFromNamespace("twoClassSummary", "caret"),
     classProbs = TRUE
     # allowParallel = TRUE
   )
@@ -78,7 +79,7 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
 
   withr::with_seed(123, {
   # Train the model using caret
-  model_fit <- train(label_train ~ .,
+  model_fit <- caret::train(label_train ~ .,
     data = train_data,
     method = "xgbTree",
     metric = "ROC",
