@@ -9,6 +9,7 @@
 #' @importFrom dplyr mutate across
 #' @importFrom pROC roc auc ci.auc coords ci.coords plot.roc
 #' @importFrom withr with_seed
+#' @importFrom ranger ranger
 #'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult` slot.
 #' @export
@@ -89,7 +90,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
   ModelData[["Training"]]$TrainLabel <- as.factor(ModelData$TrainLabel)
 
   # Retraining the model with the best hyperparameters on the entire training dataset
-  rf.Model <- ranger(
+  rf.Model <- ranger::ranger(
     formula         = as.formula(paste("TrainLabel ~ .")),
     data            = ModelData[["Training"]],
     num.trees       = best.params$num.trees,
