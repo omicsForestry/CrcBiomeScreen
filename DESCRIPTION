@@ -74,5 +74,5 @@ Suggests:
     BiocStyle
 VignetteBuilder: knitr
 LazyData: false
-URL: https://github.com/iChronostasis/CrcBiomeScreen
-BugReports: https://github.com/iChronostasis/CrcBiomeScreen/issues
+URL: https://github.com/omicsForestry/CrcBiomeScreen
+BugReports: https://github.com/omicsForestry/CrcBiomeScreen/issues
