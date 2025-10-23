@@ -48,3 +48,5 @@ vignette("CrcBiomeScreen")
 - CompareModels()
 - SelectImportanceFeatures()  
 - SHAP values analysis
+
+This package is licensed under the [MIT License](LICENSE.md).
