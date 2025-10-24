@@ -6,16 +6,30 @@ An R package for colorectal cancer screening and microbiome analysis.
 
 ## Installation
 
+### Option 1 — Install directly from GitHub
+You can install **CrcBiomeScreen** directly in R:
+
 ```r
-# Install from GitHub
-install.packages(c("remotes"))
+install.packages("remotes")
 remotes::install_github("omicsForestry/CrcBiomeScreen", force = TRUE)
 ```
 
-Or use conda environment:
+### Option 2 — Use the provided conda environment
+
+This will set up all system and R dependencies.
+After activating the environment, you still need to install the package itself from GitHub.
+
 ```bash
+# Create and activate environment
 conda env create -f environment.yml
 conda activate CrcBiomeScreen
+```
+
+Then, inside R:
+
+```R
+install.packages("remotes")
+remotes::install_github("omicsForestry/CrcBiomeScreen", force = TRUE)
 ```
 
 ## Usage
