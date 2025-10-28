@@ -48,7 +48,7 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
                          plot = TRUE) {
   # Extract normalized data and sample IDs
   study_data <- CrcBiomeScreenObject$NormalizedData
-  sampleID <- rownames(CrcBiomeScreenObject$SampleData$sampleID)
+  sampleID <- CrcBiomeScreenObject$SampleData$sampleID
 
   # Step 1: Compute Euclidean distance matrix and apply classical MDS
   dist_data <- dist(study_data)
@@ -69,10 +69,10 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
 
   # Print outlier sample IDs
   message("Outlier sample IDs detected:")
-  message(outliers)
+  message(paste(outliers, collapse = "\n"))
 
   if(!is.null(outliers)){
-    message(sprintf("Number of outliers detected:", length(outliers)))
+    message(sprintf("Number of outliers detected: %d", length(outliers)))
     # Ensure IsOutlier is a factor for color mapping
     plot_df <- data.frame(
       SampleID = sampleID,
