@@ -48,7 +48,7 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
                          plot = TRUE) {
   # Extract normalized data and sample IDs
   study_data <- CrcBiomeScreenObject$NormalizedData
-  sampleID <- rownames(CrcBiomeScreenObject$SampleData)
+  sampleID <- rownames(CrcBiomeScreenObject$SampleData$sampleID)
 
   # Step 1: Compute Euclidean distance matrix and apply classical MDS
   dist_data <- dist(study_data)
