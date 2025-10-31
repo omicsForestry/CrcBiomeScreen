@@ -86,4 +86,4 @@ This ensures data provenance and reproducibility across the full workflow.
 **Maintainer:** Li Chengxin (University of Leeds)  
 **Date:** 2025-10-21  
 **License:** MIT  
-**Repository:** [https://github.com/iChronostasis/CrcBiomeScreen](https://github.com/iChronostasis/CrcBiomeScreen)
+**Repository:** [https://github.com/omicsForestry/CrcBiomeScreen](https://github.com/omicsForestry/CrcBiomeScreen)
