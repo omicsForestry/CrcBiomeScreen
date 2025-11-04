@@ -131,7 +131,7 @@ CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
 
 # Inspect processed data
-head(CrcBiomeScreenObject$TaxaData)
+head(CrcBiomeScreenObject@TaxaData)
 ```
 
 ## Data normalization
@@ -169,11 +169,11 @@ ValidationData <- KeepTaxonomicLevel(ValidationData,level = "Genus")
 ValidationData <- NormalizeData(ValidationData, method = "GMPR", level = "Genus")
 
 # Ensure consistent features between training and validation data
-ValidationData$NormalizedData <- ValidationData$NormalizedData[, 
-  colnames(ValidationData$NormalizedData) %in% colnames(CrcBiomeScreenObject$NormalizedData)]
+ValidationData@NormalizedData <- ValidationData@NormalizedData[, 
+  colnames(ValidationData@NormalizedData) %in% colnames(CrcBiomeScreenObject@NormalizedData)]
 
-CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, 
-  colnames(CrcBiomeScreenObject$NormalizedData) %in% colnames(ValidationData$NormalizedData)]
+CrcBiomeScreenObject@NormalizedData <- CrcBiomeScreenObject@NormalizedData[, 
+  colnames(CrcBiomeScreenObject@NormalizedData) %in% colnames(ValidationData@NormalizedData)]
 ```
 
 # Model training and evaluation
@@ -184,7 +184,7 @@ Before model training, we need to filter the data to include only CRC and contro
 
 ```{r, eval = TRUE}
 # Check the available labels in the data
-table(CrcBiomeScreenObject$SampleData$study_condition)
+table(CrcBiomeScreenObject@SampleData$study_condition)
 
 # Filter data to keep only CRC and control samples
 CrcBiomeScreenObject <- FilterDataSet(
@@ -194,7 +194,7 @@ CrcBiomeScreenObject <- FilterDataSet(
 )
 
 # Verify the filtering results
-table(CrcBiomeScreenObject$SampleData$study_condition)
+table(CrcBiomeScreenObject@SampleData$study_condition)
 
 # Split data into training (70%) and test (30%) sets
 CrcBiomeScreenObject <- SplitDataSet(
@@ -218,7 +218,7 @@ CrcBiomeScreenObject <- qcByCmdscale(
 )
 
 # Check class balance in the training data
-checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)
+checkClassBalance(CrcBiomeScreenObject@ModelData$TrainLabel)
 ```
 
 ## Model training
@@ -326,14 +326,14 @@ Use the PredictCrcBiomeScreen() function to generate prediction probabilities fo
 # and 'MyNewData' is your new dataset (e.g., another CrcBiomeScreenObject or a data frame).
 
 # Generate predictions for the new dataset
-ValidationData_filtered_qc$PredictResult$XGBoost <- PredictCrcBiomeScreen(
+ValidationData_filtered_qc@PredictResult$XGBoost <- PredictCrcBiomeScreen(
     CrcBiomeScreenObject, 
-    newdata = ValidationData_filtered_qc$NormalizedData, # Use the appropriate data slot from your new data
+    newdata = ValidationData_filtered_qc@NormalizedData, # Use the appropriate data slot from your new data
     model_type = "XGBoost"
 )
 # Inspect the predictions
-head(ValidationData_filtered_qc$PredictResult$XGBoost)
-predictions <- ValidationData_filtered_qc$PredictResult$XGBoost
+head(ValidationData_filtered_qc@PredictResult$XGBoost)
+predictions <- ValidationData_filtered_qc@PredictResult$XGBoost
 ```
 
 ## Step 2: Evaluate Model Performance
@@ -346,7 +346,7 @@ If your new dataset includes known true labels, you can evaluate the model's per
 # Evaluate the predictions
 evaluation_results <- EvaluateCrcBiomeScreen(
     predictions = predictions,
-    true_labels = ValidationData_filtered_qc$SampleData$study_condition, # Provide the actual true labels
+    true_labels = ValidationData_filtered_qc@SampleData$study_condition, # Provide the actual true labels
     TrueLabel = "CRC", # Specify the positive class label
     TaskName = "MyNewDatasetEvaluation" # A name for the output plot/files
 )
@@ -377,7 +377,7 @@ CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
 
 # Inspect processed data
-head(CrcBiomeScreenObject$TaxaData)
+head(CrcBiomeScreenObject@TaxaData)
 
 # Normalize using GMPR (Geometric Mean of Pairwise Ratios)
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR", level = "Genus")
@@ -398,29 +398,30 @@ CrcBiomeScreenObject <- qcByCmdscale(
 )
 
 # Check class balance in the training data
-checkClassBalance(CrcBiomeScreenObject$SampleData$study_condition)
+checkClassBalance(CrcBiomeScreenObject@SampleData$study_condition)
 
 # Load validation data
-data("ValidationData_curated")
+data("ZellerG_2014_RelativeAbundance")
 
 # Create CrcBiomeScreenObject for validation data
 ValidationData <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = ValidationData_curated[[1]]@assays@data@listData$relative_abundance,
-  TaxaData = ValidationData_curated[[1]]@rowLinks$nodeLab,
-  SampleData = ValidationData_curated[[1]]@colData
+  RelativeAbundance = ZellerG_2014_RelativeAbundance[[1]]@assays@data@listData$relative_abundance,
+  TaxaData = ZellerG_2014_RelativeAbundance[[1]]@rowLinks$nodeLab,
+  SampleData = ZellerG_2014_RelativeAbundance[[1]]@colData
 )
 
 # Process validation data similarly to training data
 ValidationData <- SplitTaxas(ValidationData)
 ValidationData <- KeepTaxonomicLevel(ValidationData,level = "Genus")
-ValidationData <- NormalizeData(ValidationData, method = "GMPR",level = "Genus")
+ValidationData <- NormalizeData(ValidationData, method = "GMPR",
+                                level = "Genus")
 
 # Ensure consistent features between training and validation data
-ValidationData$NormalizedData <- ValidationData$NormalizedData[, 
-  colnames(ValidationData$NormalizedData) %in% colnames(CrcBiomeScreenObject$NormalizedData)]
+ValidationData@NormalizedData <- ValidationData@NormalizedData[, 
+  colnames(ValidationData@NormalizedData) %in% colnames(CrcBiomeScreenObject@NormalizedData)]
 
-CrcBiomeScreenObject$NormalizedData <- CrcBiomeScreenObject$NormalizedData[, 
-  colnames(CrcBiomeScreenObject$NormalizedData) %in% colnames(ValidationData$NormalizedData)]
+CrcBiomeScreenObject@NormalizedData <- CrcBiomeScreenObject@NormalizedData[, 
+  colnames(CrcBiomeScreenObject@NormalizedData) %in% colnames(ValidationData@NormalizedData)]
 
 # Filter validation data
 ValidationData_filtered <- FilterDataSet(
@@ -442,7 +443,7 @@ ValidationData_filtered_qc <- RunScreening(
   # Input data
   obj = CrcBiomeScreenObject,
   # Model and data splitting
-  model = "RF",
+  model_type = "RF",
   partition = 0.7,
   split.requirement = list(
     label = c("control", "CRC"),

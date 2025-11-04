@@ -12,134 +12,66 @@
 #' @examples
 #' # Keep only the genus level data
 #' CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
-
+#' @title Summarize abundance data at a given taxonomic level
+#' @description
+#' Aggregate absolute abundance data in a \linkS4class{CrcBiomeScreen} object
+#' to a specified taxonomic level (e.g. "Genus" or "Family").
+#'
+#' @param CrcBiomeScreenObject A \linkS4class{CrcBiomeScreen} object.
+#' @param level Taxonomic level to summarize to. One of
+#' "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species".
+#'
+#' @return The same \linkS4class{CrcBiomeScreen} object, updated with a slot
+#' \code{@TaxaLevelData} a new data frame in
+#' \code{@GenusLevelData} (or the corresponding level).
+#' @export
 KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
-  taxa_df <- as.data.frame(CrcBiomeScreenObject$TaxaData, stringsAsFactors = FALSE)
+
+  # Extract and validate data
+  taxa_df <- as.data.frame(getTaxaData(CrcBiomeScreenObject), stringsAsFactors = FALSE)
+  ab_df   <- as.data.frame(getAbsoluteAbundance(CrcBiomeScreenObject), stringsAsFactors = FALSE)
+
   valid_levels <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
-  if (!level %in% valid_levels) stop("Invalid level.")
+  if (!level %in% valid_levels)
+    stop("Invalid level. Choose one of: ", paste(valid_levels, collapse = ", "))
 
-  LevelData <-
-    CrcBiomeScreenObject$AbsoluteAbundance %>%
-    as.data.frame() %>%
-    dplyr::mutate(tax_level = CrcBiomeScreenObject$TaxaData[[level]]) %>%
-    dplyr::filter(!is.na(tax_level)) %>%
-    rstatix::group_by(tax_level) %>%
-    dplyr::summarise_all(sum) %>%
-    tibble::column_to_rownames("tax_level") %>%
-    t() %>%
-    as.data.frame()
+  if (!level %in% colnames(taxa_df))
+    stop(paste0("Column '", level, "' not found in TaxaData."))
 
-  # For each taxa (a row in TaxaData), select the group name: first try the target level, if NA, fall back to the previous level, and finally fall back to OriginalTaxa
+  # Define helper: pick most appropriate grouping name
   pick_group <- function(row) {
     idx <- match(level, valid_levels)
     for (i in idx:1) {
       val <- row[[ valid_levels[i] ]]
-      if (!is.na(val) && nzchar(as.character(val))) return(as.character(val))
+      if (!is.na(val) && nzchar(as.character(val)))
+        return(as.character(val))
     }
-
-    if (!is.na(row[["OriginalTaxa"]]) && nzchar(as.character(row[["OriginalTaxa"]]))) {
+    # fallback to row name if all missing
+    if (!is.na(row[["OriginalTaxa"]]) && nzchar(as.character(row[["OriginalTaxa"]])))
       return(as.character(row[["OriginalTaxa"]]))
-    }
     return(NA_character_)
   }
 
-  group_vec <- apply(taxa_df[, valid_levels], 1, pick_group)
-  # Remove the _repeated suffixes
+  # Construct grouping vector
+  group_vec <- apply(taxa_df[, valid_levels[valid_levels %in% colnames(taxa_df)]], 1, pick_group)
+
+  # cleanup repeated suffixes
   group_vec <- gsub("(_uncultured)+$", "_uncultured", group_vec)
   group_vec <- gsub("(_unclassified)+$", "_unclassified", group_vec)
   group_vec <- gsub("(_unknown)+$", "_unknown", group_vec)
 
-  ab <- as.matrix(CrcBiomeScreenObject$AbsoluteAbundance)
-  if (nrow(ab) != length(group_vec)) stop("Column count of abundance does not match number of taxa entries.")
+  if (nrow(ab_df) != length(group_vec)) {
+    stop("Row count of AbsoluteAbundance does not match number of taxa entries.")
+  }
 
-  grouped <- rowsum(ab, group = group_vec, na.rm = TRUE)  # result: rows = groups, cols = samples
-  LevelData <- as.data.frame(LevelData, stringsAsFactors = FALSE)
+  # Aggregate by selected level
+  grouped <- rowsum(as.matrix(ab_df), group = group_vec, na.rm = TRUE)
+  grouped <- as.data.frame(grouped, stringsAsFactors = FALSE)
 
-  CrcBiomeScreenObject$TaxaLevelData[[paste0(level, "LevelData")]] <- LevelData
+  # Store summarized data into the corresponding slot
+  # we store under a unified slot (e.g., GenusLevelData) for simplicity
+  CrcBiomeScreenObject@TaxaLevelData <- list()
+  CrcBiomeScreenObject@TaxaLevelData[[paste0(level, "LevelData")]] <- grouped
+
   return(CrcBiomeScreenObject)
 }
-
-
-
-# KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
-#   # Ensure the user-provided level is valid
-#   valid_levels <- colnames(CrcBiomeScreenObject$TaxaData)
-#   if (!level %in% valid_levels) {
-#     stop(paste("Invalid taxonomic level provided. Please choose from:",
-#                paste(valid_levels, collapse = ", ")))
-#   }
-#
-#   level_sym <- rlang::sym(level)
-#
-#   LevelData <-
-#     CrcBiomeScreenObject$AbsoluteAbundance %>%
-#     as.data.frame() %>%
-#     dplyr::mutate(tax_level = CrcBiomeScreenObject$TaxaData[[level]]) %>%
-#     rstatix::group_by(tax_level) %>%
-#     dplyr::summarise_all(sum) %>%
-#     tibble::column_to_rownames("tax_level") %>%
-#     t() %>%
-#     as.data.frame()
-#
-#   # Remove _uncultured/_unclassified/unknown repeatedly at the end of the names
-#   rownames(LevelData) <- gsub("(_uncultured)+$", "_uncultured", rownames(LevelData))
-#   rownames(LevelData) <- gsub("(_unclassified)+$", "_unclassified", rownames(LevelData))
-#   rownames(LevelData) <- gsub("(_unknown)+$", "_unknown", rownames(LevelData))
-#
-#   CrcBiomeScreenObject$TaxaLevelData[[paste0(level, "LevelData")]] <- LevelData
-#
-#   return(CrcBiomeScreenObject)
-# }
-
-
-# KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
-#   # Ensure the user-provided level is valid
-#   valid_levels <- colnames(CrcBiomeScreenObject$TaxaData)
-#   if (!level %in% valid_levels) {
-#     stop(paste("Invalid taxonomic level provided. Please choose from:", paste(valid_levels, collapse = ", ")))
-#   }
-#
-#   # Use rlang::sym() and !! to convert the string 'level' into a variable name
-#   # this allows dplyr to correctly use the column name specified by the user
-#   level_sym <- rlang::sym(level)
-#
-#   LevelData <-
-#     CrcBiomeScreenObject$AbsoluteAbundance %>%
-#     as.data.frame() %>%
-#     # Use !!level_sym to dynamically select the taxonomic column
-#     dplyr::mutate(tax_level = CrcBiomeScreenObject$TaxaData[[level]]) %>%
-#     rstatix::group_by(tax_level) %>%
-#     dplyr::summarise_all(sum) %>%
-#     tibble::column_to_rownames("tax_level") %>%
-#     t() %>%
-#     as.data.frame()
-#
-#   # Change the key name in the returned object to make it more generic
-#   CrcBiomeScreenObject$TaxaLevelData[[paste0(level, "LevelData")]] <- LevelData
-#
-#   return(CrcBiomeScreenObject)
-# }
-
-# KeepTaxonomicLevel <- function(CrcBiomeScreenObject) {
-#
-#   CrcBiomeScreenObject$GenusLevelData <-
-#
-#     CrcBiomeScreenObject$AbsoluteAbundance %>%
-#
-#     as.data.frame() %>%
-#
-#     mutate(genus = CrcBiomeScreenObject$TaxaData$Genus) %>%
-#
-#     rstatix::group_by(genus) %>%
-#
-#     summarise_all(sum) %>%
-#
-#     column_to_rownames("genus") %>%
-#
-#     t() %>%
-#
-#     as.data.frame()
-#
-#   return(CrcBiomeScreenObject)
-#
-# }

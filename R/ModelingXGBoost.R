@@ -44,9 +44,9 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
     subsample = c(0.5, 0.75, 1)
   )
   # Prepare training data
-  train_data <- CrcBiomeScreenObject$ModelData$Training
-  label_train <- CrcBiomeScreenObject$ModelData$TrainLabel
-  label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject$ModelData$TrainLabel))
+  train_data <- CrcBiomeScreenObject@ModelData$Training
+  label_train <- CrcBiomeScreenObject@ModelData$TrainLabel
+  label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject@ModelData$TrainLabel))
   # # Suppose Positive is majority class.  Upweight Negative by ratio:
   # w_pos <- 1
   # w_neg <- nrow(train_data[train_data$Class=="Positive",]) /
@@ -72,31 +72,43 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
     # allowParallel = TRUE
   )
 
-  # model_weights <- model_weights[CrcBiomeScreenObject$ModelData$TrainLabel]
+  # model_weights <- model_weights[CrcBiomeScreenObject@ModelData$TrainLabel]
 
   train_data <- as.data.frame(train_data)
   train_data$label_train <- as.factor(label_train)
 
-  withr::with_seed(123, {
   # Train the model using caret
-  model_fit <- caret::train(label_train ~ .,
-    data = train_data,
-    method = "xgbTree",
-    metric = "ROC",
-    trControl = ctrl,
-    tuneGrid = tune_grid,
-    weights = weights,
-    verbose = TRUE
-  )})
+  # suppressWarnings(): caret internally uses `ntree_limit`, deprecated in xgboost ≥1.6.
+  # This does not affect model behavior; warning suppressed for cleaner Bioconductor build logs.
+  withr::with_seed(123, {
+    old_warn <- getOption("warn")
+    options(warn = -1)
+    sink(tempfile())
+    on.exit({
+      sink(NULL)
+      options(warn = old_warn)
+    }, add = TRUE)
+
+    model_fit <- caret::train(
+      label_train ~ .,
+      data = train_data,
+      method = "xgbTree",
+      metric = "ROC",
+      trControl = ctrl,
+      tuneGrid = tune_grid,
+      weights = weights,
+      verbose = FALSE
+    )
+  })
 
   parallel::stopCluster(cl)
   foreach::registerDoSEQ()
 
-  CrcBiomeScreenObject$ModelResult$XGBoost <- list(
+  CrcBiomeScreenObject@ModelResult$XGBoost <- list(
     model = model_fit,
     bestTune = model_fit$bestTune
   )
-  attr(CrcBiomeScreenObject$ModelResult$XGBoost, "TaskName") <- TaskName
+  attr(CrcBiomeScreenObject@ModelResult$XGBoost, "TaskName") <- TaskName
 
   return(CrcBiomeScreenObject)
 }

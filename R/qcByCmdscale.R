@@ -19,10 +19,10 @@
 #'
 #' @return A modified \code{CrcBiomeScreenObject} where:
 #' \itemize{
-#'   \item \code{$NormalizedData} contains filtered data with outliers removed.
-#'   \item \code{$SampleData} is updated to exclude outlier samples.
-#'   \item \code{$OutlierSamples} is a character vector of sample IDs identified as outliers.
-#'   \item \code{$OrginalNormalizedData} stores the unfiltered data matrix before QC.
+#'   \item \code{NormalizedData} contains filtered data with outliers removed.
+#'   \item \code{SampleData} is updated to exclude outlier samples.
+#'   \item \code{OutlierSamples} is a character vector of sample IDs identified as outliers.
+#'   \item \code{OrginalNormalizedData} stores the unfiltered data matrix before QC.
 #' }
 #'
 #' @details
@@ -47,8 +47,8 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
                          threshold_sd = 1,
                          plot = TRUE) {
   # Extract normalized data and sample IDs
-  study_data <- CrcBiomeScreenObject$NormalizedData
-  sampleID <- CrcBiomeScreenObject$SampleData$sampleID
+  study_data <- CrcBiomeScreenObject@NormalizedData
+  sampleID <- CrcBiomeScreenObject@SampleData$sampleID
 
   # Step 1: Compute Euclidean distance matrix and apply classical MDS
   dist_data <- dist(study_data)
@@ -111,13 +111,13 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
   }
 
   # Step 5: Update the object
-  CrcBiomeScreenObject$OrginalNormalizedData <- study_data
-  CrcBiomeScreenObject$NormalizedData <- study_data[!is_outlier, , drop = FALSE]
-  CrcBiomeScreenObject$SampleData <- CrcBiomeScreenObject$SampleData[!is_outlier, , drop = FALSE]
+  CrcBiomeScreenObject@OrginalNormalizedData <- study_data
+  CrcBiomeScreenObject@NormalizedData <- study_data[!is_outlier, , drop = FALSE]
+  CrcBiomeScreenObject@SampleData <- CrcBiomeScreenObject@SampleData[!is_outlier, , drop = FALSE]
   if(!is.null(outliers)){
     attr(outliers, "QC") <- TaskName
     attr(outliers, "OutlierSamples") <- length(outliers)
-    CrcBiomeScreenObject$OutlierSamples <- outliers
+    CrcBiomeScreenObject@OutlierSamples <- outliers
   }
 
   return(CrcBiomeScreenObject)
