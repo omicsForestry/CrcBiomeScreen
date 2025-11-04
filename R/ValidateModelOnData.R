@@ -30,20 +30,20 @@ ValidateModelOnData <- function(
     TrueLabel = NULL,
     condition_col = "study_condition",
     PlotAUC = NULL) {
-  if (!condition_col %in% colnames(ValidationData$SampleData)) {
+  if (!condition_col %in% colnames(ValidationData@SampleData)) {
     stop(sprintf("Condition column", condition_col, "not found in SampleData."))
   }
   # Load the model
   if (model_type == "RF") {
-    rf.model <- CrcBiomeScreenObject$EvaluateResult$RF$RF.Model
-    probs.ValidationData.rf <- predict(rf.model, data = ValidationData$NormalizedData, type = "response")$predictions
+    rf.model <- CrcBiomeScreenObject@EvaluateResult$RF$RF.Model
+    probs.ValidationData.rf <- predict(rf.model, data = ValidationData@NormalizedData, type = "response")$predictions
     probs.ValidationData.rf.prob <- probs.ValidationData.rf[, TrueLabel]
-    rownames(probs.ValidationData.rf) <- rownames(ValidationData$NormalizedData)
+    rownames(probs.ValidationData.rf) <- rownames(ValidationData@NormalizedData)
     # Actual labels
-    actual.classes.rf <- as.factor(ValidationData$SampleData$study_condition)
+    actual.classes.rf <- as.factor(ValidationData@SampleData$study_condition)
 
     # calculating the ROC Curve
-    roc.curve.rf <- roc(actual.classes.rf, probs.ValidationData.rf.prob, levels = levels(as.factor(ValidationData$SampleData$study_condition)))
+    roc.curve.rf <- roc(actual.classes.rf, probs.ValidationData.rf.prob, levels = levels(as.factor(ValidationData@SampleData$study_condition)))
 
     # Plot
     if (PlotAUC == TRUE) {
@@ -51,7 +51,7 @@ ValidateModelOnData <- function(
       plot(roc.curve.rf, print.auc = TRUE, print.thres = TRUE)
       dev.off()
     }
-    CrcBiomeScreenObject$PredictResult[["RF"]][[TaskName]] <-
+    CrcBiomeScreenObject@PredictResult[["RF"]][[TaskName]] <-
       list(
         # Store the probabilities here
         predictions = probs.ValidationData.rf,
@@ -59,13 +59,13 @@ ValidateModelOnData <- function(
         AUC = auc(roc.curve.rf)
       )
   } else if (model_type == "XGBoost") {
-    xgb.model <- CrcBiomeScreenObject$ModelResult$XGBoost$model
+    xgb.model <- CrcBiomeScreenObject@ModelResult$XGBoost$model
 
     # Test the model
-    test.pred.prob.xgb <- predict(xgb.model, newdata = ValidationData$NormalizedData, type = "prob")[[TrueLabel]]
+    test.pred.prob.xgb <- predict(xgb.model, newdata = ValidationData@NormalizedData, type = "prob")[[TrueLabel]]
 
     # Calculate AUC
-    roc.curve.xgb <- roc(ValidationData$SampleData$study_condition, test.pred.prob.xgb)
+    roc.curve.xgb <- roc(ValidationData@SampleData$study_condition, test.pred.prob.xgb)
     auc.value.xgb <- auc(roc.curve.xgb)
 
     # Plot the ROC curve
@@ -76,11 +76,11 @@ ValidateModelOnData <- function(
     }
 
     predictions_df <- data.frame(
-      SampleID = rownames(ValidationData$NormalizedData),
+      SampleID = rownames(ValidationData@NormalizedData),
       Prediction = test.pred.prob.xgb
     )
 
-    CrcBiomeScreenObject$PredictResult[["XGBoost"]][[TaskName]] <-
+    CrcBiomeScreenObject@PredictResult[["XGBoost"]][[TaskName]] <-
       list(
         predictions = predictions_df,
         roc.curve = roc.curve.xgb,

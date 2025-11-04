@@ -15,7 +15,7 @@
 #' CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", level = "Genus")
 
 NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NULL) {
-  Data <- CrcBiomeScreenObject$TaxaLevelData[[paste0(level, "LevelData")]]
+  Data <- CrcBiomeScreenObject@TaxaLevelData[[paste0(level, "LevelData")]]
 
   if (method == "TSS") {
     # Calculate the total number of counts in each sample
@@ -39,9 +39,9 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NU
     stop("Invalid method. Please choose either 'TSS' or 'GMPR'.")
   }
 
-  CrcBiomeScreenObject$NormalizedData <- Data
-  attr(CrcBiomeScreenObject$NormalizedData, "NormalizationMethod") <- method
-  attr(CrcBiomeScreenObject$NormalizedData, "Timestamp") <- Sys.time()
+  CrcBiomeScreenObject@NormalizedData <- as.data.frame(t(Data))
+  attr(CrcBiomeScreenObject@NormalizedData, "NormalizationMethod") <- method
+  attr(CrcBiomeScreenObject@NormalizedData, "Timestamp") <- Sys.time()
 
   return(CrcBiomeScreenObject)
 }

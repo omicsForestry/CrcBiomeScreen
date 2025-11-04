@@ -25,7 +25,8 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
                        TaskName = NULL,
                        TrueLabel = NULL,
                        num_cores = NULL) {
-  folds.rf <- caret::createFolds(CrcBiomeScreenObject$ModelData$TrainLabel, k = k.rf)
+
+  folds.rf <- caret::createFolds(CrcBiomeScreenObject@ModelData$TrainLabel, k = k.rf)
 
   # Calculate the number of cores
   cl <- makePSOCKcluster(num_cores)
@@ -44,9 +45,9 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   grid.rf$AUC <- foreach(i = seq_len(nrow(grid.rf)), .combine = c, .packages = c("ranger", "pROC")) %dopar% {
     aucs <- vapply(seq_len(k.rf), function(j) {
       val.indices <- folds.rf[[j]]
-      val.data <- CrcBiomeScreenObject$ModelData$Training[val.indices, ]
-      train.fold.data <- as.data.frame(CrcBiomeScreenObject$ModelData$Training[-val.indices, ])
-      train.fold.data$TrainLabel <- as.factor(CrcBiomeScreenObject$ModelData$TrainLabel[-val.indices])
+      val.data <- CrcBiomeScreenObject@ModelData$Training[val.indices, ]
+      train.fold.data <- as.data.frame(CrcBiomeScreenObject@ModelData$Training[-val.indices, ])
+      train.fold.data$TrainLabel <- as.factor(CrcBiomeScreenObject@ModelData$TrainLabel[-val.indices])
 
       # Class weights in each fold
       class_weights <- table(train.fold.data$TrainLabel)
@@ -68,7 +69,7 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
       )
       # Validation data prediction
       predictions <- predict(model, data = val.data, type = "response")$predictions
-      val.Label <- CrcBiomeScreenObject$ModelData$TrainLabel[val.indices]
+      val.Label <- CrcBiomeScreenObject@ModelData$TrainLabel[val.indices]
       roc.obj <- roc(val.Label, predictions[, TrueLabel])
       auc(roc.obj)
     }, FUN.VALUE = numeric(1))
@@ -85,8 +86,8 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   best.params.index.rf <- which.max(grid.rf$AUC)
   best.params.rf <- grid.rf[best.params.index.rf, ]
   # Save the best parameters
-  CrcBiomeScreenObject$ModelResult$RF <- list(grid.para = grid.rf, best.params = best.params.rf)
-  attr(CrcBiomeScreenObject$ModelResult$RF, "TaskName") <- TaskName
+  CrcBiomeScreenObject@ModelResult$RF <- list(grid.para = grid.rf, best.params = best.params.rf)
+  attr(CrcBiomeScreenObject@ModelResult$RF, "TaskName") <- TaskName
 
   return(CrcBiomeScreenObject)
 }

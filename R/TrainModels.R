@@ -48,7 +48,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   }
 
   # ---- Input check ----
-  if (is.null(CrcBiomeScreenObject$ModelData)) {
+  if (is.null(CrcBiomeScreenObject@ModelData)) {
     stop("ModelData is missing in CrcBiomeScreenObject. Please run SplitDataSet first.")
   }
 

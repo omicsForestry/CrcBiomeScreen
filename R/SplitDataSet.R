@@ -8,7 +8,7 @@
 #' @importFrom dplyr mutate across
 #' @importFrom tidyr separate
 #'
-#' @return CrcBiomeScreenObject$ModelData
+#' @return CrcBiomeScreenObject@ModelData
 #' @export
 #'
 #' @examples CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject,
@@ -28,13 +28,13 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
   if (is.null(partition) || partition <= 0 || partition >= 1) {
     stop("Partition must be a value between 0 and 1.")
   }
-  if (!condition_col %in% colnames(CrcBiomeScreenObject$SampleData)) {
+  if (!condition_col %in% colnames(CrcBiomeScreenObject@SampleData)) {
     stop(sprintf("Condition column", condition_col, "not found in SampleData."))
   }
 
   # Select the data based on the label
-  sample_condition <- CrcBiomeScreenObject$SampleData[[condition_col]]
-  data <- CrcBiomeScreenObject$NormalizedData[sample_condition %in% label, ]
+  sample_condition <- CrcBiomeScreenObject@SampleData[[condition_col]]
+  data <- CrcBiomeScreenObject@NormalizedData[sample_condition %in% label, ]
   sample_condition <- sample_condition[sample_condition %in% label]
 
   # Check if the data is empty
@@ -71,7 +71,7 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
   attr(ModelData, "Training Size") <- nrow(train)
   attr(ModelData, "Test Size") <- nrow(test)
 
-  CrcBiomeScreenObject$ModelData <- ModelData
+  CrcBiomeScreenObject@ModelData <- ModelData
 
   return(CrcBiomeScreenObject)
 }

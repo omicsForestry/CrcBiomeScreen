@@ -15,16 +15,17 @@
 FilterDataSet <- function(CrcBiomeScreenObject = NULL,
                           label = NULL,
                           condition_col = "study_condition") {
+
   if (is.null(CrcBiomeScreenObject)) stop("CrcBiomeScreenObject cannot be NULL.")
   if (is.null(label)) stop("Label cannot be NULL.")
-  if (!condition_col %in% colnames(CrcBiomeScreenObject$SampleData)) {
+  if (!condition_col %in% colnames(CrcBiomeScreenObject@SampleData)) {
     stop(sprintf("Condition column", condition_col, "not found in SampleData."))
   }
 
   # Filter the data based on the specified label
-  sample_condition <- CrcBiomeScreenObject$SampleData[[condition_col]]
-  data <- CrcBiomeScreenObject$NormalizedData[sample_condition %in% label, ]
-  sampledata <- CrcBiomeScreenObject$SampleData[sample_condition %in% label, ]
+  sample_condition <- CrcBiomeScreenObject@SampleData[[condition_col]]
+  data <- CrcBiomeScreenObject@NormalizedData[sample_condition %in% label,]
+  sampledata <- CrcBiomeScreenObject@SampleData[sample_condition %in% label, ]
 
   # Checck if any data is found
   if (nrow(data) == 0) stop("No data found for the specified label.")
@@ -40,8 +41,8 @@ FilterDataSet <- function(CrcBiomeScreenObject = NULL,
   attr(FilteredData, "Timestamp") <- Sys.time()
   attr(FilteredData, "Filtered Size") <- nrow(data)
 
-  CrcBiomeScreenObject$NormalizedData <- FilteredData$NormalizedData
-  CrcBiomeScreenObject$SampleData <- FilteredData$SampleData
+  CrcBiomeScreenObject@NormalizedData <- FilteredData$NormalizedData
+  CrcBiomeScreenObject@SampleData <- FilteredData$SampleData
 
   return(CrcBiomeScreenObject)
 }

@@ -30,9 +30,9 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
   doParallel::registerDoParallel(cl)
 
   # Prepare training data
-  train_data <- CrcBiomeScreenObject$ModelData$Training
-  label_train <- as.factor(CrcBiomeScreenObject$ModelData$TrainLabel)
-  label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject$ModelData$TrainLabel))
+  train_data <- CrcBiomeScreenObject@ModelData$Training
+  label_train <- as.factor(CrcBiomeScreenObject@ModelData$TrainLabel)
+  label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject@ModelData$TrainLabel))
 
   # Define caret trainControl
   ctrl <- caret::trainControl(
@@ -58,25 +58,38 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
   train_data$label_train <- label_train
 
   # Train the model using caret
-  withr::with_seed(123, {
   # Train the model using caret
-  model_fit <- caret::train(label_train ~ .,
-    data = train_data,
-    method = "xgbTree",
-    metric = "ROC",
-    trControl = ctrl,
-    tuneGrid = tune_grid,
-    verbose = TRUE
-  )})
+  # suppressWarnings(): caret internally uses `ntree_limit`, deprecated in xgboost ≥1.6.
+  # This does not affect model behavior; warning suppressed for cleaner Bioconductor build logs.
+  withr::with_seed(123, {
+    old_warn <- getOption("warn")
+    options(warn = -1)
+    sink(tempfile())
+    on.exit({
+      sink(NULL)
+      options(warn = old_warn)
+    }, add = TRUE)
+
+    model_fit <- caret::train(
+      label_train ~ .,
+      data = train_data,
+      method = "xgbTree",
+      metric = "ROC",
+      trControl = ctrl,
+      tuneGrid = tune_grid,
+      verbose = FALSE
+    )
+  })
+
 
   parallel::stopCluster(cl)
   foreach::registerDoSEQ()
 
-  CrcBiomeScreenObject$ModelResult$XGBoost_noweights <- list(
+  CrcBiomeScreenObject@ModelResult$XGBoost_noweights <- list(
     model = model_fit,
     bestTune = model_fit$bestTune
   )
-  attr(CrcBiomeScreenObject$ModelResult$XGBoost_noweights, "TaskName") <- TaskName
+  attr(CrcBiomeScreenObject@ModelResult$XGBoost_noweights, "TaskName") <- TaskName
 
   return(CrcBiomeScreenObject)
 }

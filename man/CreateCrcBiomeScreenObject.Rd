@@ -2,7 +2,7 @@
 % Please edit documentation in R/CreateCrcBiomeScreenObject.R
 \name{CreateCrcBiomeScreenObject}
 \alias{CreateCrcBiomeScreenObject}
-\title{Create the CrcBiomeScreenObject for analysis}
+\title{Create a CrcBiomeScreen S4 object for microbiome-based CRC analysis}
 \usage{
 CreateCrcBiomeScreenObject(
   AbsoluteAbundance = NULL,
@@ -12,29 +12,48 @@ CreateCrcBiomeScreenObject(
 )
 }
 \arguments{
-\item{AbsoluteAbundance}{A numeric matrix or data frame containing absolute abundance data}
+\item{AbsoluteAbundance}{A numeric matrix or data frame containing absolute abundance data.}
 
-\item{TaxaData}{A data frame containing taxonomic information for each feature}
+\item{TaxaData}{A data frame containing taxonomic information for each feature.}
 
-\item{SampleData}{A data frame containing sample metadata}
+\item{SampleData}{A data frame containing sample-level metadata.}
 
-\item{RelativeAbundance}{A numeric matrix or data frame containing relative abundance data}
+\item{RelativeAbundance}{A numeric matrix or data frame containing relative abundance data.}
 }
 \value{
-An object with data
+A \linkS4class{CrcBiomeScreen} object containing the following slots:
+\itemize{
+\item \code{AbsoluteAbundance}: Absolute abundance data.
+\item \code{RelativeAbundance}: Relative abundance data.
+\item \code{TaxaData}: Taxonomic annotations.
+\item \code{SampleData}: Sample metadata.
+\item \code{ModelData}, \code{ModelResult}, \code{EvaluateResult}, \code{PredictResult}: Optional model results and evaluation outputs.
+}
 }
 \description{
-Creates the CrcBiomeScreenObject to contain the data for analysis.
+Constructor for the \code{CrcBiomeScreen} S4 class.
+This function creates a structured container for microbiome data,
+including absolute and relative abundance matrices, taxonomic annotations,
+and sample metadata. It ensures compatibility with downstream modelling
+and evaluation functions within the CrcBiomeScreen package.
+}
+\details{
+If only relative abundance data are supplied, absolute abundance is estimated
+using the total number of reads in \code{SampleData$number_reads}.
 }
 \examples{
 if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
   toydata <- curatedMetagenomicData::curatedMetagenomicData(
     "ThomasAM_2018a.relative_abundance",
     dryrun = FALSE, rownames = "short"
-  )}
+  )
   CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
     RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
     TaxaData = toydata[[1]]@rowLinks$nodeLab,
     SampleData = toydata[[1]]@colData
   )
+}
+}
+\seealso{
+\linkS4class{CrcBiomeScreen}
 }

@@ -18,7 +18,15 @@
 #' @examples CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 
 SplitTaxas <- function(CrcBiomeScreenObject) {
-  taxa_vec <- as.character(CrcBiomeScreenObject$TaxaData)
+  taxa_data <- getTaxaData(CrcBiomeScreenObject)
+
+  if (is.data.frame(taxa_data)) {
+    taxa_vec <- as.character(taxa_data[[1]])
+  } else if (is.vector(taxa_data)) {
+    taxa_vec <- as.character(taxa_data)
+  } else {
+    stop("TaxaData must be a character vector or a single-column data.frame.")
+  }
 
   # detect QIIME D_ style
   if (any(grepl("D_\\d+__", taxa_vec))) {
@@ -97,9 +105,10 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
                                                  gsub("(_unclassified)+$", "_unclassified",
                                                       gsub("(_unknown)+$", "_unknown", .))))))
 
-  CrcBiomeScreenObject$TaxaData <- as.data.frame(taxa_df, stringsAsFactors = FALSE)
-  rownames(CrcBiomeScreenObject$TaxaData) <- taxa_df$OriginalTaxa
-  CrcBiomeScreenObject$TaxaData <- CrcBiomeScreenObject$TaxaData[,-1]
+  CrcBiomeScreenObject@TaxaData <- as.data.frame(taxa_df, stringsAsFactors = FALSE)
+  rownames(CrcBiomeScreenObject@TaxaData) <- taxa_df$OriginalTaxa
+  CrcBiomeScreenObject@TaxaData <- CrcBiomeScreenObject@TaxaData[, -1]
+
   return(CrcBiomeScreenObject)
 }
 
