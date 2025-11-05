@@ -51,13 +51,14 @@ Imports:
     magrittr,
     parallel,
     withr,
-    SummarizedExperiment
+    SummarizedExperiment,
+    caret,
+    ranger
 Suggests:
     rstatix,
     Matrix,
     MASS,
     mgcv,
-    caret,
     ggplotify,
     ggpubr,
     ggrepel,
@@ -66,7 +67,6 @@ Suggests:
     Matrix,
     microbiome,
     phyloseq,
-    ranger,
     vegan,
     xgboost,
     gt,
