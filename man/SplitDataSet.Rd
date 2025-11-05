@@ -21,7 +21,7 @@ SplitDataSet(
 \item{condition_col}{The colname of label in SampleData}
 }
 \value{
-CrcBiomeScreenObject$ModelData
+CrcBiomeScreenObject@ModelData
 }
 \description{
 Split the dataset into training and test sets

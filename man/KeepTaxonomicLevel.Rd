@@ -2,19 +2,30 @@
 % Please edit documentation in R/KeepTaxonomicLevel.R
 \name{KeepTaxonomicLevel}
 \alias{KeepTaxonomicLevel}
-\title{Keep a specific taxonomic level}
+\title{Summarize abundance data at a given taxonomic level}
 \usage{
 KeepTaxonomicLevel(CrcBiomeScreenObject, level = "Genus")
 }
 \arguments{
-\item{CrcBiomeScreenObject}{A list or object containing 'AbsoluteAbundance' and 'TaxaData'.}
+\item{CrcBiomeScreenObject}{A \linkS4class{CrcBiomeScreen} object.}
 
-\item{level}{The taxonomic level to aggregate to (e.g., "Family", "Genus", "Species").}
+\item{level}{Taxonomic level to summarize to. One of
+"Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species".}
 }
 \value{
 The CrcBiomeScreenObject with a new data frame aggregated at the specified level.
+
+The same \linkS4class{CrcBiomeScreen} object, updated with a slot
+\code{@TaxaLevelData} a new data frame in
+\code{@GenusLevelData} (or the corresponding level).
 }
 \description{
+Aggregate absolute abundance data in a \linkS4class{CrcBiomeScreen} object
+to a specified taxonomic level (e.g. "Genus" or "Family").
+}
+\details{
+Keep a specific taxonomic level
+
 This function aggregates abundance data to a specified taxonomic level.
 }
 \examples{

@@ -75,11 +75,14 @@ The first example below, which uses the Thomas_2018_RelativeAbundance dataset, i
 data(Thomas_2018_RelativeAbundance, package = "CrcBiomeScreen")
 
 # Create the CrcBiomeScreenObject
-CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = Thomas_2018_RelativeAbundance[[1]]@assays@data@listData$relative_abundance,
-  TaxaData = Thomas_2018_RelativeAbundance[[1]]@rowLinks$nodeLab,
-  SampleData = Thomas_2018_RelativeAbundance[[1]]@colData
-)
+## Direct creation from TreeSummarizedExperiment
+
+# library(curatedMetagenomicData)
+# tse <- curatedMetagenomicData("ThomasAM_2018a.relative_abundance",
+#                               dryrun = FALSE, rownames = "short")[[1]]
+
+tse <- Thomas_2018_RelativeAbundance$`2021-03-31.ThomasAM_2018a.relative_abundance`
+CrcBiomeScreenObject <- CreateCrcBiomeScreenObjectFromTSE(tse)
 
 # Load the simple toy dataset from curatedMetagenomicData
 data(NHSBCSP_screeningData, package = "CrcBiomeScreen")

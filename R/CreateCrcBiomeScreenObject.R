@@ -54,7 +54,12 @@ CreateCrcBiomeScreenObject <- function(
     SampleData = NULL,
     RelativeAbundance = NULL
 ) {
-  # Check inputs -----------------------------------------------------------
+  # --- Optional: handle direct TreeSummarizedExperiment input ------------
+  if (inherits(AbsoluteAbundance, "TreeSummarizedExperiment")) {
+    return(CreateCrcBiomeScreenObjectFromTSE(AbsoluteAbundance))
+  }
+
+  # --- Check inputs ------------------------------------------------------
   if (is.null(RelativeAbundance) && is.null(AbsoluteAbundance)) {
     stop("Either RelativeAbundance or AbsoluteAbundance must be provided.")
   }
@@ -78,7 +83,7 @@ CreateCrcBiomeScreenObject <- function(
       data.frame()
   }
 
-  # Construct the object ---------------------------------------------------
+  # --- Construct the S4 object -------------------------------------------
   new("CrcBiomeScreen",
       AbsoluteAbundance = as.data.frame(AbsoluteAbundance),
       TaxaData = if (is.null(TaxaData)) data.frame() else as.data.frame(TaxaData),
@@ -93,7 +98,6 @@ CreateCrcBiomeScreenObject <- function(
       EvaluateResult = list(RF = NULL, XGBoost = NULL),
       PredictResult = NULL)
 }
-
 
 # Accessor methods ---------------------------------------------------------
 #' @title CrcBiomeScreen Class
