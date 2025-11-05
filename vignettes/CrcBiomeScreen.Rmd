@@ -25,18 +25,20 @@ knitr::opts_chunk$set(
 
 # Introduction
 
-Colorectal cancer (CRC) is one of the most common cancers worldwide, and the gut microbiome has been increasingly recognized as a key factor in CRC development and progression. The identification of microbiome-based biomarkers for CRC screening has great potential for early detection and improved patient outcomes.
+Microbiome research has become an increasingly important field for understanding the complex interactions between host health, disease, and environmental factors. Numerous studies have demonstrated that microbial community composition and function can provide predictive insights into a wide range of conditions, including cancer, metabolic, and inflammatory diseases. Translating these findings into robust and reproducible computational workflows remains a key challenge for the microbiome research community.
 
-`CrcBiomeScreen` is an R package designed specifically for colorectal cancer microbiome screening and analysis. The package provides a comprehensive workflow that integrates data preprocessing, normalization, machine learning-based classification, and model validation to identify microbiome signatures associated with CRC.
+`CrcBiomeScreen` is a Bioconductor package that provides a reproducible and modular workflow for microbiome-based disease screening and classification. Although originally designed for colorectal cancer (CRC) applications, the framework is disease-agnostic and can be applied to any case–control microbiome dataset. The package integrates data preprocessing, normalization, quality control, and machine learning-based classification into a streamlined and extensible pipeline.
 
-The main features of `CrcBiomeScreen` include:
+The Bioconductor ecosystem provides a standardized environment for reproducible omics analysis and emphasizes interoperability between data structures and statistical workflows. `CrcBiomeScreen` extends this principle to microbiome classification by supporting the use of Bioconductor core data containers such as `TreeSummarizedExperiment` and by providing accessor methods that facilitate integration with other packages (e.g., `phyloseq` and `curatedMetagenomicData`). This design ensures compatibility with existing Bioconductor workflows and promotes transparency, reproducibility, and reusability of microbiome-based models.
 
-- **Data preprocessing**: Taxonomic level splitting and filtering
-- **Normalization methods**: Support for two normalization approaches including GMPR and TSS
-- **Machine learning models**: Random Forest and XGBoost classifiers
-- **Model validation**: Cross-validation and external validation capabilities
-- **Quality control**: Built-in quality control using multidimensional scaling
-- **Streamlined workflow**: One-function screening pipeline
+Existing Bioconductor packages such as `microbiome`, `microbiomeMarker`, and `curatedMetagenomicData` provide powerful tools for microbiome data access, visualization, and differential abundance testing. However, there remains a gap in standardized machine learning workflows tailored for disease screening and cross-cohort validation. `CrcBiomeScreen` addresses this need by providing:
+
+- **Integrated preprocessing**: automated taxonomic splitting, filtering, and normalization (TSS and GMPR);
+- **Modeling interface**: built-in machine learning modules for Random Forest and XGBoost classification with class weighting for imbalanced data;
+- **Evaluation framework**: functions for cross-validation, ROC/F1-based performance metrics, and external validation;
+- **Quality control utilities**: MDS-based sample outlier detection and contamination-aware filtering.
+
+By bridging microbiome features with reproducible machine learning pipelines, `CrcBiomeScreen` complements existing Bioconductor tools and provides a flexible platform for developing, benchmarking, and validating microbiome-based predictive models.
 
 ## Installation
 
@@ -127,8 +129,11 @@ For data like **ASVs** or **OTUs** that do not contain taxonomic information in 
 ### Example  
 
 ```{r, eval = TRUE}
-# Split the taxa into multiple levels
-CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+# Split the taxa into multiple levels[If not done already]
+# CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+
+head(CrcBiomeScreenObject@TaxaData)
+colnames(CrcBiomeScreenObject@TaxaData) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
 
 # Keep only the genus level data
 CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
