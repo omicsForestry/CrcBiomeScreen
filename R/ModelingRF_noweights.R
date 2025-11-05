@@ -53,10 +53,6 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
       train.fold.data <- as.data.frame(CrcBiomeScreenObject@ModelData$Training[-val.indices, ])
       train.fold.data$TrainLabel <- as.factor(CrcBiomeScreenObject@ModelData$TrainLabel[-val.indices])
 
-      # Class weights in each fold
-      class_weights <- table(train.fold.data$TrainLabel)
-      class_weights <- sum(class_weights) / (length(class_weights) * class_weights)
-
       # Model training with the specified hyperparameters
       model <- ranger(
         formula = as.formula(paste("TrainLabel ~ .")),
@@ -65,7 +61,6 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
         mtry = grid.rf$mtry[i],
         min.node.size = grid.rf$node_size[i],
         sample.fraction = grid.rf$sample_size[i],
-        class.weights = class_weights,
         seed = 123,
         classification = TRUE,
         probability = TRUE,

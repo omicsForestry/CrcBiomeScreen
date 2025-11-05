@@ -95,6 +95,11 @@ CrcBiomeScreenObject_NHSBCSP_screeningData <- CreateCrcBiomeScreenObject(
   TaxaData = colnames(NHSBCSP_screeningData[,-c(1:2,646:647)]),
   SampleData = NHSBCSP_screeningData[,c(1:2,646:647)]
 )
+
+## Data exploration
+head(getTaxaData(CrcBiomeScreenObject))
+dim(getRelativeAbundance(CrcBiomeScreenObject))
+summary(getSampleData(CrcBiomeScreenObject)$age)
 ```
 
 ## Taxonomic data processing
@@ -132,14 +137,20 @@ For data like **ASVs** or **OTUs** that do not contain taxonomic information in 
 # Split the taxa into multiple levels[If not done already]
 # CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
 
-head(CrcBiomeScreenObject@TaxaData)
-colnames(CrcBiomeScreenObject@TaxaData) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+head(getTaxaData(CrcBiomeScreenObject))
+
+taxa <- getTaxaData(CrcBiomeScreenObject)
+colnames(taxa) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+
+setTaxaData(CrcBiomeScreenObject) <- taxa
+
+colnames(getTaxaData(CrcBiomeScreenObject))
 
 # Keep only the genus level data
 CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
 
 # Inspect processed data
-head(CrcBiomeScreenObject@TaxaData)
+head(getTaxaData(CrcBiomeScreenObject))
 ```
 
 ## Data normalization
@@ -164,24 +175,30 @@ For robust model evaluation, it's important to prepare independent validation da
 # Load validation data
 data("ZellerG_2014_RelativeAbundance")
 
+ValidationData_tse <- ZellerG_2014_RelativeAbundance$`2021-03-31.ZellerG_2014.relative_abundance`
+
 # Create CrcBiomeScreenObject for validation data
-ValidationData <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = ZellerG_2014_RelativeAbundance[[1]]@assays@data@listData$relative_abundance,
-  TaxaData = ZellerG_2014_RelativeAbundance[[1]]@rowLinks$nodeLab,
-  SampleData = ZellerG_2014_RelativeAbundance[[1]]@colData
-)
+ValidationData <- CreateCrcBiomeScreenObjectFromTSE(ValidationData_tse)
 
 # Process validation data similarly to training data
-ValidationData <- SplitTaxas(ValidationData)
+# ValidationData <- SplitTaxas(ValidationData)
+taxa <- getTaxaData(ValidationData)
+colnames(taxa) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+
+setTaxaData(ValidationData) <- taxa
+
 ValidationData <- KeepTaxonomicLevel(ValidationData,level = "Genus")
 ValidationData <- NormalizeData(ValidationData, method = "GMPR", level = "Genus")
 
+# Align features between training and validation data
+val_norm <- getNormalizedData(ValidationData)
+crc_norm <- getNormalizedData(CrcBiomeScreenObject)
 # Ensure consistent features between training and validation data
-ValidationData@NormalizedData <- ValidationData@NormalizedData[, 
-  colnames(ValidationData@NormalizedData) %in% colnames(CrcBiomeScreenObject@NormalizedData)]
-
-CrcBiomeScreenObject@NormalizedData <- CrcBiomeScreenObject@NormalizedData[, 
-  colnames(CrcBiomeScreenObject@NormalizedData) %in% colnames(ValidationData@NormalizedData)]
+val_norm <- val_norm[, colnames(val_norm) %in% colnames(crc_norm)]
+crc_norm <- crc_norm[, colnames(crc_norm) %in% colnames(val_norm)]
+# Set back the normalized data
+setNormalizedData(ValidationData) <- val_norm
+setNormalizedData(CrcBiomeScreenObject) <- crc_norm
 ```
 
 # Model training and evaluation
@@ -192,7 +209,8 @@ Before model training, we need to filter the data to include only CRC and contro
 
 ```{r, eval = TRUE}
 # Check the available labels in the data
-table(CrcBiomeScreenObject@SampleData$study_condition)
+
+table(getSampleData(CrcBiomeScreenObject)$study_condition)
 
 # Filter data to keep only CRC and control samples
 CrcBiomeScreenObject <- FilterDataSet(
@@ -202,7 +220,7 @@ CrcBiomeScreenObject <- FilterDataSet(
 )
 
 # Verify the filtering results
-table(CrcBiomeScreenObject@SampleData$study_condition)
+table(getSampleData(CrcBiomeScreenObject)$study_condition)
 
 # Split data into training (70%) and test (30%) sets
 CrcBiomeScreenObject <- SplitDataSet(
@@ -226,7 +244,7 @@ CrcBiomeScreenObject <- qcByCmdscale(
 )
 
 # Check class balance in the training data
-checkClassBalance(CrcBiomeScreenObject@ModelData$TrainLabel)
+checkClassBalance(getModelData(CrcBiomeScreenObject)$TrainLabel)
 ```
 
 ## Model training
@@ -239,7 +257,7 @@ CrcBiomeScreenObject <- TrainModels(
   CrcBiomeScreenObject,
   model_type = "RF",
   TaskName = "ToyData_RF",
-  ClassBalance = TRUE,
+  ClassWeights = TRUE,
   TrueLabel = "CRC",
   num_cores = 1
 )
@@ -249,7 +267,7 @@ CrcBiomeScreenObject <- TrainModels(
   CrcBiomeScreenObject,
   model_type = "XGBoost",
   TaskName = "ToyData_XGBoost",
-  ClassBalance = TRUE,
+  ClassWeights = TRUE,
   TrueLabel = "CRC",
   num_cores = 1
 )
@@ -334,14 +352,14 @@ Use the PredictCrcBiomeScreen() function to generate prediction probabilities fo
 # and 'MyNewData' is your new dataset (e.g., another CrcBiomeScreenObject or a data frame).
 
 # Generate predictions for the new dataset
-ValidationData_filtered_qc@PredictResult$XGBoost <- PredictCrcBiomeScreen(
+ValidationData_filtered_qc <- PredictCrcBiomeScreen(
     CrcBiomeScreenObject, 
-    newdata = ValidationData_filtered_qc@NormalizedData, # Use the appropriate data slot from your new data
+    newdata = getNormalizedData(ValidationData_filtered_qc), # Use the appropriate data slot from your new data
     model_type = "XGBoost"
 )
 # Inspect the predictions
-head(ValidationData_filtered_qc@PredictResult$XGBoost)
-predictions <- ValidationData_filtered_qc@PredictResult$XGBoost
+head(getPredictResult(ValidationData_filtered_qc)$XGBoost)
+predictions <- getPredictResult(ValidationData_filtered_qc)$XGBoost
 ```
 
 ## Step 2: Evaluate Model Performance
@@ -354,7 +372,7 @@ If your new dataset includes known true labels, you can evaluate the model's per
 # Evaluate the predictions
 evaluation_results <- EvaluateCrcBiomeScreen(
     predictions = predictions,
-    true_labels = ValidationData_filtered_qc@SampleData$study_condition, # Provide the actual true labels
+    true_labels = getSampleData(ValidationData_filtered_qc)$study_condition, # Provide the actual true labels
     TrueLabel = "CRC", # Specify the positive class label
     TaskName = "MyNewDatasetEvaluation" # A name for the output plot/files
 )
@@ -372,20 +390,19 @@ For users who want to run the entire screening workflow in one step, `CrcBiomeSc
 data(Thomas_2018_RelativeAbundance, package = "CrcBiomeScreen")
 
 # Create the CrcBiomeScreenObject
-CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = Thomas_2018_RelativeAbundance[[1]]@assays@data@listData$relative_abundance,
-  TaxaData = Thomas_2018_RelativeAbundance[[1]]@rowLinks$nodeLab,
-  SampleData = Thomas_2018_RelativeAbundance[[1]]@colData
-)
+tse <- Thomas_2018_RelativeAbundance$`2021-03-31.ThomasAM_2018a.relative_abundance`
+CrcBiomeScreenObject <- CreateCrcBiomeScreenObjectFromTSE(tse)
 
-# Split the taxa into multiple levels
-CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+taxa <- getTaxaData(CrcBiomeScreenObject)
+colnames(taxa) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+
+setTaxaData(CrcBiomeScreenObject) <- taxa
 
 # Keep only the genus level data
 CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
 
 # Inspect processed data
-head(CrcBiomeScreenObject@TaxaData)
+head(getTaxaData(CrcBiomeScreenObject))
 
 # Normalize using GMPR (Geometric Mean of Pairwise Ratios)
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR", level = "Genus")
@@ -406,30 +423,34 @@ CrcBiomeScreenObject <- qcByCmdscale(
 )
 
 # Check class balance in the training data
-checkClassBalance(CrcBiomeScreenObject@SampleData$study_condition)
+checkClassBalance(getModelData(CrcBiomeScreenObject)$TrainLabel)
 
 # Load validation data
 data("ZellerG_2014_RelativeAbundance")
 
+ValidationData_tse <- ZellerG_2014_RelativeAbundance$`2021-03-31.ZellerG_2014.relative_abundance`
 # Create CrcBiomeScreenObject for validation data
-ValidationData <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = ZellerG_2014_RelativeAbundance[[1]]@assays@data@listData$relative_abundance,
-  TaxaData = ZellerG_2014_RelativeAbundance[[1]]@rowLinks$nodeLab,
-  SampleData = ZellerG_2014_RelativeAbundance[[1]]@colData
-)
+ValidationData <- CreateCrcBiomeScreenObjectFromTSE(ValidationData_tse)
 
 # Process validation data similarly to training data
-ValidationData <- SplitTaxas(ValidationData)
+# ValidationData <- SplitTaxas(ValidationData)
+taxa <- getTaxaData(ValidationData)
+colnames(taxa) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
+
+setTaxaData(ValidationData) <- taxa
+
 ValidationData <- KeepTaxonomicLevel(ValidationData,level = "Genus")
-ValidationData <- NormalizeData(ValidationData, method = "GMPR",
-                                level = "Genus")
+ValidationData <- NormalizeData(ValidationData, method = "GMPR", level = "Genus")
 
+# Align features between training and validation data
+val_norm <- getNormalizedData(ValidationData)
+crc_norm <- getNormalizedData(CrcBiomeScreenObject)
 # Ensure consistent features between training and validation data
-ValidationData@NormalizedData <- ValidationData@NormalizedData[, 
-  colnames(ValidationData@NormalizedData) %in% colnames(CrcBiomeScreenObject@NormalizedData)]
-
-CrcBiomeScreenObject@NormalizedData <- CrcBiomeScreenObject@NormalizedData[, 
-  colnames(CrcBiomeScreenObject@NormalizedData) %in% colnames(ValidationData@NormalizedData)]
+val_norm <- val_norm[, colnames(val_norm) %in% colnames(crc_norm)]
+crc_norm <- crc_norm[, colnames(crc_norm) %in% colnames(val_norm)]
+# Set back the normalized data
+setNormalizedData(ValidationData) <- val_norm
+setNormalizedData(CrcBiomeScreenObject) <- crc_norm
 
 # Filter validation data
 ValidationData_filtered <- FilterDataSet(
@@ -457,7 +478,7 @@ ValidationData_filtered_qc <- RunScreening(
     label = c("control", "CRC"),
     condition_col = "study_condition"
   ),
-  ClassBalance = FALSE,
+  ClassWeights = FALSE,
   
   # Cross-validation and parallelization
   n_cv = 10,
@@ -480,7 +501,7 @@ ValidationData_filtered_qc <- RunScreening(
     label = c("control", "CRC"),
     condition_col = "study_condition"
   ),
-  ClassBalance = TRUE,
+  ClassWeights = TRUE,
   n_cv = 10,
   num_cores = 10,
   TaskName = "XGBoost_GMPR_toydata",
@@ -518,7 +539,7 @@ This function performs the complete workflow, including:
 
 ## Class imbalance
 
-- Enable `ClassBalance = TRUE` when dealing with imbalanced datasets
+- Enable `ClassWeights = TRUE` when dealing with imbalanced datasets
 - Monitor both sensitivity and specificity, not just overall accuracy
 - Consider stratified sampling when splitting datasets
 

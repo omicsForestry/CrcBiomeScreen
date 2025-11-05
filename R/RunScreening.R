@@ -9,7 +9,7 @@
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance
 #' @param num_cores Set the number of cores for parallel computing, default is NULL
 #' @param partition The number of partitions for cross-validation
-#' @param ClassBalance Whether to use class balancing in the model training, default is NULL
+#' @param ClassWeights Whether to use class weights in the model training, default is NULL
 #' @param n_cv The number of cross-validation folds, default is NULL
 #'
 #' @importFrom dplyr mutate across
@@ -38,7 +38,7 @@ RunScreening <- function(obj,
                          split.requirement = NULL, # c(label = c("control","CRC"),  condition_col = "study_condition")
                          TaskName = TaskName,
                          partition = NULL,
-                         ClassBalance = NULL,
+                         ClassWeights = NULL,
                          n_cv = NULL,
                          ValidationData = NULL,
                          TrueLabel = NULL,
@@ -46,7 +46,7 @@ RunScreening <- function(obj,
   # obj <- NormalizeData(obj, method = normalize_method)
   obj <- SplitDataSet(obj, label = split.requirement$label, condition_col = split.requirement$condition_col, partition = partition)
 
-  obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassBalance = ClassBalance, n_cv = n_cv)
+  obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassWeights = ClassWeights, n_cv = n_cv)
   obj <- EvaluateModel(obj, model_type = model_type, TaskName = paste0(TaskName, "_Test"), TrueLabel = TrueLabel, PlotAUC = TRUE)
 
   obj <- ValidateModelOnData(obj, model_type = model_type, ValidationData = ValidationData, TaskName = paste0(TaskName, "_Validation"), TrueLabel = TrueLabel, PlotAUC = TRUE)

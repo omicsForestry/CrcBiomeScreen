@@ -17,7 +17,7 @@ PredictCrcBiomeScreen <- function(
     CrcBiomeScreenObject,
     newdata,
     model_type = c("RF", "XGBoost")) {
-
+  colnames(newdata) <- make.names(colnames(newdata))
   if (model_type == "RF") {
     model <- CrcBiomeScreenObject@EvaluateResult$RF$RF.Model
     probs.ValidationData.rf <- predict(model, data = newdata, type = "response")$predictions
@@ -30,7 +30,7 @@ PredictCrcBiomeScreen <- function(
     predictions <- test.pred.prob.xgb
     rownames(predictions) <- rownames(newdata)
   }
-
-  return(predictions)
+  CrcBiomeScreenObject@PredictResult[[model_type]] <- predictions
+  return(CrcBiomeScreenObject)
 }
 
