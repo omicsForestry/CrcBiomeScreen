@@ -2,7 +2,7 @@
 #'
 #' @param CrcBiomeScreenObject  A \code{CrcBiomeScreenObject} containing normalized microbiome data, sample metadata, etc.
 #' @param model_type Select the method for modeling
-#' @param ClassBalance Choose using the class weights or not
+#' @param ClassWeights Choose using the class weights or not
 #' @param n_cv Set the number of cross validation
 #' @param TaskName A character string used to label the output
 #' @param TrueLabel This label is the future prediction target
@@ -27,14 +27,14 @@
 #' @examples CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
 #'   model_type = "RF",
 #'   TaskName = "ToyData_RF",
-#'   ClassBalance = TRUE,
+#'   ClassWeights = TRUE,
 #'   TrueLabel = "CRC",
 #'   num_cores = 10
 #' )
 #'
 TrainModels <- function(CrcBiomeScreenObject = NULL,
                         model_type = c("RF", "XGBoost"),
-                        ClassBalance = TRUE,
+                        ClassWeights = TRUE,
                         n_cv = 10,
                         TaskName = NULL,
                         TrueLabel = NULL,
@@ -55,7 +55,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   # ---- Run RF model ----
   withr::with_seed(123, {
   if ("RF" %in% model_type) {
-    if (ClassBalance) {
+    if (ClassWeights) {
       CrcBiomeScreenObject <- ModelingRF(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         k.rf = n_cv,
@@ -78,7 +78,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   # ---- Run XGBoost model ----
   withr::with_seed(123, {
   if ("XGBoost" %in% model_type) {
-    if (ClassBalance) {
+    if (ClassWeights) {
       CrcBiomeScreenObject <- ModelingXGBoost(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         k.rf = n_cv,

@@ -10,7 +10,7 @@ RunScreening(
   split.requirement = NULL,
   TaskName = TaskName,
   partition = NULL,
-  ClassBalance = NULL,
+  ClassWeights = NULL,
   n_cv = NULL,
   ValidationData = NULL,
   TrueLabel = NULL,
@@ -28,7 +28,7 @@ RunScreening(
 
 \item{partition}{The number of partitions for cross-validation}
 
-\item{ClassBalance}{Whether to use class balancing in the model training, default is NULL}
+\item{ClassWeights}{Whether to use class weights in the model training, default is NULL}
 
 \item{n_cv}{The number of cross-validation folds, default is NULL}
 

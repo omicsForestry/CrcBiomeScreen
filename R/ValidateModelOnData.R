@@ -33,6 +33,7 @@ ValidateModelOnData <- function(
   if (!condition_col %in% colnames(ValidationData@SampleData)) {
     stop(sprintf("Condition column", condition_col, "not found in SampleData."))
   }
+  colnames(ValidationData@NormalizedData) <- make.names(colnames(ValidationData@NormalizedData))
   # Load the model
   if (model_type == "RF") {
     rf.model <- CrcBiomeScreenObject@EvaluateResult$RF$RF.Model

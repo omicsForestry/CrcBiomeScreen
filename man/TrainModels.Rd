@@ -7,7 +7,7 @@
 TrainModels(
   CrcBiomeScreenObject = NULL,
   model_type = c("RF", "XGBoost"),
-  ClassBalance = TRUE,
+  ClassWeights = TRUE,
   n_cv = 10,
   TaskName = NULL,
   TrueLabel = NULL,
@@ -19,7 +19,7 @@ TrainModels(
 
 \item{model_type}{Select the method for modeling}
 
-\item{ClassBalance}{Choose using the class weights or not}
+\item{ClassWeights}{Choose using the class weights or not}
 
 \item{n_cv}{Set the number of cross validation}
 
@@ -39,7 +39,7 @@ Train the different models
 CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
   model_type = "RF",
   TaskName = "ToyData_RF",
-  ClassBalance = TRUE,
+  ClassWeights = TRUE,
   TrueLabel = "CRC",
   num_cores = 10
 )
