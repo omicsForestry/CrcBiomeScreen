@@ -26,12 +26,3 @@ A CrcBiomeScreenObject with the evaluation results stored in the \code{EvaluateR
 \description{
 Evaluate the Random Forest model
 }
-\examples{
-CrcBiomeScreenObject <- EvaluateRF(
-  CrcBiomeScreenObject = CrcBiomeScreenObject,
-  TaskName = TaskName,
-  TrueLabel = TrueLabel,
-  PlotAUC = PlotAUC
-)
-
-}

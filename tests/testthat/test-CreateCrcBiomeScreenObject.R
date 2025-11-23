@@ -21,7 +21,7 @@ test_that("CreateCrcBiomeScreenObject works correctly", {
     SampleData = sample_data
   )
 
-  expect_s3_class(result, "CrcBiomeScreenObject")
+  expect_s4_class(result, "CrcBiomeScreen")
 
   expect_error(CreateCrcBiomeScreenObject(
     RelativeAbundance = NULL,

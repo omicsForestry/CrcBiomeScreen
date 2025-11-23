@@ -29,12 +29,3 @@ A CrcBiomeScreenObject with the evaluation results stored in the \code{EvaluateR
 \description{
 Evaluate the model to select the optimal model
 }
-\examples{
-CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject,
-  model_type = "RF",
-  TaskName = "ToyData_RF_Test",
-  TrueLabel = "CRC",
-  PlotAUC = TRUE
-)
-
-}

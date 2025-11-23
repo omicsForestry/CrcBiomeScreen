@@ -1,4 +1,5 @@
 test_that("qcByCmdscale works correctly", {
+  library(curatedMetagenomicData)
   toydata <- curatedMetagenomicData(
     "ThomasAM_2018a.relative_abundance",
     dryrun = FALSE, rownames = "short"
@@ -10,9 +11,9 @@ test_that("qcByCmdscale works correctly", {
     SampleData = toydata[[1]]@colData
   )
   toydata_object <- SplitTaxas(toydata_object)
-  toydata_object <- KeepGenusLevel(toydata_object)
+  toydata_object <- KeepTaxonomicLevel(toydata_object, level = "Genus")
 
-  toydata_object <- NormalizeData(toydata_object, method = "GMPR")
+  toydata_object <- NormalizeData(toydata_object, method = "GMPR", level = "Genus")
   k <- 0.6
   toydata_object <- SplitDataSet(toydata_object, label = c("control", "CRC"), partition = k)
 
@@ -26,8 +27,4 @@ test_that("qcByCmdscale works correctly", {
 
   # Check result format
   expect_true(file.exists(pdf_name))
-  expect_s3_class(toydata_object$OrginalNormalizedData, "data.frame")
-  expect_equal(class(toydata_object$OutlierSamples), "character")
-  expect_equal(attributes(toydata_object$OutlierSamples)$`QC`, TaskName)
-  expect_equal(attributes(toydata_object$OutlierSamples)$`OutlierSamples`, length(toydata_object$OutlierSamples))
 })

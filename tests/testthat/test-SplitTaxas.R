@@ -28,6 +28,6 @@ test_that("SplitTaxas works correctly", {
   split_result <- SplitTaxas(crc_obj)
 
   # Check result format
-  expect_s3_class(split_result$TaxaData, "data.frame")
-  expect_true(all(c("Kingdom", "Phylum", "Class") %in% colnames(split_result$TaxaData)))
+  expect_s3_class(getTaxaData(split_result), "data.frame")
+  expect_true(all(c("Kingdom", "Phylum", "Class") %in% colnames(getTaxaData(split_result))))
 })

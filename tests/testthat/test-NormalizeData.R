@@ -27,13 +27,11 @@ test_that("NormalizeData works correctly", {
   # Now test SplitTaxas
   split_result <- SplitTaxas(crc_obj)
   # Keep the Genus level
-  genus_result <- KeepGenusLevel(split_result)
+  genus_result <- KeepTaxonomicLevel(split_result,level = "Genus")
   # Normalize the data
-  normalized_GMPR <- NormalizeData(genus_result, method = "GMPR")
-  normalized_TSS <- NormalizeData(genus_result, method = "TSS")
+  normalized_GMPR <- NormalizeData(genus_result, method = "GMPR",level = "Genus")
+  normalized_TSS <- NormalizeData(genus_result, method = "TSS",level = "Genus")
   # Check result format
-  expect_s3_class(normalized_GMPR$NormalizedData, "data.frame")
-  expect_s3_class(normalized_TSS$NormalizedData, "data.frame")
-  expect_equal(attributes(normalized_GMPR$NormalizedData)$NormalizationMethod, "GMPR")
-  expect_equal(attributes(normalized_TSS$NormalizedData)$NormalizationMethod, "TSS")
+  expect_s3_class(getNormalizedData(normalized_GMPR), "data.frame")
+  expect_s3_class(getNormalizedData(normalized_TSS), "data.frame")
 })

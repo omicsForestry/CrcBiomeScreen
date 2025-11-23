@@ -26,12 +26,3 @@ A CrcBiomeScreenObject with the evaluation results stored in the \code{EvaluateR
 \description{
 Evaluate the XGBoost model
 }
-\examples{
-CrcBiomeScreenObject <- EvaluateXGBoost(
-  CrcBiomeScreenObject = CrcBiomeScreenObject,
-  TaskName = TaskName,
-  TrueLabel = TrueLabel,
-  PlotAUC = PlotAUC
-)
-
-}

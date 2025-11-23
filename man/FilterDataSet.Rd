@@ -23,10 +23,3 @@ A \code{CrcBiomeScreenObject} with filtered data based on the specified label.
 \description{
 Filter the CrcBiomeScreenObject dataset based on a specific label
 }
-\examples{
-ValidationData_filtered <- FilterDataSet(ValidationData,
-  label = c("CRC", "control"),
-  condition_col = "study_condition"
-)
-
-}
