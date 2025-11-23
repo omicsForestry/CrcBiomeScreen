@@ -1,4 +1,5 @@
 test_that("checkClassBalance works correctly", {
+  library(curatedMetagenomicData)
   toydata <- curatedMetagenomicData(
     "ThomasAM_2018a.relative_abundance",
     dryrun = FALSE, rownames = "short"
@@ -10,12 +11,12 @@ test_that("checkClassBalance works correctly", {
     SampleData = toydata[[1]]@colData
   )
   toydata_object <- SplitTaxas(toydata_object)
-  toydata_object <- KeepGenusLevel(toydata_object)
+  toydata_object <- KeepTaxonomicLevel(toydata_object, level = "Genus")
 
-  toydata_object <- NormalizeData(toydata_object, method = "GMPR")
+  toydata_object <- NormalizeData(toydata_object, method = "GMPR", level = "Genus")
   k <- 0.6
   toydata_object <- SplitDataSet(toydata_object, label = c("control", "CRC"), partition = k)
-  checkClassBalanceResult <- checkClassBalance(toydata_object$ModelData$TrainLabel)
+  checkClassBalanceResult <- checkClassBalance(getModelData(toydata_object)$TrainLabel)
 
   pdf_name <- "class_balance_plot.pdf"
   # Check result format

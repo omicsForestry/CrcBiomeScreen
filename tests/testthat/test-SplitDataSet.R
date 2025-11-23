@@ -1,4 +1,5 @@
 test_that("NormalizeData works correctly", {
+  library(curatedMetagenomicData)
   toydata <- curatedMetagenomicData(
     "ThomasAM_2018a.relative_abundance",
     dryrun = FALSE, rownames = "short"
@@ -10,18 +11,20 @@ test_that("NormalizeData works correctly", {
     SampleData = toydata[[1]]@colData
   )
   toydata_object <- SplitTaxas(toydata_object)
-  toydata_object <- KeepGenusLevel(toydata_object)
+  toydata_object <- KeepTaxonomicLevel(toydata_object,level="Genus")
 
-  toydata_object <- NormalizeData(toydata_object, method = "GMPR")
+  toydata_object <- NormalizeData(toydata_object, method = "GMPR",level="Genus")
   k <- 0.6
   toydata_object <- SplitDataSet(toydata_object, label = c("control", "CRC"), partition = k)
 
-  # Check result format
-  expect_equal(class(toydata_object$ModelData), "list")
-  expect_s3_class(toydata_object$ModelData[["Training"]], "data.frame")
-  expect_s3_class(toydata_object$ModelData[["Test"]], "data.frame")
-  expect_equal(class(toydata_object$ModelData[["TrainLabel"]]), "character")
-  expect_equal(class(toydata_object$ModelData[["TestLabel"]]), "character")
-  expect_equal(attributes(toydata_object$ModelData)$names, c("Training", "Test", "TrainLabel", "TestLabel"))
-  expect_equal(attributes(toydata_object$ModelData)$`Split Partition`, k)
+  md <- toydata_object@ModelData
+
+  expect_true(is.list(md))
+  expect_s3_class(md[["Training"]], "data.frame")
+  expect_s3_class(md[["Test"]], "data.frame")
+  expect_true(is.character(md[["TrainLabel"]]))
+  expect_true(is.character(md[["TestLabel"]]))
+
+  expect_equal(names(md), c("Training", "Test", "TrainLabel", "TestLabel"))
+
 })

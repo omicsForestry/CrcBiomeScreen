@@ -10,14 +10,14 @@
 #' @examples
 #' ValidationData_filtered_qc$PredictResult$XGBoost <- PredictCrcBiomeScreen(
 #' CrcBiomeScreenObject,
-#' newdata = ValidationData_filtered_qc$NormalizedData, # Use the appropriate data slot from your new data
+#' newdata = getNormalizedData(ValidationData_filtered_qc), # Use the appropriate data slot from your new data
 #' model_type = "XGBoost")
 
 PredictCrcBiomeScreen <- function(
     CrcBiomeScreenObject,
     newdata,
     model_type = c("RF", "XGBoost")) {
-
+  colnames(newdata) <- make.names(colnames(newdata))
   if (model_type == "RF") {
     model <- CrcBiomeScreenObject@EvaluateResult$RF$RF.Model
     probs.ValidationData.rf <- predict(model, data = newdata, type = "response")$predictions
@@ -30,7 +30,7 @@ PredictCrcBiomeScreen <- function(
     predictions <- test.pred.prob.xgb
     rownames(predictions) <- rownames(newdata)
   }
-
-  return(predictions)
+  CrcBiomeScreenObject@PredictResult[[model_type]] <- predictions
+  return(CrcBiomeScreenObject)
 }
 

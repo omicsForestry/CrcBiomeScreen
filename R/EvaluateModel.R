@@ -14,12 +14,6 @@
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult` slot.
 #' @export
 #'
-#' @examples CrcBiomeScreenObject <- EvaluateModel(CrcBiomeScreenObject,
-#'   model_type = "RF",
-#'   TaskName = "ToyData_RF_Test",
-#'   TrueLabel = "CRC",
-#'   PlotAUC = TRUE
-#' )
 #'
 EvaluateModel <- function(CrcBiomeScreenObject = NULL,
                           model_type = c("RF", "XGBoost"),
@@ -71,12 +65,6 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$RF` slot.
 #' @export
 #'
-#' @examples CrcBiomeScreenObject <- EvaluateRF(
-#'   CrcBiomeScreenObject = CrcBiomeScreenObject,
-#'   TaskName = TaskName,
-#'   TrueLabel = TrueLabel,
-#'   PlotAUC = PlotAUC
-#' )
 #'
 EvaluateRF <- function(CrcBiomeScreenObject = NULL,
                        TaskName = NULL,
@@ -173,12 +161,6 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$XGBoost` slot.
 #' @export
 #'
-#' @examples CrcBiomeScreenObject <- EvaluateXGBoost(
-#'   CrcBiomeScreenObject = CrcBiomeScreenObject,
-#'   TaskName = TaskName,
-#'   TrueLabel = TrueLabel,
-#'   PlotAUC = PlotAUC
-#' )
 #'
 EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
                             TaskName = NULL,

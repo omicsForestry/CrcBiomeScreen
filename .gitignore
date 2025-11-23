@@ -9,3 +9,5 @@
 *.Rhistory
 *.RData
 
+/doc/
+/Meta/

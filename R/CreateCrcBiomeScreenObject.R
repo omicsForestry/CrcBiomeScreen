@@ -139,6 +139,7 @@ setClass(
 #' @title Accessor for AbsoluteAbundance slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing absolute abundance data.
+#' @examples getAbsoluteAbundance(CrcBiomeScreenObject)
 #' @export
 setGeneric("getAbsoluteAbundance", function(object) standardGeneric("getAbsoluteAbundance"))
 #' @describeIn getAbsoluteAbundance Retrieve absolute abundance data from a CrcBiomeScreen object.
@@ -147,6 +148,7 @@ setMethod("getAbsoluteAbundance", "CrcBiomeScreen", function(object) object@Abso
 #' @title Accessor for RelativeAbundance slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing relative abundance data.
+#' @examples getRelativeAbundance(CrcBiomeScreenObject)
 #' @export
 setGeneric("getRelativeAbundance", function(object) standardGeneric("getRelativeAbundance"))
 #' @describeIn getRelativeAbundance Retrieve relative abundance data from a CrcBiomeScreen object.
@@ -155,14 +157,25 @@ setMethod("getRelativeAbundance", "CrcBiomeScreen", function(object) object@Rela
 #' @title Accessor for SampleData slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing sample metadata.
+#' @examples getSampleData(CrcBiomeScreenObject)
 #' @export
 setGeneric("getSampleData", function(object) standardGeneric("getSampleData"))
 #' @describeIn getSampleData Retrieve sample metadata from a CrcBiomeScreen object.
 setMethod("getSampleData", "CrcBiomeScreen", function(object) object@SampleData)
 
+#' @title Accessor for ModelData slot of CrcBiomeScreen object
+#' @param object A \linkS4class{CrcBiomeScreen} object.
+#' @return A data.frame containing model data.
+#' @examples getModelData(CrcBiomeScreenObject)
+#' @export
+setGeneric("getModelData", function(object) standardGeneric("getModelData"))
+#' @describeIn getSampleData Retrieve sample metadata from a CrcBiomeScreen object.
+setMethod("getModelData", "CrcBiomeScreen", function(object) object@ModelData)
+
 #' @title Accessor for TaxaData slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing taxonomic annotations.
+#' @examples getTaxaData(CrcBiomeScreenObject)
 #' @export
 setGeneric("getTaxaData", function(object) standardGeneric("getTaxaData"))
 #' @describeIn getTaxaData Retrieve taxonomic annotations from a CrcBiomeScreen object.
@@ -171,7 +184,71 @@ setMethod("getTaxaData", "CrcBiomeScreen", function(object) object@TaxaData)
 #' @title Accessor for ModelResult slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A list containing fitted model results.
+#' @examples getModelResult(CrcBiomeScreenObject)
 #' @export
 setGeneric("getModelResult", function(object) standardGeneric("getModelResult"))
 #' @describeIn getModelResult Retrieve model results from a CrcBiomeScreen object.
 setMethod("getModelResult", "CrcBiomeScreen", function(object) object@ModelResult)
+
+#' @title Accessor for PredictResult slot of CrcBiomeScreen object
+#' @param object A \linkS4class{CrcBiomeScreen} object.
+#' @return A list containing fitted Prediction results.
+#' @examples getPredictResult(CrcBiomeScreenObject)
+#' @export
+setGeneric("getPredictResult", function(object) standardGeneric("getPredictResult"))
+#' @describeIn getPredictResult Prediction results from a CrcBiomeScreen object.
+setMethod("getPredictResult", "CrcBiomeScreen", function(object) object@PredictResult)
+
+#' @title setTaxaData<-: Setter for TaxaData slot of CrcBiomeScreen object
+#' @name setTaxaData-setter
+#' @aliases setTaxaData<-
+#' @usage setTaxaData(object) <- value
+#'
+#' @param object A \linkS4class{CrcBiomeScreen} object.
+#' @param value A data.frame containing updated taxonomic annotations.
+#'
+#' @return The modified \linkS4class{CrcBiomeScreen} object.
+#' @examples setTaxaData(CrcBiomeScreenObject)
+#' @export
+setGeneric("setTaxaData<-", function(object, value) standardGeneric("setTaxaData<-"))
+
+#' @describeIn setTaxaData-setter Replace the TaxaData slot of a CrcBiomeScreen object.
+setReplaceMethod("setTaxaData", "CrcBiomeScreen", function(object, value) {
+  object@TaxaData <- value
+  validObject(object)
+  return(object)
+})
+
+#' @title Accessor for NormalizedData slot of CrcBiomeScreen object
+#' @name getNormalizedData
+#'
+#' @description Retrieve normalized abundance data from a \linkS4class{CrcBiomeScreen} object.
+#' @param object A \linkS4class{CrcBiomeScreen} object.
+#'
+#' @return A data.frame (or matrix) containing normalized abundance data.
+#' @examples getNormalizedData(CrcBiomeScreenObject)
+#' @export
+setGeneric("getNormalizedData", function(object) standardGeneric("getNormalizedData"))
+
+#' @describeIn getNormalizedData Retrieve normalized abundance data.
+setMethod("getNormalizedData", "CrcBiomeScreen", function(object) object@NormalizedData)
+
+#' @title setNormalizedData<-: Setter for NormalizedData slot of CrcBiomeScreen object
+#' @name setNormalizedData-setter
+#' @aliases setNormalizedData<-
+#' @usage setNormalizedData(object) <- value
+#'
+#' @param object A \linkS4class{CrcBiomeScreen} object.
+#' @param value A data.frame or matrix containing normalized abundance data.
+#'
+#' @return The modified \linkS4class{CrcBiomeScreen} object.
+#' @examples setNormalizedData(CrcBiomeScreenObject)
+#' @export
+setGeneric("setNormalizedData<-", function(object, value) standardGeneric("setNormalizedData<-"))
+
+#' @describeIn setNormalizedData-setter Replace the NormalizedData slot of a CrcBiomeScreen object.
+setReplaceMethod("setNormalizedData", "CrcBiomeScreen", function(object, value) {
+  object@NormalizedData <- value
+  validObject(object)
+  return(object)
+})

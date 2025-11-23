@@ -18,8 +18,8 @@
 #' @examples
 #' # Assume you have obtained predictions and true labels from a previous step
 #' # e.g., predictions <- PredictCrcBiomeScreen(my_object, newdata, "RF")
-#' true_labels <- my_newdata_object$SampleData$study_condition
-#' EvaluateCrcBiomeScreen(predictions, true_labels, TrueLabel = "CRC", TaskName = "MyEvaluation", PlotAUC = TRUE)
+#' # true_labels <- my_newdata_object$SampleData$study_condition
+#' # EvaluateCrcBiomeScreen(predictions, true_labels, TrueLabel = "CRC", TaskName = "MyEvaluation", PlotAUC = TRUE)
 
 EvaluateCrcBiomeScreen <- function(
     predictions,
