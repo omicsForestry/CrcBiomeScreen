@@ -24,5 +24,5 @@ Retrieve normalized abundance data from a \linkS4class{CrcBiomeScreen} object.
 
 }}
 \examples{
-getNormalizedData(CrcBiomeScreenObject)
+\dontrun{getNormalizedData(CrcBiomeScreenObject)}
 }

@@ -27,5 +27,5 @@ setNormalizedData<-: Setter for NormalizedData slot of CrcBiomeScreen object
 
 }}
 \examples{
-setNormalizedData(CrcBiomeScreenObject)
+\dontrun{setNormalizedData(CrcBiomeScreenObject)}
 }
