@@ -31,6 +31,7 @@
 #'
 #' @seealso \linkS4class{CrcBiomeScreen}
 #'
+#' @importFrom methods new validObject
 #' @importFrom dplyr mutate across
 #' @importFrom tibble tibble
 #' @importFrom grDevices pdf dev.off
@@ -189,7 +190,7 @@ setMethod("getTaxaData", "CrcBiomeScreen", function(object) object@TaxaData)
 #' @title Accessor for ModelResult slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A list containing fitted model results.
-#' @examples getModelResult(CrcBiomeScreenObject)
+#' @examples \dontrun{getModelResult(CrcBiomeScreenObject)}
 #' @export
 setGeneric("getModelResult", function(object) standardGeneric("getModelResult"))
 #' @describeIn getModelResult Retrieve model results from a CrcBiomeScreen object.
@@ -198,7 +199,7 @@ setMethod("getModelResult", "CrcBiomeScreen", function(object) object@ModelResul
 #' @title Accessor for PredictResult slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A list containing fitted Prediction results.
-#' @examples getPredictResult(CrcBiomeScreenObject)
+#' @examples \dontrun{getPredictResult(CrcBiomeScreenObject)}
 #' @export
 setGeneric("getPredictResult", function(object) standardGeneric("getPredictResult"))
 #' @describeIn getPredictResult Prediction results from a CrcBiomeScreen object.
@@ -213,7 +214,7 @@ setMethod("getPredictResult", "CrcBiomeScreen", function(object) object@PredictR
 #' @param value A data.frame containing updated taxonomic annotations.
 #'
 #' @return The modified \linkS4class{CrcBiomeScreen} object.
-#' @examples setTaxaData(CrcBiomeScreenObject)
+#' @examples \dontrun{setTaxaData(CrcBiomeScreenObject)}
 #' @export
 setGeneric("setTaxaData<-", function(object, value) standardGeneric("setTaxaData<-"))
 
@@ -231,7 +232,7 @@ setReplaceMethod("setTaxaData", "CrcBiomeScreen", function(object, value) {
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #'
 #' @return A data.frame (or matrix) containing normalized abundance data.
-#' @examples getNormalizedData(CrcBiomeScreenObject)
+#' @examples \dontrun{getNormalizedData(CrcBiomeScreenObject)}
 #' @export
 setGeneric("getNormalizedData", function(object) standardGeneric("getNormalizedData"))
 
@@ -247,7 +248,7 @@ setMethod("getNormalizedData", "CrcBiomeScreen", function(object) object@Normali
 #' @param value A data.frame or matrix containing normalized abundance data.
 #'
 #' @return The modified \linkS4class{CrcBiomeScreen} object.
-#' @examples setNormalizedData(CrcBiomeScreenObject)
+#' @examples \dontrun{setNormalizedData(CrcBiomeScreenObject)}
 #' @export
 setGeneric("setNormalizedData<-", function(object, value) standardGeneric("setNormalizedData<-"))
 

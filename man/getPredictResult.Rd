@@ -24,5 +24,5 @@ Accessor for PredictResult slot of CrcBiomeScreen object
 
 }}
 \examples{
-getPredictResult(CrcBiomeScreenObject)
+\dontrun{getPredictResult(CrcBiomeScreenObject)}
 }

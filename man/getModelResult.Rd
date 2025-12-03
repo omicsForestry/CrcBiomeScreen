@@ -24,5 +24,5 @@ Accessor for ModelResult slot of CrcBiomeScreen object
 
 }}
 \examples{
-getModelResult(CrcBiomeScreenObject)
+\dontrun{getModelResult(CrcBiomeScreenObject)}
 }

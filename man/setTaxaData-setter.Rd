@@ -27,5 +27,5 @@ setTaxaData<-: Setter for TaxaData slot of CrcBiomeScreen object
 
 }}
 \examples{
-setTaxaData(CrcBiomeScreenObject)
+\dontrun{setTaxaData(CrcBiomeScreenObject)}
 }
