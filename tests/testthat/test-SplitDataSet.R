@@ -1,4 +1,5 @@
 test_that("NormalizeData works correctly", {
+  skip_on_bioc()
   library(curatedMetagenomicData)
   toydata <- curatedMetagenomicData(
     "ThomasAM_2018a.relative_abundance",

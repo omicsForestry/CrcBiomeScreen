@@ -11,7 +11,7 @@
 #' @return A list including the details about this step
 #' @export
 #'
-#' @examples checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)
+#' @examples  \dontrun{checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)}
 #'
 checkClassBalance <- function(labels, threshold = 0.5, plot = TRUE) {
     # Convert to factor

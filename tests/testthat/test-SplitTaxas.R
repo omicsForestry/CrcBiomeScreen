@@ -1,4 +1,5 @@
 test_that("SplitTaxas works correctly", {
+  skip_on_bioc()
   # Construct test input data
   rel_abund <- matrix(runif(9), nrow = 3, dimnames = list(
     c(

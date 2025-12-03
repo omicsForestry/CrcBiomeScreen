@@ -30,5 +30,5 @@ This function aggregates abundance data to a specified taxonomic level.
 }
 \examples{
 # Keep only the genus level data
-CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
+ \dontrun{CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")}
 }

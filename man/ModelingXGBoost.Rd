@@ -33,11 +33,11 @@ CrcBiomeScreenObject
 The packaging function for XGBoost modeling
 }
 \examples{
-CrcBiomeScreenObject <- ModelingXGBoost(
+ \dontrun{CrcBiomeScreenObject <- ModelingXGBoost(
   CrcBiomeScreenObject = CrcBiomeScreenObject,
   k.rf = n_cv,
   TaskName = TaskName,
   TrueLabel = TrueLabel,
   num_cores = num_cores
-)
+)}
 }

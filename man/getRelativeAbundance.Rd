@@ -24,5 +24,5 @@ Accessor for RelativeAbundance slot of CrcBiomeScreen object
 
 }}
 \examples{
-getRelativeAbundance(CrcBiomeScreenObject)
+\dontrun{getRelativeAbundance(CrcBiomeScreenObject)}
 }

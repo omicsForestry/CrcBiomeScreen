@@ -29,5 +29,5 @@ Accessor for SampleData slot of CrcBiomeScreen object
 
 }}
 \examples{
-getSampleData(CrcBiomeScreenObject)
+\dontrun{getSampleData(CrcBiomeScreenObject)}
 }

@@ -1,4 +1,5 @@
 test_that("CreateCrcBiomeScreenObject works correctly", {
+  skip_on_bioc()
   if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
   }

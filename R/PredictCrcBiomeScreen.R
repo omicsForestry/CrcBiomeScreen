@@ -8,10 +8,11 @@
 #' @export
 #'
 #' @examples
+#'  \dontrun{
 #' ValidationData_filtered_qc$PredictResult$XGBoost <- PredictCrcBiomeScreen(
 #' CrcBiomeScreenObject,
 #' newdata = getNormalizedData(ValidationData_filtered_qc), # Use the appropriate data slot from your new data
-#' model_type = "XGBoost")
+#' model_type = "XGBoost")}
 
 PredictCrcBiomeScreen <- function(
     CrcBiomeScreenObject,

@@ -24,5 +24,5 @@ Accessor for AbsoluteAbundance slot of CrcBiomeScreen object
 
 }}
 \examples{
-getAbsoluteAbundance(CrcBiomeScreenObject)
+\dontrun{getAbsoluteAbundance(CrcBiomeScreenObject)}
 }

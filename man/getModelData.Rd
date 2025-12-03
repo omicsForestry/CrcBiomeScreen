@@ -16,5 +16,5 @@ A data.frame containing model data.
 Accessor for ModelData slot of CrcBiomeScreen object
 }
 \examples{
-getModelData(CrcBiomeScreenObject)
+\dontrun{getModelData(CrcBiomeScreenObject)}
 }

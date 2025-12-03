@@ -1,4 +1,5 @@
 # test_that("TrainModels works correctly", {
+#   skip_on_bioc()
 #   # Load the CrcBiomeScreenObject
 #   CrcBiomeScreenObject <- readRDS("tests/testthat/CrcBiomeScreenObject.rds")
 #

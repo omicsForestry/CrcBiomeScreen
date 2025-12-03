@@ -24,13 +24,13 @@
 #' @return CrcBiomeScreenObject
 #' @export
 #'
-#' @examples CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
+#' @examples  \dontrun{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
 #'   model_type = "RF",
 #'   TaskName = "ToyData_RF",
 #'   ClassWeights = TRUE,
 #'   TrueLabel = "CRC",
 #'   num_cores = 10
-#' )
+#' )}
 #'
 TrainModels <- function(CrcBiomeScreenObject = NULL,
                         model_type = c("RF", "XGBoost"),

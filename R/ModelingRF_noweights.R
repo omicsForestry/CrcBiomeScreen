@@ -13,13 +13,13 @@
 #' @return CrcBiomeScreenObject
 #' @export
 #'
-#' @examples CrcBiomeScreenObject <- ModelingRF_noweights(
+#' @examples  \dontrun{CrcBiomeScreenObject <- ModelingRF_noweights(
 #'   CrcBiomeScreenObject = CrcBiomeScreenObject,
 #'   k.rf = n_cv,
 #'   TaskName = TaskName,
 #'   TrueLabel = TrueLabel,
 #'   num_cores = num_cores
-#' )
+#' )}
 #'
 ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  k.rf = n_cv,

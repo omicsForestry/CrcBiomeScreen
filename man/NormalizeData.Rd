@@ -20,8 +20,8 @@ Normalise the absolute data to relative data by using Total Sum Scaling
 and Geometric Mean of Pairwise Ratios (GMPR)
 }
 \examples{
-# Normalize using GMPR (Geometric Mean of Pairwise Ratios)
+ \dontrun{# Normalize using GMPR (Geometric Mean of Pairwise Ratios)
 CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR", level = "Genus")
 # Normalize using TSS (Total Sum Scaling)
-CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", level = "Genus")
+CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", level = "Genus")}
 }

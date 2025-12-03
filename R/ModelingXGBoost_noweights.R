@@ -12,12 +12,12 @@
 #' @return CrcBiomeScreenObject
 #' @export
 #'
-#' @examples CrcBiomeScreenObject <- ModelingXGBoost_noweights(
+#' @examples  \dontrun{CrcBiomeScreenObject <- ModelingXGBoost_noweights(
 #'                                   CrcBiomeScreenObject = CrcBiomeScreenObject,
 #'                                   k.rf = n_cv,
 #'                                   TaskName = TaskName,
 #'                                   TrueLabel = TrueLabel,
-#'                                   num_cores = num_cores)
+#'                                   num_cores = num_cores)}
 
 ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
                                       k.rf = 10,

@@ -2,7 +2,7 @@
 #'
 #' This function aggregates abundance data to a specified taxonomic level.
 #'
-#' @param CrcBiomeScreenObject A list or object containing 'AbsoluteAbundance' and 'TaxaData'.
+#' @param CrcBiomeScreenObject An object containing 'AbsoluteAbundance' and 'TaxaData'.
 #' @param level The taxonomic level to aggregate to (e.g., "Family", "Genus", "Species").
 #'
 #' @importFrom magrittr %>%
@@ -11,7 +11,7 @@
 #' @export
 #' @examples
 #' # Keep only the genus level data
-#' CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")
+#'  \dontrun{CrcBiomeScreenObject <- KeepTaxonomicLevel(CrcBiomeScreenObject,level = "Genus")}
 #' @title Summarize abundance data at a given taxonomic level
 #' @description
 #' Aggregate absolute abundance data in a \linkS4class{CrcBiomeScreen} object
@@ -25,6 +25,7 @@
 #' \code{@TaxaLevelData} a new data frame in
 #' \code{@GenusLevelData} (or the corresponding level).
 #' @export
+#'
 KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
 
   # Extract and validate data

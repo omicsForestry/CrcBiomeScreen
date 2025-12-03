@@ -24,8 +24,9 @@ This function allows users to load their own taxonomic assignments for ASV/OTU d
 The input table should map sequence IDs to their full taxonomic lineage.
 }
 \examples{
+\dontrun{
 CrcBiomeScreenObject <- LoadTaxaTable(CrcBiomeScreenObject,
                                        taxa_table = my_taxa_table,
                                        id_column = "ASV_ID",
-                                       taxa_column = "Taxonomy")
+                                       taxa_column = "Taxonomy")}
 }

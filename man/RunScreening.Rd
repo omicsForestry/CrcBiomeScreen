@@ -47,7 +47,7 @@ A \code{CrcBiomeScreenObject} with the results of the screening process, includi
 Run the screening process for the microbiome data
 }
 \examples{
-CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
+ \dontrun{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
   normalize_method = "GMPR",
   model = "RF",
   split.requirement =
@@ -59,5 +59,5 @@ CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
   num_cores = 10,
   ValidationData = ValidationData,
   TrueLabel = "Cancer"
-)
+)}
 }

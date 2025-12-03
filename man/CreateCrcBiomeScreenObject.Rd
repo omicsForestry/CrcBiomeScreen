@@ -46,6 +46,7 @@ If only relative abundance data are supplied, absolute abundance is estimated
 using the total number of reads in \code{SampleData$number_reads}.
 }
 \examples{
+\dontrun{
 if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
   toydata <- curatedMetagenomicData::curatedMetagenomicData(
     "ThomasAM_2018a.relative_abundance",
@@ -56,7 +57,7 @@ if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
     TaxaData = toydata[[1]]@rowLinks$nodeLab,
     SampleData = toydata[[1]]@colData
   )
-}
+}}
 }
 \seealso{
 \linkS4class{CrcBiomeScreen}

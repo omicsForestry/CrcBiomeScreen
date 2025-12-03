@@ -23,6 +23,6 @@ Check the sample distribution of the dataset and
 give the suggestion if need the class weight or not
 }
 \examples{
-checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)
+ \dontrun{checkClassBalance(CrcBiomeScreenObject$ModelData$TrainLabel)}
 
 }

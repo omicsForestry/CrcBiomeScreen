@@ -9,10 +9,10 @@
 #' @export
 #'
 #' @examples
-#' # Normalize using GMPR (Geometric Mean of Pairwise Ratios)
+#'  \dontrun{# Normalize using GMPR (Geometric Mean of Pairwise Ratios)
 #' CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR", level = "Genus")
 #' # Normalize using TSS (Total Sum Scaling)
-#' CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", level = "Genus")
+#' CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", level = "Genus")}
 
 NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NULL) {
   Data <- CrcBiomeScreenObject@TaxaLevelData[[paste0(level, "LevelData")]]

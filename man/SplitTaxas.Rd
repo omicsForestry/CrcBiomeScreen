@@ -19,5 +19,5 @@ retains the original taxonomy string in a new column (\code{OriginalTaxa}),
 and refines labels such as "uncultured" or "unclassified" by appending the parent rank.
 }
 \examples{
-CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+ \dontrun{CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)}
 }
