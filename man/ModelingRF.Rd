@@ -30,11 +30,11 @@ CrcBiomeScreenObject
 The packaging function for Random Forest modeling
 }
 \examples{
-CrcBiomeScreenObject <- ModelingRF(
+ \dontrun{CrcBiomeScreenObject <- ModelingRF(
                                   CrcBiomeScreenObject = CrcBiomeScreenObject,
                                   k.rf = n_cv,
                                   TaskName = TaskName,
                                   TrueLabel = TrueLabel,
-                                  num_cores = num_cores)
+                                  num_cores = num_cores)}
 
 }

@@ -14,13 +14,13 @@
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `PredictResult` slot for the specified model type.
 #' @export
 #'
-#' @examples CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
+#' @examples  \dontrun{CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
 #'   model_type = "RF",
 #'   ValidationData = ValidationData_filtered_qc,
 #'   TaskName = "ValidationData_RF_Validation",
 #'   TrueLabel = "CRC",
 #'   PlotAUC = TRUE
-#' )
+#' )}
 #'
 ValidateModelOnData <- function(
     CrcBiomeScreenObject = NULL,

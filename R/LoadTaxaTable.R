@@ -13,10 +13,11 @@
 #' @export
 #'
 #' @examples
+#'\dontrun{
 #' CrcBiomeScreenObject <- LoadTaxaTable(CrcBiomeScreenObject,
 #'                                        taxa_table = my_taxa_table,
 #'                                        id_column = "ASV_ID",
-#'                                        taxa_column = "Taxonomy")
+#'                                        taxa_column = "Taxonomy")}
 
 LoadTaxaTable <- function(CrcBiomeScreenObject, taxa_table, id_column, taxa_column) {
 

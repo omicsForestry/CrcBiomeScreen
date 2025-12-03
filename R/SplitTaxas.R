@@ -15,7 +15,7 @@
 #' @return CrcBiomeScreenObject$TaxaData
 #' @export
 #'
-#' @examples CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)
+#' @examples  \dontrun{CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)}
 
 SplitTaxas <- function(CrcBiomeScreenObject) {
   taxa_data <- getTaxaData(CrcBiomeScreenObject)

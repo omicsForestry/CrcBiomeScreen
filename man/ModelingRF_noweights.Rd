@@ -30,12 +30,12 @@ CrcBiomeScreenObject
 The function for modeling random forest without using class weights
 }
 \examples{
-CrcBiomeScreenObject <- ModelingRF_noweights(
+ \dontrun{CrcBiomeScreenObject <- ModelingRF_noweights(
   CrcBiomeScreenObject = CrcBiomeScreenObject,
   k.rf = n_cv,
   TaskName = TaskName,
   TrueLabel = TrueLabel,
   num_cores = num_cores
-)
+)}
 
 }

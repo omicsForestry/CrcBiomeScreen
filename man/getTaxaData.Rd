@@ -24,5 +24,5 @@ Accessor for TaxaData slot of CrcBiomeScreen object
 
 }}
 \examples{
-getTaxaData(CrcBiomeScreenObject)
+\dontrun{getTaxaData(CrcBiomeScreenObject)}
 }

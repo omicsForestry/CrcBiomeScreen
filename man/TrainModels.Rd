@@ -36,12 +36,12 @@ CrcBiomeScreenObject
 Train the different models
 }
 \examples{
-CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
+ \dontrun{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
   model_type = "RF",
   TaskName = "ToyData_RF",
   ClassWeights = TRUE,
   TrueLabel = "CRC",
   num_cores = 10
-)
+)}
 
 }

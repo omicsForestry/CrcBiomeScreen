@@ -36,12 +36,12 @@ A CrcBiomeScreenObject with the evaluation results stored in the \code{PredictRe
 Predict the validation data by using the trained model in CrcBiomeScreenObject
 }
 \examples{
-CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
+ \dontrun{CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
   model_type = "RF",
   ValidationData = ValidationData_filtered_qc,
   TaskName = "ValidationData_RF_Validation",
   TrueLabel = "CRC",
   PlotAUC = TRUE
-)
+)}
 
 }

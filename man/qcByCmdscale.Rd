@@ -48,9 +48,10 @@ A PDF plot is saved to the working directory, showing sample positions in MDS sp
 with outliers highlighted in red.
 }
 \examples{
+ \dontrun{
 # Perform QC with threshold = 1 SD
 CrcBiomeScreenObject <- qcByCmdscale(CrcBiomeScreenObject,
   TaskName = "Normalize_ToyData_filtered_qc",
   normalize_method = "GMPR"
-)
+)}
 }

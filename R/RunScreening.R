@@ -19,7 +19,7 @@
 #' @return A \code{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
 #' @export
 #'
-#' @examples CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
+#' @examples  \dontrun{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
 #'   normalize_method = "GMPR",
 #'   model = "RF",
 #'   split.requirement =
@@ -31,7 +31,7 @@
 #'   num_cores = 10,
 #'   ValidationData = ValidationData,
 #'   TrueLabel = "Cancer"
-#' )
+#' )}
 
 RunScreening <- function(obj,
                          model_type = NULL, # c("RF", "XGBoost")

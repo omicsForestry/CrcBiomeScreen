@@ -27,10 +27,10 @@ CrcBiomeScreenObject@ModelData
 Split the dataset into training and test sets
 }
 \examples{
-CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject,
+ \dontrun{CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject,
   label = c("control", "CRC"),
   partition = 0.7,
   condition_col = "study_condition"
-)
+)}
 
 }

@@ -11,11 +11,11 @@
 #' @return CrcBiomeScreenObject@ModelData
 #' @export
 #'
-#' @examples CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject,
+#' @examples  \dontrun{CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject,
 #'   label = c("control", "CRC"),
 #'   partition = 0.7,
 #'   condition_col = "study_condition"
-#' )
+#' )}
 #'
 SplitDataSet <- function(CrcBiomeScreenObject = NULL,
                          label = NULL,

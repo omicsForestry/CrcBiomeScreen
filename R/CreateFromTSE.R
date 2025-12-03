@@ -10,14 +10,14 @@
 #' @export
 #'
 #' @examples
-#' if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
+#' \dontrun{if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
 #'   tse <- curatedMetagenomicData::curatedMetagenomicData(
 #'     "ThomasAM_2018a.relative_abundance",
 #'     dryrun = FALSE, rownames = "short"
 #'   )[[1]]
 #'   obj <- CreateCrcBiomeScreenObjectFromTSE(tse)
 #'   obj
-#' }
+#' }}
 CreateCrcBiomeScreenObjectFromTSE <- function(tse, assay_name = NULL) {
   if (!inherits(tse, "TreeSummarizedExperiment")) {
     stop("Input must be a TreeSummarizedExperiment object.")

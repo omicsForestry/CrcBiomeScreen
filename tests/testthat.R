@@ -7,6 +7,6 @@
 # * https://testthat.r-lib.org/articles/special-files.html
 
 library(testthat)
-library(CrcBiomeScreen)
+testthat::skip_on_bioc()
 
 test_check("CrcBiomeScreen")

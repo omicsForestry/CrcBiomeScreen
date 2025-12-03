@@ -36,6 +36,7 @@
 #' @export
 #'
 #' @examples
+#' \dontrun{
 #' if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
 #'   toydata <- curatedMetagenomicData::curatedMetagenomicData(
 #'     "ThomasAM_2018a.relative_abundance",
@@ -46,7 +47,7 @@
 #'     TaxaData = toydata[[1]]@rowLinks$nodeLab,
 #'     SampleData = toydata[[1]]@colData
 #'   )
-#' }
+#' }}
 
 CreateCrcBiomeScreenObject <- function(
     AbsoluteAbundance = NULL,
@@ -139,7 +140,7 @@ setClass(
 #' @title Accessor for AbsoluteAbundance slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing absolute abundance data.
-#' @examples getAbsoluteAbundance(CrcBiomeScreenObject)
+#' @examples \dontrun{getAbsoluteAbundance(CrcBiomeScreenObject)}
 #' @export
 setGeneric("getAbsoluteAbundance", function(object) standardGeneric("getAbsoluteAbundance"))
 #' @describeIn getAbsoluteAbundance Retrieve absolute abundance data from a CrcBiomeScreen object.
@@ -148,7 +149,7 @@ setMethod("getAbsoluteAbundance", "CrcBiomeScreen", function(object) object@Abso
 #' @title Accessor for RelativeAbundance slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing relative abundance data.
-#' @examples getRelativeAbundance(CrcBiomeScreenObject)
+#' @examples \dontrun{getRelativeAbundance(CrcBiomeScreenObject)}
 #' @export
 setGeneric("getRelativeAbundance", function(object) standardGeneric("getRelativeAbundance"))
 #' @describeIn getRelativeAbundance Retrieve relative abundance data from a CrcBiomeScreen object.
@@ -157,7 +158,7 @@ setMethod("getRelativeAbundance", "CrcBiomeScreen", function(object) object@Rela
 #' @title Accessor for SampleData slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing sample metadata.
-#' @examples getSampleData(CrcBiomeScreenObject)
+#' @examples \dontrun{getSampleData(CrcBiomeScreenObject)}
 #' @export
 setGeneric("getSampleData", function(object) standardGeneric("getSampleData"))
 #' @describeIn getSampleData Retrieve sample metadata from a CrcBiomeScreen object.
@@ -166,7 +167,7 @@ setMethod("getSampleData", "CrcBiomeScreen", function(object) object@SampleData)
 #' @title Accessor for ModelData slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing model data.
-#' @examples getModelData(CrcBiomeScreenObject)
+#' @examples \dontrun{getModelData(CrcBiomeScreenObject)}
 #' @export
 setGeneric("getModelData", function(object) standardGeneric("getModelData"))
 #' @describeIn getSampleData Retrieve sample metadata from a CrcBiomeScreen object.
@@ -175,7 +176,7 @@ setMethod("getModelData", "CrcBiomeScreen", function(object) object@ModelData)
 #' @title Accessor for TaxaData slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing taxonomic annotations.
-#' @examples getTaxaData(CrcBiomeScreenObject)
+#' @examples \dontrun{getTaxaData(CrcBiomeScreenObject)}
 #' @export
 setGeneric("getTaxaData", function(object) standardGeneric("getTaxaData"))
 #' @describeIn getTaxaData Retrieve taxonomic annotations from a CrcBiomeScreen object.

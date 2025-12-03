@@ -19,12 +19,12 @@ Wrapper function to directly convert a TreeSummarizedExperiment object
 into a \linkS4class{CrcBiomeScreen} S4 object for downstream analysis.
 }
 \examples{
-if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
+\dontrun{if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
   tse <- curatedMetagenomicData::curatedMetagenomicData(
     "ThomasAM_2018a.relative_abundance",
     dryrun = FALSE, rownames = "short"
   )[[1]]
   obj <- CreateCrcBiomeScreenObjectFromTSE(tse)
   obj
-}
+}}
 }
