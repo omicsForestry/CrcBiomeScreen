@@ -33,6 +33,10 @@
 #'
 #' @importFrom dplyr mutate across
 #' @importFrom tibble tibble
+#' @importFrom grDevices pdf dev.off
+#' @importFrom graphics abline barplot
+#' @importFrom utils getFromNamespace
+#' @importFrom ggplot2 aes geom_point geom_text labs theme theme_minimal ggsave
 #' @export
 #'
 #' @examples
