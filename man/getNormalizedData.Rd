@@ -24,5 +24,14 @@ Retrieve normalized abundance data from a \linkS4class{CrcBiomeScreen} object.
 
 }}
 \examples{
-\dontrun{getNormalizedData(CrcBiomeScreenObject)}
+toy_obj <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+  TaxaData = data.frame(Taxa = "TaxaA"),
+  SampleData = data.frame(
+    number_reads = 10000,
+    condition = "control"
+  )
+)
+
+getNormalizedData(toy_obj)
 }

@@ -11,12 +11,51 @@
 #' @return CrcBiomeScreenObject@ModelData
 #' @export
 #'
-#' @examples  \dontrun{CrcBiomeScreenObject <- SplitDataSet(CrcBiomeScreenObject,
+#' @examples
+#' # Minimal toy object for dataset splitting
+#'
+#' # Example normalized data (4 samples × 2 taxa)
+#' toy_norm <- data.frame(
+#'   TaxaA = c(10, 20, 15, 30),
+#'   TaxaB = c( 5,  7,  6,  8)
+#' )
+#' rownames(toy_norm) <- paste0("S", 1:4)
+#'
+#' # Sample metadata with conditions
+#' toy_sampledata <- data.frame(
+#'   study_condition = c("control", "CRC", "control", "CRC"),
+#'   row.names = paste0("S", 1:4)
+#' )
+#'
+#' # Construct a minimal CrcBiomeScreen object
+#' toy_obj <- new(
+#'   "CrcBiomeScreen",
+#'   AbsoluteAbundance   = data.frame(),
+#'   RelativeAbundance   = data.frame(),
+#'   TaxaData            = data.frame(),
+#'   SampleData          = toy_sampledata,
+#'   NormalizedData      = toy_norm,   # <-- IMPORTANT: SplitDataSet needs this
+#'   TaxaLevelData       = NULL,
+#'   OrginalNormalizedData = NULL,
+#'   ValidationData      = NULL,
+#'   ModelData           = list(),
+#'   ModelResult         = NULL,
+#'   EvaluateResult      = list(),
+#'   PredictResult       = NULL
+#' )
+#'
+#' # Split into training/testing sets with 70/30 ratio
+#' toy_split <- SplitDataSet(
+#'   toy_obj,
 #'   label = c("control", "CRC"),
 #'   partition = 0.7,
 #'   condition_col = "study_condition"
-#' )}
+#' )
 #'
+#' # Inspect training labels
+#' toy_split@ModelData$TrainLabel
+#'
+
 SplitDataSet <- function(CrcBiomeScreenObject = NULL,
                          label = NULL,
                          partition = NULL,

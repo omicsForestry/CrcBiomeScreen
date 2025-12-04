@@ -26,3 +26,34 @@ A CrcBiomeScreenObject with the evaluation results stored in the \code{EvaluateR
 \description{
 Evaluate the Random Forest model
 }
+\examples{
+# Minimal runnable example demonstrating input structure for EvaluateRF
+
+# Toy training + test matrices
+train_df <- data.frame(x = c(1, 2), TrainLabel = factor(c("control", "CRC")))
+test_df  <- data.frame(x = c(3, 4))
+
+# Build minimal CrcBiomeScreen object
+obj <- new("CrcBiomeScreen",
+  AbsoluteAbundance = data.frame(),
+  RelativeAbundance = data.frame(),
+  TaxaData = data.frame(),
+  SampleData = data.frame(),
+  ModelData = list(
+    Training = train_df,
+    Test = test_df,
+    TrainLabel = train_df$TrainLabel,
+    TestLabel = factor(c("control", "CRC"))
+  ),
+  ModelResult = list(
+    RF = list(best.params = list(
+      num.trees = 1, mtry = 1, node_size = 1, sample_size = 1
+    ))
+  )
+)
+
+# NOT RUN: real evaluation uses ranger + pROC (too slow for BioC builds)
+# out <- EvaluateRF(obj, TaskName = "toy", TrueLabel = "CRC")
+
+obj
+}

@@ -24,7 +24,7 @@
 #' @return CrcBiomeScreenObject
 #' @export
 #'
-#' @examples  \dontrun{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
+#' @examples  \donttest{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
 #'   model_type = "RF",
 #'   TaskName = "ToyData_RF",
 #'   ClassWeights = TRUE,

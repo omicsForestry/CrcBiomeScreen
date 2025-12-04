@@ -24,5 +24,17 @@ Accessor for AbsoluteAbundance slot of CrcBiomeScreen object
 
 }}
 \examples{
-\dontrun{getAbsoluteAbundance(CrcBiomeScreenObject)}
+# Construct minimal example object
+toy_obj <- CreateCrcBiomeScreenObject(
+  AbsoluteAbundance = data.frame(TaxaA = c(1000, 2000)),
+  RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+  TaxaData = data.frame(Taxa = "TaxaA"),
+  SampleData = data.frame(
+    number_reads = 10000,
+    condition = "control"
+  )
+)
+
+# Retrieve absolute abundance
+getAbsoluteAbundance(toy_obj)
 }

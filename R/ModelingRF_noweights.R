@@ -13,14 +13,39 @@
 #' @return CrcBiomeScreenObject
 #' @export
 #'
-#' @examples  \dontrun{CrcBiomeScreenObject <- ModelingRF_noweights(
-#'   CrcBiomeScreenObject = CrcBiomeScreenObject,
-#'   k.rf = n_cv,
-#'   TaskName = TaskName,
-#'   TrueLabel = TrueLabel,
-#'   num_cores = num_cores
-#' )}
+#' @examples
+#' # Minimal runnable example for ModelingRF_noweights
 #'
+#' rel_abund <- data.frame(S1 = 10, S2 = 20)
+#' rownames(rel_abund) <- "TaxaA"
+#'
+#' sample_info <- data.frame(
+#'   number_reads = c(10000, 12000),
+#'   condition = c("control", "CRC"),
+#'   row.names = c("S1", "S2")
+#' )
+#'
+#' obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = rel_abund,
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = sample_info
+#' )
+#'
+#' obj@ModelData <- list(
+#'   Training = data.frame(x = c(1, 2)),
+#'   TrainLabel = factor(c("control", "CRC"))
+#' )
+#'
+#' # out <- ModelingRF_noweights(
+#' #   CrcBiomeScreenObject = obj,
+#' #   k.rf = 2,
+#' #   TaskName = "toy_RF_nw",
+#' #   TrueLabel = c("control", "CRC"),
+#' #   num_cores = 1
+#' # )
+#'
+#' out
+
 ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  k.rf = n_cv,
                                  TaskName = NULL,

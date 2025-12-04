@@ -36,12 +36,41 @@
 #' @export
 #'
 #' @examples
-#'  \dontrun{
-#' # Perform QC with threshold = 1 SD
-#' CrcBiomeScreenObject <- qcByCmdscale(CrcBiomeScreenObject,
-#'   TaskName = "Normalize_ToyData_filtered_qc",
-#'   normalize_method = "GMPR"
-#' )}
+#' # Minimal toy object for QC example
+#' toy_sampledata <- data.frame(
+#'   sample_id = paste0("S", 1:4),
+#'   study_condition = c("control", "CRC", "control", "CRC")
+#' )
+#'
+#' toy_norm <- data.frame(
+#'   S1 = c(1, 2, 3),
+#'   S2 = c(2, 3, 4),
+#'   S3 = c(1, 1, 1),
+#'   S4 = c(3, 2, 1)
+#' )
+#' rownames(toy_norm) <- c("g1", "g2", "g3")
+#'
+#' toy_obj <- new(
+#'   "CrcBiomeScreen",
+#'   AbsoluteAbundance = data.frame(),
+#'   RelativeAbundance = data.frame(),
+#'   TaxaData = data.frame(),
+#'   SampleData = toy_sampledata,
+#'   NormalizedData = toy_norm,
+#'   ModelData = list()
+#' )
+#'
+#' # Run QC with 1 SD threshold (small example)
+#' qc_obj <- qcByCmdscale(
+#'   toy_obj,
+#'   TaskName = "ToyQC",
+#'   normalize_method = "GMPR",
+#'   threshold = 1
+#' )
+#'
+#' qc_obj@SampleData
+#'
+#'
 qcByCmdscale <- function(CrcBiomeScreenObject,
                          TaskName = NULL,
                          normalize_method = NULL,

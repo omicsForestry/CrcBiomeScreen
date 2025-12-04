@@ -19,7 +19,7 @@
 #' @return A \code{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
 #' @export
 #'
-#' @examples  \dontrun{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
+#' @examples  \donttest{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
 #'   normalize_method = "GMPR",
 #'   model = "RF",
 #'   split.requirement =

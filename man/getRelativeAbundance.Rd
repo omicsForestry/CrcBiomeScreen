@@ -24,5 +24,14 @@ Accessor for RelativeAbundance slot of CrcBiomeScreen object
 
 }}
 \examples{
-\dontrun{getRelativeAbundance(CrcBiomeScreenObject)}
+toy_obj <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+  TaxaData = data.frame(Taxa = "TaxaA"),
+  SampleData = data.frame(
+    number_reads = 10000,
+    condition = "control"
+  )
+)
+
+getRelativeAbundance(toy_obj)
 }

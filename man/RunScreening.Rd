@@ -47,7 +47,7 @@ A \code{CrcBiomeScreenObject} with the results of the screening process, includi
 Run the screening process for the microbiome data
 }
 \examples{
- \dontrun{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
+ \donttest{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
   normalize_method = "GMPR",
   model = "RF",
   split.requirement =

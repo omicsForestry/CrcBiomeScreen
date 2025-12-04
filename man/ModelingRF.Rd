@@ -30,11 +30,42 @@ CrcBiomeScreenObject
 The packaging function for Random Forest modeling
 }
 \examples{
- \dontrun{CrcBiomeScreenObject <- ModelingRF(
-                                  CrcBiomeScreenObject = CrcBiomeScreenObject,
-                                  k.rf = n_cv,
-                                  TaskName = TaskName,
-                                  TrueLabel = TrueLabel,
-                                  num_cores = num_cores)}
+# Minimal runnable example illustrating required inputs for ModelingRF
+
+# Create toy relative abundance matrix
+rel_abund <- data.frame(S1 = 10, S2 = 20)
+rownames(rel_abund) <- "TaxaA"
+
+# Create sample metadata
+sample_info <- data.frame(
+  number_reads = c(10000, 12000),
+  condition = c("control", "CRC"),
+  row.names = c("S1", "S2")
+)
+
+# Construct minimal CrcBiomeScreen object
+obj <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = rel_abund,
+  TaxaData = data.frame(Taxa = "TaxaA"),
+  SampleData = sample_info
+)
+
+# Add minimal ModelData — this is the required input to ModelingRF()
+obj@ModelData <- list(
+  Training   = data.frame(x = c(1, 2)),
+  TrainLabel = factor(c("control", "CRC"))
+)
+
+# NOT RUN: Actual model fitting is time-consuming
+# out <- ModelingRF(
+#   CrcBiomeScreenObject = obj,
+#   k.rf = 2,
+#   TaskName = "toy_RF",
+#   TrueLabel = c("control", "CRC"),
+#   num_cores = 1
+# )
+
+# The example instead demonstrates setup only
+obj
 
 }

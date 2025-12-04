@@ -12,12 +12,39 @@
 #' @return CrcBiomeScreenObject
 #' @export
 #'
-#' @examples  \dontrun{CrcBiomeScreenObject <- ModelingXGBoost_noweights(
-#'                                   CrcBiomeScreenObject = CrcBiomeScreenObject,
-#'                                   k.rf = n_cv,
-#'                                   TaskName = TaskName,
-#'                                   TrueLabel = TrueLabel,
-#'                                   num_cores = num_cores)}
+#' @examples
+#' # Minimal runnable example for ModelingXGBoost_noweights
+#'
+#' rel_abund <- data.frame(S1 = 10, S2 = 20)
+#' rownames(rel_abund) <- "TaxaA"
+#'
+#' sample_info <- data.frame(
+#'   number_reads = c(10000, 12000),
+#'   condition = c("control", "CRC"),
+#'   row.names = c("S1", "S2")
+#' )
+#'
+#' obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = rel_abund,
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = sample_info
+#' )
+#'
+#' obj@ModelData <- list(
+#'   Training   = data.frame(x = c(1, 2)),
+#'   TrainLabel = factor(c("control", "CRC"))
+#' )
+#'
+#' # out <- ModelingXGBoost_noweights(
+#' # CrcBiomeScreenObject = obj,
+#' # k.rf = 2,
+#' # TaskName = "toy_XGB_nw",
+#' # TrueLabel = c("control", "CRC"),
+#' # num_cores = 1
+#' #)
+#'
+#' out
+
 
 ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
                                       k.rf = 10,
@@ -57,7 +84,6 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
   train_data <- as.data.frame(train_data)
   train_data$label_train <- label_train
 
-  # Train the model using caret
   # Train the model using caret
   # suppressWarnings(): caret internally uses `ntree_limit`, deprecated in xgboost ≥1.6.
   # This does not affect model behavior; warning suppressed for cleaner Bioconductor build logs.

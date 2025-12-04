@@ -26,3 +26,33 @@ A CrcBiomeScreenObject with the evaluation results stored in the \code{EvaluateR
 \description{
 Evaluate the XGBoost model
 }
+\examples{
+# Minimal runnable example demonstrating input structure for EvaluateXGBoost
+
+# Toy data for testing
+train_df <- data.frame(x = c(1, 2), TrainLabel = factor(c("control", "CRC")))
+test_df  <- data.frame(x = c(3, 4))
+
+obj <- new("CrcBiomeScreen",
+  AbsoluteAbundance = data.frame(),
+  RelativeAbundance = data.frame(),
+  TaxaData = data.frame(),
+  SampleData = data.frame(),
+  ModelData = list(
+    Training = train_df,
+    Test = test_df,
+    TrainLabel = train_df$TrainLabel,
+    TestLabel = factor(c("control", "CRC"))
+  ),
+  ModelResult = list(
+    XGBoost = list(
+      model = list(dummy_model = TRUE)  # placeholder model
+    )
+  )
+)
+
+# NOT RUN: actual evaluation needs xgboost + pROC
+# out <- EvaluateXGBoost(obj, TaskName = "toy", TrueLabel = "CRC")
+
+obj
+}

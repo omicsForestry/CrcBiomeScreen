@@ -9,10 +9,51 @@
 #' @export
 #'
 #' @examples
-#'  \dontrun{# Normalize using GMPR (Geometric Mean of Pairwise Ratios)
-#' CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "GMPR", level = "Genus")
-#' # Normalize using TSS (Total Sum Scaling)
-#' CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", level = "Genus")}
+#' # Minimal runnable example for NormalizeData
+#'
+#' # Create toy absolute abundance matrix (2 samples × 3 taxa)
+#' abs_abund <- data.frame(
+#'   S1 = c(10, 30, 60),
+#'   S2 = c(20, 20, 60)
+#' )
+#' rownames(abs_abund) <- c("TaxaA", "TaxaB", "TaxaC")
+#'
+#' # Create toy taxonomy with a valid Genus column
+#' toy_taxa <- data.frame(
+#'   Taxa = rownames(abs_abund),
+#'   Genus = c("G1", "G2", "G3"),   # <-- REQUIRED so level="Genus" works
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' # Sample metadata
+#' toy_samples <- data.frame(
+#'   study_condition = c("control", "CRC"),
+#'   row.names = c("S1", "S2")
+#' )
+#'
+#' # Construct toy CrcBiomeScreen object
+#' toy_obj <- new(
+#'   "CrcBiomeScreen",
+#'   AbsoluteAbundance   = abs_abund,
+#'   RelativeAbundance   = data.frame(),
+#'   TaxaData            = toy_taxa,
+#'   SampleData          = toy_samples,
+#'   TaxaLevelData       = NULL,
+#'   NormalizedData      = NULL,
+#'   OrginalNormalizedData = NULL,
+#'   ValidationData      = NULL,
+#'   ModelData           = NULL,
+#'   ModelResult         = NULL,
+#'   EvaluateResult      = list(),
+#'   PredictResult       = NULL
+#' )
+#'
+#' # Apply TSS normalization (always runnable)
+#' \donttest{norm_obj <- NormalizeData(toy_obj, method = "TSS", level = "Genus")
+#'
+#' # Inspect normalized results
+#' head(norm_obj@NormalizedData)}
+
 
 NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NULL) {
   Data <- CrcBiomeScreenObject@TaxaLevelData[[paste0(level, "LevelData")]]

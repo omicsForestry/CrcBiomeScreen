@@ -19,5 +19,34 @@ retains the original taxonomy string in a new column (\code{OriginalTaxa}),
 and refines labels such as "uncultured" or "unclassified" by appending the parent rank.
 }
 \examples{
- \dontrun{CrcBiomeScreenObject <- SplitTaxas(CrcBiomeScreenObject)}
+# Minimal toy object for SplitTaxas demonstration
+
+# Example taxonomic strings with up to Genus level
+toy_taxa <- data.frame(
+    Taxa = c(
+        "D_0__Bacteria;D_1__Firmicutes;D_2__Clostridia;D_3__Lachnospirales;D_4__Lachnospiraceae;D_5__Roseburia",
+        "D_0__Bacteria;D_1__Firmicutes;D_2__Bacilli;D_3__Lactobacillales;D_4__Lactobacillaceae;D_5__Lactobacillus"
+    ),
+    stringsAsFactors = FALSE
+)
+
+# Minimal object containing only the TaxaData slot needed for splitting
+toy_obj <- new(
+    "CrcBiomeScreen",
+    AbsoluteAbundance   = data.frame(),
+    RelativeAbundance   = data.frame(),
+    TaxaData            = toy_taxa,
+    SampleData          = data.frame(),
+    TaxaLevelData       = NULL,
+    NormalizedData      = NULL,
+    OrginalNormalizedData = NULL,
+    ValidationData      = NULL,
+    ModelData           = NULL,
+    ModelResult         = NULL,
+    EvaluateResult      = list(),
+    PredictResult       = NULL
+)
+
+# Run taxonomic splitting
+SplitTaxas(toy_obj)
 }

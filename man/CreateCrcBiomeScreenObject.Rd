@@ -46,18 +46,34 @@ If only relative abundance data are supplied, absolute abundance is estimated
 using the total number of reads in \code{SampleData$number_reads}.
 }
 \examples{
-\dontrun{
-if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
-  toydata <- curatedMetagenomicData::curatedMetagenomicData(
-    "ThomasAM_2018a.relative_abundance",
-    dryrun = FALSE, rownames = "short"
-  )
-  CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
-    RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
-    TaxaData = toydata[[1]]@rowLinks$nodeLab,
-    SampleData = toydata[[1]]@colData
-  )
-}}
+# Minimal example with tiny toy data (required for Bioconductor checks)
+
+# Create toy abundance matrices
+rel_abund <- data.frame(
+  Sample1 = c(10, 20, 70),
+  Sample2 = c(30, 30, 40)
+)
+rownames(rel_abund) <- c("TaxaA", "TaxaB", "TaxaC")
+
+taxa_info <- data.frame(
+  Taxa = rownames(rel_abund),
+  stringsAsFactors = FALSE
+)
+
+sample_info <- data.frame(
+  number_reads = c(10000, 12000),
+  condition = c("control", "CRC"),
+  row.names = c("Sample1", "Sample2"),
+  stringsAsFactors = FALSE
+)
+
+# Create object
+obj <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = rel_abund,
+  TaxaData = taxa_info,
+  SampleData = sample_info
+)
+
 }
 \seealso{
 \linkS4class{CrcBiomeScreen}

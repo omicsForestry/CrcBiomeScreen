@@ -24,5 +24,14 @@ Accessor for PredictResult slot of CrcBiomeScreen object
 
 }}
 \examples{
-\dontrun{getPredictResult(CrcBiomeScreenObject)}
+toy_obj <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+  TaxaData = data.frame(Taxa = "TaxaA"),
+  SampleData = data.frame(
+    number_reads = 10000,
+    condition = "control"
+  )
+)
+
+getPredictResult(toy_obj)
 }

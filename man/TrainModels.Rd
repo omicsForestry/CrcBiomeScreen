@@ -36,7 +36,7 @@ CrcBiomeScreenObject
 Train the different models
 }
 \examples{
- \dontrun{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
+ \donttest{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
   model_type = "RF",
   TaskName = "ToyData_RF",
   ClassWeights = TRUE,
