@@ -9,7 +9,7 @@ EvaluateCrcBiomeScreen(
   true_labels,
   TrueLabel = NULL,
   TaskName = "ModelEvaluation",
-  PlotAUC = TRUE
+  PlotAUC = FALSE
 )
 }
 \arguments{
@@ -32,9 +32,24 @@ This function calculates performance metrics (e.g., AUC) and plots the
 ROC curve based on prediction probabilities and true labels.
 }
 \examples{
-\dontrun{
-# Assume you have obtained predictions and true labels from a previous step
-# e.g., predictions <- PredictCrcBiomeScreen(my_object, newdata, "RF")
-# true_labels <- my_newdata_object$SampleData$study_condition
-# EvaluateCrcBiomeScreen(predictions, true_labels, TrueLabel = "CRC", TaskName = "MyEvaluation", PlotAUC = TRUE)}
+# --- Minimal runnable example (no external dependencies) ---
+
+# Fake prediction probabilities for 4 samples and 2 classes
+pred <- data.frame(
+  control = c(0.8, 0.3, 0.7, 0.2),
+  CRC     = c(0.2, 0.7, 0.3, 0.8)
+)
+
+# True class labels
+labels <- factor(c("control", "CRC", "control", "CRC"))
+
+# Evaluate performance using CRC as positive class
+result <- EvaluateCrcBiomeScreen(
+  predictions = pred,
+  true_labels = labels,
+  TrueLabel = "CRC",
+  PlotAUC = FALSE  # disable plotting for speed/safety
+)
+
+result$AUC
 }

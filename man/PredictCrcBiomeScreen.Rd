@@ -24,9 +24,54 @@ A data frame containing sample-specific predictions.
 Predict the class and probabilities for new data
 }
 \examples{
- \dontrun{
-ValidationData_filtered_qc$PredictResult$XGBoost <- PredictCrcBiomeScreen(
-CrcBiomeScreenObject,
-newdata = getNormalizedData(ValidationData_filtered_qc), # Use the appropriate data slot from your new data
-model_type = "XGBoost")}
+# --- Minimal runnable example ---
+
+# Create a tiny toy dataset (2 samples × 2 features)
+newdata <- data.frame(
+  Feature1 = c(0.2, 0.8),
+  Feature2 = c(0.7, 0.3)
+)
+rownames(newdata) <- c("S1", "S2")
+
+# Create a minimal CrcBiomeScreen object with a fake RF model
+# Instead of training, we attach a dummy model object whose predict()
+# method returns fixed probabilities.
+
+fake_rf_model <- structure(
+  list(),
+  class = "fakeRF"
+)
+
+# Define a simple predict method for this fake model
+predict.fakeRF <- function(object, data, type = "response") {
+  probs <- matrix(
+    c(0.8, 0.2,   # S1: control=0.8, CRC=0.2
+      0.3, 0.7),  # S2: control=0.3, CRC=0.7
+    ncol = 2,
+    byrow = TRUE
+  )
+  colnames(probs) <- c("control", "CRC")
+  list(predictions = probs)
+}
+
+toy_obj <- new(
+  "CrcBiomeScreen",
+  AbsoluteAbundance = data.frame(),
+  RelativeAbundance = data.frame(),
+  TaxaData = data.frame(),
+  SampleData = data.frame(),
+  ModelResult = list(),
+  EvaluateResult = list(
+    RF = list(RF.Model = fake_rf_model)
+  )
+)
+
+# Run prediction
+pred_obj <- PredictCrcBiomeScreen(
+  CrcBiomeScreenObject = toy_obj,
+  newdata = newdata,
+  model_type = "RF"
+)
+
+pred_obj@PredictResult$RF
 }

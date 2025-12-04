@@ -16,57 +16,62 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' # Assume you have obtained predictions and true labels from a previous step
-#' # e.g., predictions <- PredictCrcBiomeScreen(my_object, newdata, "RF")
-#' # true_labels <- my_newdata_object$SampleData$study_condition
-#' # EvaluateCrcBiomeScreen(predictions, true_labels, TrueLabel = "CRC", TaskName = "MyEvaluation", PlotAUC = TRUE)}
+#' # --- Minimal runnable example (no external dependencies) ---
+#'
+#' # Fake prediction probabilities for 4 samples and 2 classes
+#' pred <- data.frame(
+#'   control = c(0.8, 0.3, 0.7, 0.2),
+#'   CRC     = c(0.2, 0.7, 0.3, 0.8)
+#' )
+#'
+#' # True class labels
+#' labels <- factor(c("control", "CRC", "control", "CRC"))
+#'
+#' # Evaluate performance using CRC as positive class
+#' result <- EvaluateCrcBiomeScreen(
+#'   predictions = pred,
+#'   true_labels = labels,
+#'   TrueLabel = "CRC",
+#'   PlotAUC = FALSE  # disable plotting for speed/safety
+#' )
+#'
+#' result$AUC
 
 EvaluateCrcBiomeScreen <- function(
     predictions,
     true_labels,
     TrueLabel = NULL,
     TaskName = "ModelEvaluation",
-    PlotAUC = TRUE) {
+    PlotAUC = FALSE) {   # default FALSE for safety
 
-  # Check for required inputs
   if (is.null(TrueLabel)) {
-    stop("Please specify the 'TrueLabel' (the positive class) for AUC calculation.")
+    stop("Please specify the 'TrueLabel' (the positive class).")
   }
 
-  # Ensure the predictions data frame has a column matching the TrueLabel
   if (!TrueLabel %in% colnames(predictions)) {
-    stop(sprintf("The 'predictions' data frame must contain a column named:", TrueLabel))
+    stop(sprintf("The 'predictions' data frame must contain a column named '%s'.", TrueLabel))
   }
 
-  # Extract the probabilities for the positive class
-  probs <- predictions[, TrueLabel]
-
-  # Ensure labels are a factor
+  probs <- predictions[[TrueLabel]]
   actual.classes <- as.factor(true_labels)
 
-  # Calculate the ROC curve
   roc.curve <- pROC::roc(
-    response = actual.classes,
+    response  = actual.classes,
     predictor = probs,
-    levels = levels(actual.classes)
+    levels    = levels(actual.classes)
   )
 
-  # Calculate AUC value
   auc.value <- pROC::auc(roc.curve)
 
-  # Plot the ROC curve if requested
   if (PlotAUC) {
     pdf(paste0("roc.curve.", TaskName, ".pdf"))
     plot(roc.curve, print.auc = TRUE, print.thres = TRUE)
     dev.off()
   }
 
-  # Return a list of evaluation results
-  evaluation_results <- list(
+  return(list(
     roc.curve = roc.curve,
     AUC = auc.value
-  )
-
-  return(evaluation_results)
+  ))
 }
+

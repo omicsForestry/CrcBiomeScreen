@@ -41,18 +41,34 @@
 #' @export
 #'
 #' @examples
-#' \dontrun{
-#' if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
-#'   toydata <- curatedMetagenomicData::curatedMetagenomicData(
-#'     "ThomasAM_2018a.relative_abundance",
-#'     dryrun = FALSE, rownames = "short"
-#'   )
-#'   CrcBiomeScreenObject <- CreateCrcBiomeScreenObject(
-#'     RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
-#'     TaxaData = toydata[[1]]@rowLinks$nodeLab,
-#'     SampleData = toydata[[1]]@colData
-#'   )
-#' }}
+#' # Minimal example with tiny toy data (required for Bioconductor checks)
+#'
+#' # Create toy abundance matrices
+#' rel_abund <- data.frame(
+#'   Sample1 = c(10, 20, 70),
+#'   Sample2 = c(30, 30, 40)
+#' )
+#' rownames(rel_abund) <- c("TaxaA", "TaxaB", "TaxaC")
+#'
+#' taxa_info <- data.frame(
+#'   Taxa = rownames(rel_abund),
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' sample_info <- data.frame(
+#'   number_reads = c(10000, 12000),
+#'   condition = c("control", "CRC"),
+#'   row.names = c("Sample1", "Sample2"),
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' # Create object
+#' obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = rel_abund,
+#'   TaxaData = taxa_info,
+#'   SampleData = sample_info
+#' )
+#'
 
 CreateCrcBiomeScreenObject <- function(
     AbsoluteAbundance = NULL,
@@ -66,10 +82,6 @@ CreateCrcBiomeScreenObject <- function(
   }
 
   # --- Check inputs ------------------------------------------------------
-  if (is.null(RelativeAbundance) && is.null(AbsoluteAbundance)) {
-    stop("Either RelativeAbundance or AbsoluteAbundance must be provided.")
-  }
-
   if (!is.null(RelativeAbundance) && is.null(AbsoluteAbundance)) {
     if (is.null(SampleData)) {
       stop("SampleData is required to convert RelativeAbundance to AbsoluteAbundance.")
@@ -78,13 +90,19 @@ CreateCrcBiomeScreenObject <- function(
       stop("SampleData must contain 'number_reads' to convert RelativeAbundance to AbsoluteAbundance.")
     }
 
-    AbsoluteAbundance <- RelativeAbundance %>%
+    ra_df <- RelativeAbundance %>%
       t() %>%
-      data.frame() %>%
-      mutate(across(
-        seq_len(dim(RelativeAbundance)[2]),
-        ~ (. * SampleData$number_reads / 100)
-      )) %>%
+      data.frame()
+
+    ra_df <- ra_df %>%
+      mutate(
+        across(
+          dplyr::everything(),
+          ~ . * SampleData$number_reads / 100
+        )
+      )
+
+    AbsoluteAbundance <- ra_df %>%
       t() %>%
       data.frame()
   }
@@ -145,7 +163,22 @@ setClass(
 #' @title Accessor for AbsoluteAbundance slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing absolute abundance data.
-#' @examples \dontrun{getAbsoluteAbundance(CrcBiomeScreenObject)}
+#'
+#' @examples
+#' # Construct minimal example object
+#' toy_obj <- CreateCrcBiomeScreenObject(
+#'   AbsoluteAbundance = data.frame(TaxaA = c(1000, 2000)),
+#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = data.frame(
+#'     number_reads = 10000,
+#'     condition = "control"
+#'   )
+#' )
+#'
+#' # Retrieve absolute abundance
+#' getAbsoluteAbundance(toy_obj)
+
 #' @export
 setGeneric("getAbsoluteAbundance", function(object) standardGeneric("getAbsoluteAbundance"))
 #' @describeIn getAbsoluteAbundance Retrieve absolute abundance data from a CrcBiomeScreen object.
@@ -154,7 +187,17 @@ setMethod("getAbsoluteAbundance", "CrcBiomeScreen", function(object) object@Abso
 #' @title Accessor for RelativeAbundance slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing relative abundance data.
-#' @examples \dontrun{getRelativeAbundance(CrcBiomeScreenObject)}
+#' @examples
+#' toy_obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = data.frame(
+#'     number_reads = 10000,
+#'     condition = "control"
+#'   )
+#' )
+#'
+#' getRelativeAbundance(toy_obj)
 #' @export
 setGeneric("getRelativeAbundance", function(object) standardGeneric("getRelativeAbundance"))
 #' @describeIn getRelativeAbundance Retrieve relative abundance data from a CrcBiomeScreen object.
@@ -163,7 +206,17 @@ setMethod("getRelativeAbundance", "CrcBiomeScreen", function(object) object@Rela
 #' @title Accessor for SampleData slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing sample metadata.
-#' @examples \dontrun{getSampleData(CrcBiomeScreenObject)}
+#' @examples
+#' toy_obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = data.frame(
+#'     number_reads = 10000,
+#'     condition = "control"
+#'   )
+#' )
+#'
+#' getSampleData(toy_obj)
 #' @export
 setGeneric("getSampleData", function(object) standardGeneric("getSampleData"))
 #' @describeIn getSampleData Retrieve sample metadata from a CrcBiomeScreen object.
@@ -172,7 +225,17 @@ setMethod("getSampleData", "CrcBiomeScreen", function(object) object@SampleData)
 #' @title Accessor for ModelData slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing model data.
-#' @examples \dontrun{getModelData(CrcBiomeScreenObject)}
+#' @examples
+#' toy_obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = data.frame(
+#'     number_reads = 10000,
+#'     condition = "control"
+#'   )
+#' )
+#'
+#' getTaxaData(toy_obj)
 #' @export
 setGeneric("getModelData", function(object) standardGeneric("getModelData"))
 #' @describeIn getSampleData Retrieve sample metadata from a CrcBiomeScreen object.
@@ -181,7 +244,17 @@ setMethod("getModelData", "CrcBiomeScreen", function(object) object@ModelData)
 #' @title Accessor for TaxaData slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A data.frame containing taxonomic annotations.
-#' @examples \dontrun{getTaxaData(CrcBiomeScreenObject)}
+#' @examples
+#' toy_obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = data.frame(
+#'     number_reads = 10000,
+#'     condition = "control"
+#'   )
+#' )
+#'
+#' getTaxaData(toy_obj)
 #' @export
 setGeneric("getTaxaData", function(object) standardGeneric("getTaxaData"))
 #' @describeIn getTaxaData Retrieve taxonomic annotations from a CrcBiomeScreen object.
@@ -190,7 +263,17 @@ setMethod("getTaxaData", "CrcBiomeScreen", function(object) object@TaxaData)
 #' @title Accessor for ModelResult slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A list containing fitted model results.
-#' @examples \dontrun{getModelResult(CrcBiomeScreenObject)}
+#' @examples
+#' toy_obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = data.frame(
+#'     number_reads = 10000,
+#'     condition = "control"
+#'   )
+#' )
+#'
+#' getModelData(toy_obj)
 #' @export
 setGeneric("getModelResult", function(object) standardGeneric("getModelResult"))
 #' @describeIn getModelResult Retrieve model results from a CrcBiomeScreen object.
@@ -199,7 +282,17 @@ setMethod("getModelResult", "CrcBiomeScreen", function(object) object@ModelResul
 #' @title Accessor for PredictResult slot of CrcBiomeScreen object
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #' @return A list containing fitted Prediction results.
-#' @examples \dontrun{getPredictResult(CrcBiomeScreenObject)}
+#' @examples
+#' toy_obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = data.frame(
+#'     number_reads = 10000,
+#'     condition = "control"
+#'   )
+#' )
+#'
+#' getPredictResult(toy_obj)
 #' @export
 setGeneric("getPredictResult", function(object) standardGeneric("getPredictResult"))
 #' @describeIn getPredictResult Prediction results from a CrcBiomeScreen object.
@@ -214,7 +307,18 @@ setMethod("getPredictResult", "CrcBiomeScreen", function(object) object@PredictR
 #' @param value A data.frame containing updated taxonomic annotations.
 #'
 #' @return The modified \linkS4class{CrcBiomeScreen} object.
-#' @examples \dontrun{setTaxaData(CrcBiomeScreenObject)}
+#' @examples
+#' toy_obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = data.frame(
+#'     number_reads = 10000,
+#'     condition = "control"
+#'   )
+#' )
+#'
+#' setTaxaData(toy_obj) <- data.frame(Taxa = "NewTaxa")
+#' getTaxaData(toy_obj)
 #' @export
 setGeneric("setTaxaData<-", function(object, value) standardGeneric("setTaxaData<-"))
 
@@ -232,7 +336,17 @@ setReplaceMethod("setTaxaData", "CrcBiomeScreen", function(object, value) {
 #' @param object A \linkS4class{CrcBiomeScreen} object.
 #'
 #' @return A data.frame (or matrix) containing normalized abundance data.
-#' @examples \dontrun{getNormalizedData(CrcBiomeScreenObject)}
+#' @examples
+#' toy_obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = data.frame(
+#'     number_reads = 10000,
+#'     condition = "control"
+#'   )
+#' )
+#'
+#' getNormalizedData(toy_obj)
 #' @export
 setGeneric("getNormalizedData", function(object) standardGeneric("getNormalizedData"))
 
@@ -248,7 +362,18 @@ setMethod("getNormalizedData", "CrcBiomeScreen", function(object) object@Normali
 #' @param value A data.frame or matrix containing normalized abundance data.
 #'
 #' @return The modified \linkS4class{CrcBiomeScreen} object.
-#' @examples \dontrun{setNormalizedData(CrcBiomeScreenObject)}
+#' @examples
+#' toy_obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = data.frame(
+#'     number_reads = 10000,
+#'     condition = "control"
+#'   )
+#' )
+#'
+#' setNormalizedData(toy_obj) <- data.frame(n1 = 1:2)
+#' getNormalizedData(toy_obj)
 #' @export
 setGeneric("setNormalizedData<-", function(object, value) standardGeneric("setNormalizedData<-"))
 

@@ -13,8 +13,48 @@
 #'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult` slot.
 #' @export
+#' @examples
+#' # Minimal runnable example demonstrating EvaluateModel setup
 #'
+#' # Create small toy relative abundance matrix
+#' rel_abund <- data.frame(S1 = 10, S2 = 20)
+#' rownames(rel_abund) <- "TaxaA"
 #'
+#' # Sample metadata (required for CreateCrcBiomeScreenObject)
+#' sample_info <- data.frame(
+#'   number_reads = c(10000, 12000),
+#'   condition = c("control", "CRC"),
+#'   row.names = c("S1", "S2")
+#' )
+#'
+#' # Build a minimal CrcBiomeScreen object
+#' obj <- CreateCrcBiomeScreenObject(
+#'   RelativeAbundance = rel_abund,
+#'   TaxaData = data.frame(Taxa = "TaxaA"),
+#'   SampleData = sample_info
+#' )
+#'
+#' # Add minimal ModelData (required input shape)
+#' obj@ModelData <- list(
+#'   Training   = data.frame(x = c(1, 2)),
+#'   Test       = data.frame(x = c(3, 4)),
+#'   TrainLabel = factor(c("control", "CRC")),
+#'   TestLabel  = factor(c("control", "CRC"))
+#' )
+#'
+#' # Insert dummy model results so EvaluateModel() can run without training
+#' obj@ModelResult <- list(
+#'   RF = list(best.params = list(
+#'     num.trees = 1, mtry = 1, node_size = 1, sample_size = 1
+#'   )),
+#'   XGBoost = list(model = list(dummy = TRUE))
+#' )
+#'
+#' # NOT RUN: Real evaluation requires pROC + ranger etc.
+#' # obj <- EvaluateModel(obj, model_type = "RF", TaskName = "toy", TrueLabel = "CRC")
+#'
+#' obj
+
 EvaluateModel <- function(CrcBiomeScreenObject = NULL,
                           model_type = c("RF", "XGBoost"),
                           TaskName = NULL,
@@ -64,8 +104,37 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
 #'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$RF` slot.
 #' @export
+#' @examples
+#' # Minimal runnable example demonstrating input structure for EvaluateRF
 #'
+#' # Toy training + test matrices
+#' train_df <- data.frame(x = c(1, 2), TrainLabel = factor(c("control", "CRC")))
+#' test_df  <- data.frame(x = c(3, 4))
 #'
+#' # Build minimal CrcBiomeScreen object
+#' obj <- new("CrcBiomeScreen",
+#'   AbsoluteAbundance = data.frame(),
+#'   RelativeAbundance = data.frame(),
+#'   TaxaData = data.frame(),
+#'   SampleData = data.frame(),
+#'   ModelData = list(
+#'     Training = train_df,
+#'     Test = test_df,
+#'     TrainLabel = train_df$TrainLabel,
+#'     TestLabel = factor(c("control", "CRC"))
+#'   ),
+#'   ModelResult = list(
+#'     RF = list(best.params = list(
+#'       num.trees = 1, mtry = 1, node_size = 1, sample_size = 1
+#'     ))
+#'   )
+#' )
+#'
+#' # NOT RUN: real evaluation uses ranger + pROC (too slow for BioC builds)
+#' # out <- EvaluateRF(obj, TaskName = "toy", TrueLabel = "CRC")
+#'
+#' obj
+
 EvaluateRF <- function(CrcBiomeScreenObject = NULL,
                        TaskName = NULL,
                        TrueLabel = NULL,
@@ -160,8 +229,36 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 #'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$XGBoost` slot.
 #' @export
+#' @examples
+#' # Minimal runnable example demonstrating input structure for EvaluateXGBoost
 #'
+#' # Toy data for testing
+#' train_df <- data.frame(x = c(1, 2), TrainLabel = factor(c("control", "CRC")))
+#' test_df  <- data.frame(x = c(3, 4))
 #'
+#' obj <- new("CrcBiomeScreen",
+#'   AbsoluteAbundance = data.frame(),
+#'   RelativeAbundance = data.frame(),
+#'   TaxaData = data.frame(),
+#'   SampleData = data.frame(),
+#'   ModelData = list(
+#'     Training = train_df,
+#'     Test = test_df,
+#'     TrainLabel = train_df$TrainLabel,
+#'     TestLabel = factor(c("control", "CRC"))
+#'   ),
+#'   ModelResult = list(
+#'     XGBoost = list(
+#'       model = list(dummy_model = TRUE)  # placeholder model
+#'     )
+#'   )
+#' )
+#'
+#' # NOT RUN: actual evaluation needs xgboost + pROC
+#' # out <- EvaluateXGBoost(obj, TaskName = "toy", TrueLabel = "CRC")
+#'
+#' obj
+
 EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
                             TaskName = NULL,
                             TrueLabel = NULL,

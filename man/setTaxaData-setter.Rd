@@ -27,5 +27,15 @@ setTaxaData<-: Setter for TaxaData slot of CrcBiomeScreen object
 
 }}
 \examples{
-\dontrun{setTaxaData(CrcBiomeScreenObject)}
+toy_obj <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = data.frame(TaxaA = c(10, 20)),
+  TaxaData = data.frame(Taxa = "TaxaA"),
+  SampleData = data.frame(
+    number_reads = 10000,
+    condition = "control"
+  )
+)
+
+setTaxaData(toy_obj) <- data.frame(Taxa = "NewTaxa")
+getTaxaData(toy_obj)
 }

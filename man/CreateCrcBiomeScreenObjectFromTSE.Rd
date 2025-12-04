@@ -19,12 +19,43 @@ Wrapper function to directly convert a TreeSummarizedExperiment object
 into a \linkS4class{CrcBiomeScreen} S4 object for downstream analysis.
 }
 \examples{
-\dontrun{if (requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
-  tse <- curatedMetagenomicData::curatedMetagenomicData(
-    "ThomasAM_2018a.relative_abundance",
-    dryrun = FALSE, rownames = "short"
-  )[[1]]
-  obj <- CreateCrcBiomeScreenObjectFromTSE(tse)
-  obj
-}}
+# Runnable example using a minimal mock TreeSummarizedExperiment
+
+# Load required classes (SummarizedExperiment & TreeSummarizedExperiment)
+suppressMessages({
+  library(SummarizedExperiment)
+  library(TreeSummarizedExperiment)
+})
+
+# Create a tiny assay matrix
+assay_mat <- matrix(
+  c(10, 5,
+    20, 7),
+  nrow = 2,
+  dimnames = list(c("Taxa1", "Taxa2"), c("S1", "S2"))
+)
+
+# Create row (taxa) metadata
+row_meta <- DataFrame(
+  Taxa = c("A;B;C", "A;D;E")
+)
+
+# Create sample metadata
+col_meta <- DataFrame(
+  number_reads = c(10000, 12000),
+  condition = c("control", "CRC")
+)
+
+# Build a minimal TreeSummarizedExperiment
+tse <- TreeSummarizedExperiment::TreeSummarizedExperiment(
+  assays = list(relative_abundance = assay_mat),
+  rowData = row_meta,
+  colData = col_meta
+)
+
+# Convert to CrcBiomeScreen object
+obj <- CreateCrcBiomeScreenObjectFromTSE(tse)
+
+# Inspect object
+obj
 }

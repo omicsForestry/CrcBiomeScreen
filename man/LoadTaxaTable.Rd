@@ -24,9 +24,52 @@ This function allows users to load their own taxonomic assignments for ASV/OTU d
 The input table should map sequence IDs to their full taxonomic lineage.
 }
 \examples{
-\dontrun{
-CrcBiomeScreenObject <- LoadTaxaTable(CrcBiomeScreenObject,
-                                       taxa_table = my_taxa_table,
-                                       id_column = "ASV_ID",
-                                       taxa_column = "Taxonomy")}
+## Minimal example using CreateCrcBiomeScreenObject and LoadTaxaTable
+
+# Toy relative abundance matrix: 1 taxon (row) × 2 samples (columns)
+rel_abund <- data.frame(
+  S1 = 10,
+  S2 = 20,
+  row.names = "TaxaA"
+)
+
+# Sample metadata with required 'number_reads' column
+sample_info <- data.frame(
+  number_reads = c(10000, 12000),
+  condition    = c("control", "CRC"),
+  row.names    = c("S1", "S2"),
+  stringsAsFactors = FALSE
+)
+
+# Simple taxa table matching the row names of rel_abund
+taxa_info <- data.frame(
+  Taxa = rownames(rel_abund),
+  stringsAsFactors = FALSE
+)
+
+# Construct a minimal CrcBiomeScreen object
+toy_obj <- CreateCrcBiomeScreenObject(
+  RelativeAbundance = rel_abund,
+  TaxaData          = taxa_info,
+  SampleData        = sample_info
+)
+
+# External taxonomy table to be merged in by LoadTaxaTable
+my_taxa_table <- data.frame(
+  ASV_ID   = "TaxaA",
+  Taxonomy = "D_0__Bacteria;D_1__Firmicutes;D_2__Clostridia",
+  stringsAsFactors = FALSE
+)
+
+# Load taxonomy table into the CrcBiomeScreen object
+toy_obj <- LoadTaxaTable(
+  CrcBiomeScreenObject = toy_obj,
+  taxa_table  = my_taxa_table,
+  id_column   = "ASV_ID",
+  taxa_column = "Taxonomy"
+)
+
+# Inspect updated taxonomy using the accessor
+head(getTaxaData(toy_obj))
+
 }

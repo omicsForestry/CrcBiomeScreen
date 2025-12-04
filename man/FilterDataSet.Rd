@@ -23,3 +23,46 @@ A \code{CrcBiomeScreenObject} with filtered data based on the specified label.
 \description{
 Filter the CrcBiomeScreenObject dataset based on a specific label
 }
+\examples{
+# Create toy normalized data (5 samples × 2 taxa)
+norm_data <- data.frame(
+  TaxaA = c(10, 20, 15, 30, 10),
+  TaxaB = c(5, 7, 6, 8, 6)
+)
+rownames(norm_data) <- paste0("S", 1:5)
+
+# Create sample metadata
+sample_info <- data.frame(
+  study_condition = c("control", "CRC", "control", "CRC", "Adenoma"),
+  country = c("US", "US", "UK", "UK", "US"),
+  row.names = paste0("S", 1:5),
+  stringsAsFactors = FALSE
+)
+
+# Construct a minimal CrcBiomeScreen object
+toy_obj <- new(
+  "CrcBiomeScreen",
+  AbsoluteAbundance   = data.frame(),
+  RelativeAbundance   = data.frame(),
+  TaxaData            = data.frame(),
+  SampleData          = sample_info,
+  NormalizedData      = norm_data,
+  TaxaLevelData       = NULL,
+  OrginalNormalizedData = NULL,
+  ValidationData      = NULL,
+  ModelData           = NULL,
+  ModelResult         = NULL,
+  EvaluateResult      = list(),
+  PredictResult       = NULL
+)
+
+# Filter to keep only CRC and control samples
+filtered_obj <- FilterDataSet(
+  toy_obj,
+  label = c("CRC", "control"),
+  condition_col = "study_condition"
+)
+
+# Inspect filtered SampleData
+filtered_obj@SampleData
+}
