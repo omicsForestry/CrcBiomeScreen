@@ -12,6 +12,7 @@
 #' @param normalize_method A character string indicating the normalization method used (e.g., \code{"GMPR"}). Used for labeling only.
 #' @param threshold_sd Numeric value indicating how many standard deviations above the mean
 #'        distance should be considered an outlier (default is 1).
+#' @param plot Logical value indicating whether to generate and save the MDS plot (default is TRUE).
 #'
 #' @importFrom dplyr mutate across
 #' @importFrom tibble tibble

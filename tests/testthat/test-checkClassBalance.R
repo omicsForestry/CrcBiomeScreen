@@ -1,26 +1,13 @@
-test_that("checkClassBalance works correctly", {
-  skip_on_bioc()
-  library(curatedMetagenomicData)
-  toydata <- curatedMetagenomicData(
-    "ThomasAM_2018a.relative_abundance",
-    dryrun = FALSE, rownames = "short"
-  )
+test_that("checkClassBalance returns expected structure", {
 
-  toydata_object <- CreateCrcBiomeScreenObject(
-    RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
-    TaxaData = toydata[[1]]@rowLinks$nodeLab,
-    SampleData = toydata[[1]]@colData
-  )
-  toydata_object <- SplitTaxas(toydata_object)
-  toydata_object <- KeepTaxonomicLevel(toydata_object, level = "Genus")
+  # minimal labels (2 classes, imbalanced)
+  train_labels <- factor(c(rep("control", 8), rep("CRC", 2)))
 
-  toydata_object <- NormalizeData(toydata_object, method = "GMPR", level = "Genus")
-  k <- 0.6
-  toydata_object <- SplitDataSet(toydata_object, label = c("control", "CRC"), partition = k)
-  checkClassBalanceResult <- checkClassBalance(getModelData(toydata_object)$TrainLabel)
+  res <- checkClassBalance(train_labels, plot = TRUE)
 
-  pdf_name <- "class_balance_plot.pdf"
-  # Check result format
-  expect_equal(class(checkClassBalanceResult), "list")
-  expect_true(file.exists(pdf_name))
+  expect_type(res, "list")
+  expect_true(all(c("class_counts","class_proportions","is_imbalanced","suggestion") %in% names(res)))
+  expect_true(setequal(names(res$class_counts), levels(train_labels)))
+  expect_equal(sum(res$class_counts), length(train_labels))
+  expect_equal(sum(res$class_proportions), 1)
 })

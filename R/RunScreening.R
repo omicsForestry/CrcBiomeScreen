@@ -1,7 +1,6 @@
 #' Run the screening process for the microbiome data
 #'
 #' @param obj A \code{CrcBiomeScreenObject} containing normalized microbiome data, sample metadata, etc.
-#' @param normalize_method Normalization method to be used, default is "TSS"
 #' @param model_type Model type to be used, default is "RF"
 #' @param split.requirement A list containing the label and condition column for splitting the dataset, default is NULL
 #' @param TaskName A character string used to label the output
@@ -12,6 +11,7 @@
 #' @param ClassWeights Whether to use class weights in the model training, default is NULL
 #' @param n_cv The number of cross-validation folds, default is NULL
 #'
+#'
 #' @importFrom dplyr mutate across
 #' @importFrom tidyr separate
 #' @importFrom tibble tibble
@@ -20,7 +20,6 @@
 #' @export
 #'
 #' @examples  \donttest{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
-#'   normalize_method = "GMPR",
 #'   model = "RF",
 #'   split.requirement =
 #'     c(
@@ -43,7 +42,6 @@ RunScreening <- function(obj,
                          ValidationData = NULL,
                          TrueLabel = NULL,
                          num_cores = NULL) {
-  # obj <- NormalizeData(obj, method = normalize_method)
   obj <- SplitDataSet(obj, label = split.requirement$label, condition_col = split.requirement$condition_col, partition = partition)
 
   obj <- TrainModels(obj, model_type = model_type, TaskName = TaskName, TrueLabel = TrueLabel, num_cores = num_cores, ClassWeights = ClassWeights, n_cv = n_cv)

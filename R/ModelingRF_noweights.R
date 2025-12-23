@@ -44,7 +44,7 @@
 #' #   num_cores = 1
 #' # )
 #'
-#' out
+#' obj
 
 ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  k.rf = n_cv,

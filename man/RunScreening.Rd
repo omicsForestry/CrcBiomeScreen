@@ -37,8 +37,6 @@ RunScreening(
 \item{TrueLabel}{The true label for the classification task, which is used to evaluate the model's performance}
 
 \item{num_cores}{Set the number of cores for parallel computing, default is NULL}
-
-\item{normalize_method}{Normalization method to be used, default is "TSS"}
 }
 \value{
 A \code{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
@@ -48,7 +46,6 @@ Run the screening process for the microbiome data
 }
 \examples{
  \donttest{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
-  normalize_method = "GMPR",
   model = "RF",
   split.requirement =
     c(
