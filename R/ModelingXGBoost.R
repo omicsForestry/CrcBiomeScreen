@@ -46,7 +46,7 @@
 #' #  num_cores = 1
 #' # )
 #'
-#' obk
+#' obj
 
 
 ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
