@@ -3,6 +3,7 @@
 #'
 #' @param CrcBiomeScreenObject From the CreateCrcBiomeScreenObject()
 #' @param method "TSS" or "GMPR"
+#' @param level Taxonomic level for normalization, e.g., "Genus"
 #'
 #'
 #' @return Updated CrcBiomeScreenObject with NormalizedData

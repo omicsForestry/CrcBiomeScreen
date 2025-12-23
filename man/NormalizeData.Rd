@@ -11,6 +11,8 @@ NormalizeData(CrcBiomeScreenObject = NULL, method = NULL, level = NULL)
 \item{CrcBiomeScreenObject}{From the CreateCrcBiomeScreenObject()}
 
 \item{method}{"TSS" or "GMPR"}
+
+\item{level}{Taxonomic level for normalization, e.g., "Genus"}
 }
 \value{
 Updated CrcBiomeScreenObject with NormalizedData
