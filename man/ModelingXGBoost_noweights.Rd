@@ -63,5 +63,5 @@ obj@ModelData <- list(
 # num_cores = 1
 #)
 
-out
+obj
 }
