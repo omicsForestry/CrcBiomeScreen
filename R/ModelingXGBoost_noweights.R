@@ -43,7 +43,7 @@
 #' # num_cores = 1
 #' #)
 #'
-#' out
+#' obj
 
 
 ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
