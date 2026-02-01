@@ -6,6 +6,7 @@
 \usage{
 EvaluateRF(
   CrcBiomeScreenObject = NULL,
+  outdir = tempdir(),
   TaskName = NULL,
   TrueLabel = NULL,
   PlotAUC = NULL
@@ -13,6 +14,8 @@ EvaluateRF(
 }
 \arguments{
 \item{CrcBiomeScreenObject}{A CrcBiomeScreenObject containing the model data and results}
+
+\item{outdir}{The output directory where plots will be saved (default: tempdir()).}
 
 \item{TaskName}{A character string used to label the output files and results.}
 

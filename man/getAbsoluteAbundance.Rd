@@ -13,14 +13,16 @@ getAbsoluteAbundance(object)
 \item{object}{A \linkS4class{CrcBiomeScreen} object.}
 }
 \value{
-A data.frame containing absolute abundance data.
+A \linkS4class{CrcBiomeScreen} object with A data.frame containing
+absolute abundance data.
 }
 \description{
 Accessor for AbsoluteAbundance slot of CrcBiomeScreen object
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{getAbsoluteAbundance(CrcBiomeScreen)}: Retrieve absolute abundance data from a CrcBiomeScreen object.
+\item \code{getAbsoluteAbundance(CrcBiomeScreen)}: Retrieve absolute abundance data
+from a CrcBiomeScreen object.
 
 }}
 \examples{

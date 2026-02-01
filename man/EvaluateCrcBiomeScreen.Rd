@@ -6,6 +6,7 @@
 \usage{
 EvaluateCrcBiomeScreen(
   predictions,
+  outdir = tempdir(),
   true_labels,
   TrueLabel = NULL,
   TaskName = "ModelEvaluation",
@@ -16,6 +17,8 @@ EvaluateCrcBiomeScreen(
 \item{predictions}{A data frame or matrix of model predictions, typically
 containing columns for probability scores for each class.}
 
+\item{outdir}{The output directory where plots will be saved (default: tempdir()).}
+
 \item{true_labels}{A character vector or factor of the true class labels.}
 
 \item{TrueLabel}{The positive class label (e.g., "CRC") to use for ROC/AUC calculation.}
@@ -25,7 +28,7 @@ containing columns for probability scores for each class.}
 \item{PlotAUC}{A logical value indicating whether to plot the AUC curve.}
 }
 \value{
-A list containing the ROC curve object and the AUC value.
+A \linkS4class{CrcBiomeScreen} object with updated slots containing the ROC curve object and the AUC value.
 }
 \description{
 This function calculates performance metrics (e.g., AUC) and plots the

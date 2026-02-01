@@ -16,14 +16,16 @@ setTaxaData(object) <- value
 \item{value}{A data.frame containing updated taxonomic annotations.}
 }
 \value{
-The modified \linkS4class{CrcBiomeScreen} object.
+A \linkS4class{CrcBiomeScreen} object with
+a modified \linkS4class{CrcBiomeScreen} object.
 }
 \description{
 setTaxaData<-: Setter for TaxaData slot of CrcBiomeScreen object
 }
 \section{Functions}{
 \itemize{
-\item \code{setTaxaData(CrcBiomeScreen) <- value}: Replace the TaxaData slot of a CrcBiomeScreen object.
+\item \code{setTaxaData(CrcBiomeScreen) <- value}: Replace the TaxaData slot
+of a CrcBiomeScreen object.
 
 }}
 \examples{

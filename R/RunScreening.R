@@ -16,7 +16,7 @@
 #' @importFrom tidyr separate
 #' @importFrom tibble tibble
 #'
-#' @return A \code{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
+#' @return A \linkS4class{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
 #' @export
 #'
 #' @examples  \donttest{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,

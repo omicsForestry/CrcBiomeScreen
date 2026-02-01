@@ -10,7 +10,8 @@ getModelData(object)
 \item{object}{A \linkS4class{CrcBiomeScreen} object.}
 }
 \value{
-A data.frame containing model data.
+A \linkS4class{CrcBiomeScreen} object with
+a data.frame containing model data.
 }
 \description{
 Accessor for ModelData slot of CrcBiomeScreen object
@@ -24,6 +25,11 @@ toy_obj <- CreateCrcBiomeScreenObject(
     condition = "control"
   )
 )
+toy_obj <- SplitDataSet(
+CrcBiomeScreenObject,
+label = c("control", "CRC"),
+partition = 0.7
+)
+getModelData(toy_obj)
 
-getTaxaData(toy_obj)
 }

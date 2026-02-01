@@ -10,7 +10,7 @@
 #' @importFrom foreach foreach %dopar% %do%
 #' @importFrom caret createFolds
 #'
-#' @return CrcBiomeScreenObject
+#' @return A \linkS4class{CrcBiomeScreenObject} with the modelling results.
 #' @export
 #'
 #' @examples
@@ -31,10 +31,6 @@
 #'   SampleData = sample_info
 #' )
 #'
-#' obj@ModelData <- list(
-#'   Training = data.frame(x = c(1, 2)),
-#'   TrainLabel = factor(c("control", "CRC"))
-#' )
 #'
 #' # out <- ModelingRF_noweights(
 #' #   CrcBiomeScreenObject = obj,
@@ -44,7 +40,7 @@
 #' #   num_cores = 1
 #' # )
 #'
-#' # obj
+#' obj
 
 ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  k.rf = n_cv,

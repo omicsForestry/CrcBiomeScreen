@@ -4,7 +4,7 @@
 #' @param newdata The data frame or matrix of new features to predict on.
 #' @param model_type The type of model to use for prediction ("RF" or "XGBoost").
 #'
-#' @return A data frame containing sample-specific predictions.
+#' @return A \linkS4class{CrcBiomeScreenObject} with a data frame containing sample-specific predictions.
 #' @export
 #'
 #' @examples

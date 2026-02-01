@@ -7,6 +7,7 @@
 EvaluateModel(
   CrcBiomeScreenObject = NULL,
   model_type = c("RF", "XGBoost"),
+  outdir = tempdir(),
   TaskName = NULL,
   TrueLabel = NULL,
   PlotAUC = NULL
@@ -24,7 +25,7 @@ EvaluateModel(
 \item{PlotAUC}{A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.}
 }
 \value{
-A CrcBiomeScreenObject with the evaluation results stored in the \code{EvaluateResult} slot.
+A \linkS4class{CrcBiomeScreen} object with with the evaluation results stored in the \code{EvaluateResult} slot.
 }
 \description{
 Evaluate the model to select the optimal model
@@ -59,12 +60,12 @@ obj@ModelData <- list(
 )
 
 # Insert dummy model results so EvaluateModel() can run without training
-obj@ModelResult <- list(
-  RF = list(best.params = list(
-    num.trees = 1, mtry = 1, node_size = 1, sample_size = 1
-  )),
-  XGBoost = list(model = list(dummy = TRUE))
-)
+# obj@ModelResult <- list(
+# RF = list(best.params = list(
+#   num.trees = 1, mtry = 1, node_size = 1, sample_size = 1
+# )),
+#  XGBoost = list(model = list(dummy = TRUE))
+#)
 
 # NOT RUN: Real evaluation requires pROC + ranger etc.
 # obj <- EvaluateModel(obj, model_type = "RF", TaskName = "toy", TrueLabel = "CRC")

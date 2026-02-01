@@ -7,6 +7,7 @@
 qcByCmdscale(
   CrcBiomeScreenObject,
   TaskName = NULL,
+  outdir = tempdir(),
   normalize_method = NULL,
   threshold_sd = 1,
   plot = TRUE
@@ -16,6 +17,8 @@ qcByCmdscale(
 \item{CrcBiomeScreenObject}{A \code{CrcBiomeScreenObject} containing normalized microbiome data, sample metadata, etc.}
 
 \item{TaskName}{A character string used to label the output plot and PDF filename.}
+
+\item{outdir}{The output directory where plots will be saved (default: tempdir()).description}
 
 \item{normalize_method}{A character string indicating the normalization method used (e.g., \code{"GMPR"}). Used for labeling only.}
 
@@ -32,6 +35,8 @@ A modified \code{CrcBiomeScreenObject} where:
 \item \code{OutlierSamples} is a character vector of sample IDs identified as outliers.
 \item \code{OrginalNormalizedData} stores the unfiltered data matrix before QC.
 }
+
+A \linkS4class{CrcBiomeScreenObject} with outliers.
 }
 \description{
 This function performs quality control on microbiome data by applying classical
@@ -82,7 +87,7 @@ qc_obj <- qcByCmdscale(
   threshold = 1
 )
 
-qc_obj@SampleData
+getSampleData(qc_obj)
 
 
 }

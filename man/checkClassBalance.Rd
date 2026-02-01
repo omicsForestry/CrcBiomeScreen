@@ -5,10 +5,13 @@
 \title{Check the sample distribution of the dataset and
 give the suggestion if need the class weight or not}
 \usage{
-checkClassBalance(labels, threshold = 0.5, plot = TRUE)
+checkClassBalance(labels, outdir = tempdir(), threshold = 0.5, plot = TRUE)
 }
 \arguments{
 \item{labels}{The label for distribution}
+
+\item{outdir}{The output directory where plots will be saved
+(default: tempdir()).}
 
 \item{threshold}{The threshold for the ratio (0.5) if it is the
 imbalanced dataset}
@@ -16,7 +19,7 @@ imbalanced dataset}
 \item{plot}{Choose to have the figures or not}
 }
 \value{
-A list including the details about this step
+A \linkS4class{CrcBiomeScreen} object with updated slots.
 }
 \description{
 Check the sample distribution of the dataset and

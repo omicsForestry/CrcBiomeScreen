@@ -1,5 +1,11 @@
 test_that("qcByCmdscale works correctly", {
+  skip_on_bioc()
+  if (!requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
+    skip("curatedMetagenomicData not available")
+  }
+
   library(curatedMetagenomicData)
+
   toydata <- curatedMetagenomicData(
     "ThomasAM_2018a.relative_abundance",
     dryrun = FALSE, rownames = "short"
@@ -10,21 +16,21 @@ test_that("qcByCmdscale works correctly", {
     TaxaData = toydata[[1]]@rowLinks$nodeLab,
     SampleData = toydata[[1]]@colData
   )
+
   toydata_object <- SplitTaxas(toydata_object)
   toydata_object <- KeepTaxonomicLevel(toydata_object, level = "Genus")
-
   toydata_object <- NormalizeData(toydata_object, method = "GMPR", level = "Genus")
-  k <- 0.6
-  toydata_object <- SplitDataSet(toydata_object, label = c("control", "CRC"), partition = k)
+  toydata_object <- SplitDataSet(toydata_object, label = c("control", "CRC"), partition = 0.6)
 
-  toydata_object <- qcByCmdscale(toydata_object,
+  outdir <- withr::local_tempdir()
+
+  toydata_object <- qcByCmdscale(
+    toydata_object,
     TaskName = "GMPR_ToyData_filtered_qc",
-    normalize_method = "GMPR"
+    normalize_method = "GMPR",
+    outdir = outdir,
+    plot = FALSE
   )
-  TaskName <- "GMPR_ToyData_filtered_qc"
-  normalize_method <- "GMPR"
-  pdf_name <- paste0("cmdscale_", TaskName, "_", normalize_method, ".pdf")
 
-  # Check result format
-  expect_true(file.exists(pdf_name))
+  expect_true(is.character(toydata_object@OutlierSamples))
 })

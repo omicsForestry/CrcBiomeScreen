@@ -24,7 +24,7 @@ ModelingRF(
 \item{num_cores}{Set the number of the cores in parallel computing}
 }
 \value{
-CrcBiomeScreenObject
+A \linkS4class{CrcBiomeScreenObject} with the modelling results.
 }
 \description{
 The packaging function for Random Forest modeling
@@ -47,14 +47,9 @@ sample_info <- data.frame(
 obj <- CreateCrcBiomeScreenObject(
   RelativeAbundance = rel_abund,
   TaxaData = data.frame(Taxa = "TaxaA"),
-  SampleData = sample_info
+  SampleData = sample_info,
 )
 
-# Add minimal ModelData — this is the required input to ModelingRF()
-obj@ModelData <- list(
-  Training   = data.frame(x = c(1, 2)),
-  TrainLabel = factor(c("control", "CRC"))
-)
 
 # NOT RUN: Actual model fitting is time-consuming
 # out <- ModelingRF(

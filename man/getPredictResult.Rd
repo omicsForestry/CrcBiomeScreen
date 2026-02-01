@@ -13,14 +13,16 @@ getPredictResult(object)
 \item{object}{A \linkS4class{CrcBiomeScreen} object.}
 }
 \value{
-A list containing fitted Prediction results.
+A \linkS4class{CrcBiomeScreen} object with
+a  list containing fitted Prediction results.
 }
 \description{
 Accessor for PredictResult slot of CrcBiomeScreen object
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{getPredictResult(CrcBiomeScreen)}: Prediction results from a CrcBiomeScreen object.
+\item \code{getPredictResult(CrcBiomeScreen)}: Prediction results
+from a CrcBiomeScreen object.
 
 }}
 \examples{

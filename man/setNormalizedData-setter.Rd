@@ -4,7 +4,8 @@
 \alias{setNormalizedData-setter}
 \alias{setNormalizedData<-}
 \alias{setNormalizedData<-,CrcBiomeScreen-method}
-\title{setNormalizedData<-: Setter for NormalizedData slot of CrcBiomeScreen object}
+\title{setNormalizedData<-: Setter for NormalizedData slot
+of CrcBiomeScreen object}
 \usage{
 setNormalizedData(object) <- value
 
@@ -16,14 +17,17 @@ setNormalizedData(object) <- value
 \item{value}{A data.frame or matrix containing normalized abundance data.}
 }
 \value{
-The modified \linkS4class{CrcBiomeScreen} object.
+A \linkS4class{CrcBiomeScreen} object with
+a  modified \linkS4class{CrcBiomeScreen} object.
 }
 \description{
-setNormalizedData<-: Setter for NormalizedData slot of CrcBiomeScreen object
+setNormalizedData<-: Setter for NormalizedData slot
+of CrcBiomeScreen object
 }
 \section{Functions}{
 \itemize{
-\item \code{setNormalizedData(CrcBiomeScreen) <- value}: Replace the NormalizedData slot of a CrcBiomeScreen object.
+\item \code{setNormalizedData(CrcBiomeScreen) <- value}: Replace the NormalizedData slot
+of a CrcBiomeScreen object.
 
 }}
 \examples{

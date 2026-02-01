@@ -6,7 +6,7 @@
 #' @param level Taxonomic level for normalization, e.g., "Genus"
 #'
 #'
-#' @return Updated CrcBiomeScreenObject with NormalizedData
+#' @return A \linkS4class{CrcBiomeScreenObject} with the updated NormalizedData.
 #' @export
 #'
 #' @examples

@@ -4,6 +4,9 @@
 \name{CrcBiomeScreen-class}
 \alias{CrcBiomeScreen-class}
 \title{CrcBiomeScreen Class}
+\value{
+A \linkS4class{CrcBiomeScreen} object.
+}
 \description{
 An S4 container for CRC microbiome screening data, including abundance
 matrices, taxonomy, sample metadata, and model results.
@@ -15,7 +18,8 @@ matrices, taxonomy, sample metadata, and model results.
 
 \item{\code{TaxaData}}{Taxonomy annotation data frame.}
 
-\item{\code{SampleData}}{Sample metadata (must include number_reads if relative abundance is used).}
+\item{\code{SampleData}}{Sample metadata (must include number_reads if relative
+abundance is used).}
 
 \item{\code{RelativeAbundance}}{Relative abundance matrix.}
 

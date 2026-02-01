@@ -15,7 +15,7 @@ NormalizeData(CrcBiomeScreenObject = NULL, method = NULL, level = NULL)
 \item{level}{Taxonomic level for normalization, e.g., "Genus"}
 }
 \value{
-Updated CrcBiomeScreenObject with NormalizedData
+A \linkS4class{CrcBiomeScreenObject} with the updated NormalizedData.
 }
 \description{
 Normalise the absolute data to relative data by using Total Sum Scaling

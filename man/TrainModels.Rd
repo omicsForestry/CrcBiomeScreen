@@ -30,7 +30,7 @@ TrainModels(
 \item{num_cores}{Set the number of the cores in parallel computing}
 }
 \value{
-CrcBiomeScreenObject
+A \linkS4class{CrcBiomeScreenObject} with training results.
 }
 \description{
 Train the different models

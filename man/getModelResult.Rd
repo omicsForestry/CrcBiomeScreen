@@ -13,14 +13,16 @@ getModelResult(object)
 \item{object}{A \linkS4class{CrcBiomeScreen} object.}
 }
 \value{
-A list containing fitted model results.
+A \linkS4class{CrcBiomeScreen} object with
+a list containing fitted model results.
 }
 \description{
 Accessor for ModelResult slot of CrcBiomeScreen object
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{getModelResult(CrcBiomeScreen)}: Retrieve model results from a CrcBiomeScreen object.
+\item \code{getModelResult(CrcBiomeScreen)}: Retrieve model results
+from a CrcBiomeScreen object.
 
 }}
 \examples{

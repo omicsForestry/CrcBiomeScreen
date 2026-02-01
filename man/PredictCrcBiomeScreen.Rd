@@ -18,7 +18,7 @@ PredictCrcBiomeScreen(
 \item{model_type}{The type of model to use for prediction ("RF" or "XGBoost").}
 }
 \value{
-A data frame containing sample-specific predictions.
+A \linkS4class{CrcBiomeScreenObject} with a data frame containing sample-specific predictions.
 }
 \description{
 Predict the class and probabilities for new data

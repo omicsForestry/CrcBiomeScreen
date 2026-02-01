@@ -8,7 +8,7 @@
 #' @importFrom dplyr mutate across
 #' @importFrom tidyr separate
 #'
-#' @return CrcBiomeScreenObject@ModelData
+#' @return A \linkS4class{CrcBiomeScreenObject} with CrcBiomeScreenObject@ModelData
 #' @export
 #'
 #' @examples

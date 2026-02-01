@@ -11,7 +11,8 @@ ValidateModelOnData(
   TaskName = NULL,
   TrueLabel = NULL,
   condition_col = "study_condition",
-  PlotAUC = NULL
+  PlotAUC = NULL,
+  outdir = tempdir()
 )
 }
 \arguments{
@@ -28,6 +29,8 @@ ValidateModelOnData(
 \item{condition_col}{The column name in the SampleData that contains the study condition labels. Default is "study_condition".}
 
 \item{PlotAUC}{A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.}
+
+\item{outdir}{The output directory where plots will be saved (default: tempdir()).}
 }
 \value{
 A CrcBiomeScreenObject with the evaluation results stored in the \code{PredictResult} slot for the specified model type.
