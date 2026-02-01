@@ -5,10 +5,12 @@
 #' @param threshold The threshold for the ratio (0.5) if it is the
 #' imbalanced dataset
 #' @param plot Choose to have the figures or not
+#' @param outdir The output directory where plots will be saved
+#' (default: tempdir()).
 #'
 #' @importFrom tibble tibble
 #'
-#' @return A list including the details about this step
+#' @return A \linkS4class{CrcBiomeScreen} object with updated slots.
 #' @export
 #'
 #' @examples
@@ -46,8 +48,10 @@
 #'
 #' # Check class balance
 #' checkClassBalance(toy_obj@ModelData$TrainLabel)
-
-checkClassBalance <- function(labels, threshold = 0.5, plot = TRUE) {
+checkClassBalance <- function(labels,
+                              outdir = tempdir(),
+                              threshold = 0.5,
+                              plot = TRUE) {
     # Convert to factor
   labels <- as.factor(labels)
   class_counts <- table(labels)
@@ -63,7 +67,7 @@ checkClassBalance <- function(labels, threshold = 0.5, plot = TRUE) {
 
     # Optional plot
   if (plot) {
-    pdf("class_balance_plot.pdf", width = 8, height = 6)
+    pdf(file.path(outdir, "class_balance_plot.pdf"), width = 8, height = 6)
     barplot(class_counts,
       col = "steelblue",
       main = "Class Distribution",

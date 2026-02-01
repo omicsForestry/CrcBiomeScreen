@@ -5,14 +5,13 @@
 #' retains the original taxonomy string in a new column (`OriginalTaxa`),
 #' and refines labels such as "uncultured" or "unclassified" by appending the parent rank.
 #'
-#' @param CrcBiomeScreenObject
-#'
+#' @param CrcBiomeScreenObject A \linkS4class{CrcBiomeScreen} object.
 #' @importFrom dplyr mutate across
 #' @importFrom tidyr separate
 #' @importFrom tibble tibble
 #' @importFrom magrittr %>%
 #'
-#' @return CrcBiomeScreenObject$TaxaData
+#' @return A \linkS4class{CrcBiomeScreenObject} with TaxaData.
 #' @export
 #'
 #' @examples

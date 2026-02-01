@@ -13,14 +13,16 @@ getTaxaData(object)
 \item{object}{A \linkS4class{CrcBiomeScreen} object.}
 }
 \value{
-A data.frame containing taxonomic annotations.
+A \linkS4class{CrcBiomeScreen} object with
+a  data.frame containing taxonomic annotations.
 }
 \description{
 Accessor for TaxaData slot of CrcBiomeScreen object
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{getTaxaData(CrcBiomeScreen)}: Retrieve taxonomic annotations from a CrcBiomeScreen object.
+\item \code{getTaxaData(CrcBiomeScreen)}: Retrieve taxonomic annotations
+from a CrcBiomeScreen object.
 
 }}
 \examples{

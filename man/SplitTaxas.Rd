@@ -7,10 +7,10 @@
 SplitTaxas(CrcBiomeScreenObject)
 }
 \arguments{
-\item{CrcBiomeScreenObject}{}
+\item{CrcBiomeScreenObject}{A \linkS4class{CrcBiomeScreen} object.}
 }
 \value{
-CrcBiomeScreenObject$TaxaData
+A \linkS4class{CrcBiomeScreenObject} with TaxaData.
 }
 \description{
 This function automatically detects the taxonomy string format (e.g., MetaPhlAn, QIIME, SILVA, GTDB),

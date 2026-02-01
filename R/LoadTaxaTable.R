@@ -9,7 +9,7 @@
 #' @param id_column The name of the column in `taxa_table` that contains the sequence IDs (ASV/OTU names).
 #' @param taxa_column The name of the column in `taxa_table` that contains the taxonomic lineage string.
 #'
-#' @return The CrcBiomeScreenObject with the loaded taxa table.
+#' @return The \linkS4class{CrcBiomeScreenObject} with the loaded taxa table.
 #' @export
 #' @examples
 #' ## Minimal example using CreateCrcBiomeScreenObject and LoadTaxaTable

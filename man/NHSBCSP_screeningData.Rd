@@ -13,6 +13,11 @@ NHS BCSP
 \usage{
 NHSBCSP_screeningData
 }
+\value{
+A data frame containing microbiome-based colorectal cancer screening
+data from the NHS Bowel Cancer Screening Programme, including sample
+identifiers, metadata, and clinical labels.
+}
 \description{
 A small subset of the NHS Bowel Cancer Screening Programme microbiome data.
 }

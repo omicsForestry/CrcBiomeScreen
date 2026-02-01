@@ -39,7 +39,7 @@ RunScreening(
 \item{num_cores}{Set the number of cores for parallel computing, default is NULL}
 }
 \value{
-A \code{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
+A \linkS4class{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
 }
 \description{
 Run the screening process for the microbiome data

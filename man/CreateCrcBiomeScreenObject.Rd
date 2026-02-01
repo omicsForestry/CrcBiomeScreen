@@ -21,7 +21,7 @@ CreateCrcBiomeScreenObject(
 \item{RelativeAbundance}{A numeric matrix or data frame containing relative abundance data.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object containing the following slots:
+A \linkS4class{CrcBiomeScreen} object.
 \itemize{
 \item \code{AbsoluteAbundance}: Absolute abundance data.
 \item \code{RelativeAbundance}: Relative abundance data.
@@ -31,7 +31,9 @@ A \linkS4class{CrcBiomeScreen} object containing the following slots:
 \item \code{NormalizedData}: Normalized data.
 \item \code{OrginalNormalizedData}: Original normalized data.
 \item \code{ValidationData}: Optional validation dataset.
-\item \code{ModelData}, \code{ModelResult}, \code{EvaluateResult}, \code{PredictResult}: Optional model results and evaluation outputs.
+\item \code{OutlierSamples}: Character vector of outlier sample names.
+\item \code{ModelData}, \code{ModelResult}, \code{EvaluateResult},
+\code{PredictResult}: Optional model results and evaluation outputs
 }
 }
 \description{

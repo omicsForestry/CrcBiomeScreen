@@ -77,7 +77,7 @@ KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
 
   valid_levels <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
   if (!level %in% valid_levels)
-    stop("Invalid level. Choose one of: ", paste(valid_levels, collapse = ", "))
+    stop("Invalid level. Choose one of: ", paste0(valid_levels, collapse = ", "))
 
   if (!level %in% colnames(taxa_df))
     stop(paste0("Column '", level, "' not found in TaxaData."))

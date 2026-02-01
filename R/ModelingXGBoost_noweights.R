@@ -9,7 +9,7 @@
 #' @importFrom dplyr mutate across
 #' @importFrom caret train trainControl twoClassSummary
 #'
-#' @return CrcBiomeScreenObject
+#' @return A \linkS4class{CrcBiomeScreenObject} with the modelling results.
 #' @export
 #'
 #' @examples
@@ -30,10 +30,6 @@
 #'   SampleData = sample_info
 #' )
 #'
-#' obj@ModelData <- list(
-#'   Training   = data.frame(x = c(1, 2)),
-#'   TrainLabel = factor(c("control", "CRC"))
-#' )
 #'
 #' # out <- ModelingXGBoost_noweights(
 #' # CrcBiomeScreenObject = obj,

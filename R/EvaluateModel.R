@@ -11,7 +11,7 @@
 #' @importFrom withr with_seed
 #' @importFrom ranger ranger
 #'
-#' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult` slot.
+#' @return A \linkS4class{CrcBiomeScreen} object with with the evaluation results stored in the `EvaluateResult` slot.
 #' @export
 #' @examples
 #' # Minimal runnable example demonstrating EvaluateModel setup
@@ -43,12 +43,12 @@
 #' )
 #'
 #' # Insert dummy model results so EvaluateModel() can run without training
-#' obj@ModelResult <- list(
-#'   RF = list(best.params = list(
-#'     num.trees = 1, mtry = 1, node_size = 1, sample_size = 1
-#'   )),
-#'   XGBoost = list(model = list(dummy = TRUE))
-#' )
+#' # obj@ModelResult <- list(
+#' # RF = list(best.params = list(
+#' #   num.trees = 1, mtry = 1, node_size = 1, sample_size = 1
+#' # )),
+#' #  XGBoost = list(model = list(dummy = TRUE))
+#' #)
 #'
 #' # NOT RUN: Real evaluation requires pROC + ranger etc.
 #' # obj <- EvaluateModel(obj, model_type = "RF", TaskName = "toy", TrueLabel = "CRC")
@@ -57,6 +57,7 @@
 
 EvaluateModel <- function(CrcBiomeScreenObject = NULL,
                           model_type = c("RF", "XGBoost"),
+                          outdir = tempdir(),
                           TaskName = NULL,
                           TrueLabel = NULL,
                           PlotAUC = NULL) {
@@ -86,7 +87,7 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
   })
   # Save the result into the CrcBiomeScreenObject
   # CrcBiomeScreenObject@ModelResult <- results
-  saveRDS(CrcBiomeScreenObject, paste0("CrcBiomeScreenObject_", TaskName, ".rds"))
+  saveRDS(CrcBiomeScreenObject, file.path(outdir = tempdir(),paste0("CrcBiomeScreenObject_", TaskName, ".rds")))
   # print("Save the result sucessfully!")
   return(CrcBiomeScreenObject)
 }
@@ -99,7 +100,7 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
 #' @param TaskName A character string used to label the output files and results.
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
-#'
+#' @param outdir The output directory where plots will be saved (default: tempdir()).
 #' @importFrom pROC roc auc ci.auc coords ci.coords plot.roc
 #'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$RF` slot.
@@ -136,6 +137,7 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
 #' obj
 
 EvaluateRF <- function(CrcBiomeScreenObject = NULL,
+                       outdir = tempdir(),
                        TaskName = NULL,
                        TrueLabel = NULL,
                        PlotAUC = NULL) {
@@ -209,7 +211,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 
   # Plot
   if (PlotAUC == TRUE) {
-    pdf(paste0("roc.curve.rf.", TaskName, ".pdf"))
+    pdf(file.path(outdir,paste0("roc.curve.rf.", TaskName, ".pdf")))
     plot(roc.curve.rf, print.auc = TRUE, print.thres = TRUE)
     dev.off()
   }
@@ -224,6 +226,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 #' @param TaskName A character string used to label the output files and results.
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
+#' @param outdir The output directory where plots will be saved (default: tempdir()).
 #'
 #' @importFrom pROC roc auc ci.auc coords ci.coords plot.roc
 #'
@@ -260,6 +263,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 #' obj
 
 EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
+                            outdir = tempdir(),
                             TaskName = NULL,
                             TrueLabel = NULL,
                             PlotAUC = NULL) {
@@ -296,7 +300,7 @@ EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
 
   # Plot the ROC curve
   if (PlotAUC == TRUE) {
-    pdf(paste0("roc.curve.xgb.", TaskName, ".pdf"))
+    pdf(file.path(outdir,"roc.curve.xgb.", TaskName, ".pdf"))
     plot(roc.curve.xgb, print.auc = TRUE, print.thres = TRUE)
     dev.off()
   }

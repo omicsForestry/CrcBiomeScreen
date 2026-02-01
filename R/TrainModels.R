@@ -21,7 +21,7 @@
 #' @importFrom withr with_seed
 #'
 #'
-#' @return CrcBiomeScreenObject
+#' @return A \linkS4class{CrcBiomeScreenObject} with training results.
 #' @export
 #'
 #' @examples  \donttest{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,

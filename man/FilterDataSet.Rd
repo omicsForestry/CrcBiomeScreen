@@ -18,7 +18,7 @@ FilterDataSet(
 \item{condition_col}{A character string indicating the column in the SampleData that contains the condition labels (default is "study_condition").}
 }
 \value{
-A \code{CrcBiomeScreenObject} with filtered data based on the specified label.
+A \linkS4class{CrcBiomeScreenObject} with filtered data based on the specified label.
 }
 \description{
 Filter the CrcBiomeScreenObject dataset based on a specific label

@@ -17,7 +17,7 @@ and another for the corresponding taxonomic lineage string.}
 \item{taxa_column}{The name of the column in \code{taxa_table} that contains the taxonomic lineage string.}
 }
 \value{
-The CrcBiomeScreenObject with the loaded taxa table.
+The \linkS4class{CrcBiomeScreenObject} with the loaded taxa table.
 }
 \description{
 This function allows users to load their own taxonomic assignments for ASV/OTU data.

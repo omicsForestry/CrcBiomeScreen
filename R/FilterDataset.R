@@ -4,7 +4,7 @@
 #' @param label A character vector specifying the label(s) to filter the dataset by.
 #' @param condition_col A character string indicating the column in the SampleData that contains the condition labels (default is "study_condition").
 #'
-#' @return A \code{CrcBiomeScreenObject} with filtered data based on the specified label.
+#' @return A \linkS4class{CrcBiomeScreenObject} with filtered data based on the specified label.
 #' @export
 #' @examples
 #' # Create toy normalized data (5 samples × 2 taxa)

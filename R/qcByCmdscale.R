@@ -13,7 +13,7 @@
 #' @param threshold_sd Numeric value indicating how many standard deviations above the mean
 #'        distance should be considered an outlier (default is 1).
 #' @param plot Logical value indicating whether to generate and save the MDS plot (default is TRUE).
-#'
+#' @param outdir The output directory where plots will be saved (default: tempdir()).description
 #' @importFrom dplyr mutate across
 #' @importFrom tibble tibble
 #'
@@ -34,6 +34,7 @@
 #' A PDF plot is saved to the working directory, showing sample positions in MDS space
 #' with outliers highlighted in red.
 #'
+#' @return A \linkS4class{CrcBiomeScreenObject} with outliers.
 #' @export
 #'
 #' @examples
@@ -69,11 +70,12 @@
 #'   threshold = 1
 #' )
 #'
-#' qc_obj@SampleData
+#' getSampleData(qc_obj)
 #'
 #'
 qcByCmdscale <- function(CrcBiomeScreenObject,
                          TaskName = NULL,
+                         outdir = tempdir(),
                          normalize_method = NULL,
                          threshold_sd = 1,
                          plot = TRUE) {
@@ -135,7 +137,7 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
       theme(legend.position = "none")
 
     # Save PDF
-    ggsave(pdf_name, plot = p, width = 12, height = 5)
+    ggsave(file.path(outdir,pdf_name), plot = p, width = 12, height = 5)
     }
   } else {
     message("No outliers detected.")
@@ -149,6 +151,8 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
     attr(outliers, "QC") <- TaskName
     attr(outliers, "OutlierSamples") <- length(outliers)
     CrcBiomeScreenObject@OutlierSamples <- outliers
+  } else{
+    CrcBiomeScreenObject@OutlierSamples <- character(0)
   }
 
   return(CrcBiomeScreenObject)

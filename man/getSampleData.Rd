@@ -16,16 +16,19 @@ getSampleData(object)
 \item{object}{A \linkS4class{CrcBiomeScreen} object.}
 }
 \value{
-A data.frame containing sample metadata.
+A \linkS4class{CrcBiomeScreen} object with
+a data.frame containing sample metadata.
 }
 \description{
 Accessor for SampleData slot of CrcBiomeScreen object
 }
 \section{Methods (by class)}{
 \itemize{
-\item \code{getSampleData(CrcBiomeScreen)}: Retrieve sample metadata from a CrcBiomeScreen object.
+\item \code{getSampleData(CrcBiomeScreen)}: Retrieve sample metadata
+from a CrcBiomeScreen object.
 
-\item \code{getModelData(CrcBiomeScreen)}: Retrieve sample metadata from a CrcBiomeScreen object.
+\item \code{getModelData(CrcBiomeScreen)}: Retrieve sample metadata
+from a CrcBiomeScreen object.
 
 }}
 \examples{

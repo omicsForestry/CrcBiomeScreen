@@ -9,10 +9,11 @@
 #' @param TrueLabel The positive class label (e.g., "CRC") to use for ROC/AUC calculation.
 #' @param TaskName A character string used to label the output files.
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve.
+#' @param outdir The output directory where plots will be saved (default: tempdir()).
 #'
 #' @importFrom pROC roc auc
 #'
-#' @return A list containing the ROC curve object and the AUC value.
+#' @return A \linkS4class{CrcBiomeScreen} object with updated slots containing the ROC curve object and the AUC value.
 #' @export
 #'
 #' @examples
@@ -39,6 +40,7 @@
 
 EvaluateCrcBiomeScreen <- function(
     predictions,
+    outdir = tempdir(),
     true_labels,
     TrueLabel = NULL,
     TaskName = "ModelEvaluation",
@@ -64,7 +66,7 @@ EvaluateCrcBiomeScreen <- function(
   auc.value <- pROC::auc(roc.curve)
 
   if (PlotAUC) {
-    pdf(paste0("roc.curve.", TaskName, ".pdf"))
+    pdf(file.path(outdir,paste0("roc.curve.", TaskName, ".pdf")))
     plot(roc.curve, print.auc = TRUE, print.thres = TRUE)
     dev.off()
   }

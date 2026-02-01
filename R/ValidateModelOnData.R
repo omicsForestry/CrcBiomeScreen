@@ -7,6 +7,7 @@
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
 #' @param condition_col The column name in the SampleData that contains the study condition labels. Default is "study_condition".
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
+#' @param outdir The output directory where plots will be saved (default: tempdir()).
 #'
 #' @importFrom tidyr separate
 #' @importFrom tibble tibble
@@ -29,11 +30,12 @@ ValidateModelOnData <- function(
     TaskName = NULL,
     TrueLabel = NULL,
     condition_col = "study_condition",
-    PlotAUC = NULL) {
+    PlotAUC = NULL,
+    outdir = tempdir()) {
   if (!condition_col %in% colnames(ValidationData@SampleData)) {
     stop(sprintf("Condition column", condition_col, "not found in SampleData."))
   }
-  colnames(ValidationData@NormalizedData) <- make.names(colnames(ValidationData@NormalizedData))
+  colnames(getNormalizedData(ValidationData)) <- make.names(colnames(getNormalizedData(ValidationData)))
   # Load the model
   if (model_type == "RF") {
     rf.model <- CrcBiomeScreenObject@EvaluateResult$RF$RF.Model
@@ -71,7 +73,7 @@ ValidateModelOnData <- function(
 
     # Plot the ROC curve
     if (PlotAUC == TRUE) {
-      pdf(paste0("roc.curve.xgb.", TaskName, ".pdf"))
+      pdf(file.path(outdir, paste0("roc.curve.xgb.", TaskName, ".pdf")))
       plot(roc.curve.xgb, print.auc = TRUE, print.thres = TRUE)
       dev.off()
     }

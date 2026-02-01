@@ -27,7 +27,7 @@ ModelingXGBoost(
 \item{num_cores}{Set the number of the cores in parallel computing}
 }
 \value{
-CrcBiomeScreenObject
+A \linkS4class{CrcBiomeScreenObject} with the modelling results.
 }
 \description{
 The packaging function for XGBoost modeling
@@ -50,10 +50,6 @@ obj <- CreateCrcBiomeScreenObject(
   SampleData = sample_info
 )
 
-obj@ModelData <- list(
-  Training = data.frame(x = c(1, 2)),
-  TrainLabel = factor(c("control", "CRC"))
-)
 
 # out <- ModelingXGBoost(
 # CrcBiomeScreenObject = obj,
