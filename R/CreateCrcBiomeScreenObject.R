@@ -132,6 +132,7 @@ CreateCrcBiomeScreenObject <- function(
 
 # Accessor methods ---------------------------------------------------------
 #' @title CrcBiomeScreen Class
+#' @alias CrcBiomeScreenObject-class
 #' @description
 #' An S4 container for CRC microbiome screening data, including abundance
 #' matrices, taxonomy, sample metadata, and model results.
