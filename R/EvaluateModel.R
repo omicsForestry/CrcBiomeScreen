@@ -2,6 +2,7 @@
 #'
 #' @param CrcBiomeScreenObject A CrcBiomeScreenObject containing the model data and results
 #' @param model_type A character vector indicating the type of model to evaluate. Options are "RF" for Random Forest and "XGBoost" for XGBoost.
+#' @param outdir A character string. Path to the output directory where results (PDFs, RDS) should be saved. Defaults to tempdir().
 #' @param TaskName A character string used to label the output files and results.
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
