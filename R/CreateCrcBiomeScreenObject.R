@@ -132,6 +132,7 @@ CreateCrcBiomeScreenObject <- function(
 
 # Accessor methods ---------------------------------------------------------
 #' @title CrcBiomeScreen Class
+#' @alias CrcBiomeScreenObject-class
 #' @description
 #' An S4 container for CRC microbiome screening data, including abundance
 #' matrices, taxonomy, sample metadata, and model results.
@@ -250,14 +251,14 @@ setMethod("getSampleData", "CrcBiomeScreen", function(object) object@SampleData)
 #'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
 #'   TaxaData = data.frame(Taxa = "TaxaA"),
 #'   SampleData = data.frame(
-#'     number_reads = 10000,
-#'     condition = "control"
+#'     number_reads = c(10000, 10000),
+#'     condition = c("control", "CRC")
 #'   )
 #' )
 #' toy_obj <- SplitDataSet(
-#' CrcBiomeScreenObject,
-#' label = c("control", "CRC"),
-#' partition = 0.7
+#'   toy_obj,
+#'   label = c("control", "CRC"),
+#'   partition = 0.7
 #' )
 #' getModelData(toy_obj)
 #'

@@ -2,6 +2,7 @@
 #'
 #' @param CrcBiomeScreenObject A CrcBiomeScreenObject containing the model data and results
 #' @param model_type A character vector indicating the type of model to evaluate. Options are "RF" for Random Forest and "XGBoost" for XGBoost.
+#' @param outdir A character string. Path to the output directory where results (PDFs, RDS) should be saved. Defaults to tempdir().
 #' @param TaskName A character string used to label the output files and results.
 #' @param TrueLabel The true label for the classification task, which is used to evaluate the model's performance.
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
@@ -61,33 +62,40 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
                           TaskName = NULL,
                           TrueLabel = NULL,
                           PlotAUC = NULL) {
+  
+  # Ensure output directory exists
+  if (!dir.exists(outdir)) {
+    dir.create(outdir, recursive = TRUE)
+  }
+
   if (is.null(CrcBiomeScreenObject@EvaluateResult)) {
     CrcBiomeScreenObject@EvaluateResult <- list()
   }
+  
   withr::with_seed(123, {
-  if ("RF" %in% model_type) {
-    CrcBiomeScreenObject <-
-      EvaluateRF(
+    if ("RF" %in% model_type) {
+      CrcBiomeScreenObject <- EvaluateRF(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         TaskName = TaskName,
         TrueLabel = TrueLabel,
-        PlotAUC = PlotAUC
+        PlotAUC = PlotAUC,
+        outdir = outdir
       )
-  } else if ("XGBoost" %in% model_type) {
-    CrcBiomeScreenObject <-
-      EvaluateXGBoost(
+    } else if ("XGBoost" %in% model_type) {
+      CrcBiomeScreenObject <- EvaluateXGBoost(
         CrcBiomeScreenObject = CrcBiomeScreenObject,
         TaskName = TaskName,
         TrueLabel = TrueLabel,
-        PlotAUC = PlotAUC
+        PlotAUC = PlotAUC,
+        outdir = outdir
       )
-  } else {
-    stop("Invalid model type. Please choose either 'RF' or 'XGBoost'.")
-  }
+    } else {
+      stop("Invalid model type. Please choose either 'RF' or 'XGBoost'.")
+    }
   })
   # Save the result into the CrcBiomeScreenObject
   # CrcBiomeScreenObject@ModelResult <- results
-  saveRDS(CrcBiomeScreenObject, file.path(outdir = tempdir(),paste0("CrcBiomeScreenObject_", TaskName, ".rds")))
+  saveRDS(CrcBiomeScreenObject, file.path(outdir, paste0("CrcBiomeScreenObject_", TaskName, ".rds")))
   # print("Save the result sucessfully!")
   return(CrcBiomeScreenObject)
 }
@@ -102,6 +110,7 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
 #' @param PlotAUC A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.
 #' @param outdir The output directory where plots will be saved (default: tempdir()).
 #' @importFrom pROC roc auc ci.auc coords ci.coords plot.roc
+#' @importFrom caret confusionMatrix
 #'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$RF` slot.
 #' @export
@@ -229,6 +238,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 #' @param outdir The output directory where plots will be saved (default: tempdir()).
 #'
 #' @importFrom pROC roc auc ci.auc coords ci.coords plot.roc
+#' @importFrom caret confusionMatrix
 #'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `EvaluateResult$XGBoost` slot.
 #' @export
