@@ -58,7 +58,8 @@ Imports:
     ranger,
     utils,
     graphics,
-    grDevices
+    grDevices,
+    xgboost
 Suggests:
     rstatix,
     MASS,
@@ -72,7 +73,6 @@ Suggests:
     microbiome,
     phyloseq,
     vegan,
-    xgboost,
     gt,
     testthat (>= 3.0.0),
     BiocManager,
