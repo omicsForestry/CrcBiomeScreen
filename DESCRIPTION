@@ -1,6 +1,6 @@
 Package: CrcBiomeScreen
 Title: An R package for colorectal cancer screening and microbiome analysis
-Version: 0.99.11
+Version: 0.99.12
 Authors@R: c(person("Chengxin", "Li",
                   email = "ngzh5554@leeds.ac.uk",
                   role = c("cre", "aut"),
