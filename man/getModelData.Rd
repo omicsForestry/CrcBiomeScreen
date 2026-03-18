@@ -21,6 +21,7 @@ toy_obj <- CreateCrcBiomeScreenObject(
   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
   TaxaData = data.frame(Taxa = "TaxaA"),
   SampleData = data.frame(
+<<<<<<< Updated upstream
     number_reads = 10000,
     condition = "control"
   )
@@ -29,6 +30,16 @@ toy_obj <- SplitDataSet(
 CrcBiomeScreenObject,
 label = c("control", "CRC"),
 partition = 0.7
+=======
+    number_reads = c(10000, 10000),
+    condition = c("control", "CRC")
+  )
+)
+toy_obj <- SplitDataSet(
+  toy_obj,
+  label = c("control", "CRC"),
+  partition = 0.7
+>>>>>>> Stashed changes
 )
 getModelData(toy_obj)
 

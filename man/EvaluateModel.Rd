@@ -18,6 +18,8 @@ EvaluateModel(
 
 \item{model_type}{A character vector indicating the type of model to evaluate. Options are "RF" for Random Forest and "XGBoost" for XGBoost.}
 
+\item{outdir}{A character string. Path to the output directory where results (PDFs, RDS) should be saved. Defaults to tempdir().}
+
 \item{TaskName}{A character string used to label the output files and results.}
 
 \item{TrueLabel}{The true label for the classification task, which is used to evaluate the model's performance.}

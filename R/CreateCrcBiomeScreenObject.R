@@ -132,7 +132,11 @@ CreateCrcBiomeScreenObject <- function(
 
 # Accessor methods ---------------------------------------------------------
 #' @title CrcBiomeScreen Class
+<<<<<<< Updated upstream
 #' @alias CrcBiomeScreenObject-class
+=======
+#' @aliases CrcBiomeScreenObject-class
+>>>>>>> Stashed changes
 #' @description
 #' An S4 container for CRC microbiome screening data, including abundance
 #' matrices, taxonomy, sample metadata, and model results.
@@ -404,12 +408,22 @@ setReplaceMethod("setTaxaData", "CrcBiomeScreen", function(object, value) {
 #' @title Accessor for NormalizedData slot of CrcBiomeScreen object
 #' @name getNormalizedData
 #'
+<<<<<<< Updated upstream
 #' @description Retrieve normalized abundance data
 #' from a \linkS4class{CrcBiomeScreen} object.
+=======
+#' @description Retrieve or set normalized abundance data
+#' from/in a \linkS4class{CrcBiomeScreen} object.
+>>>>>>> Stashed changes
 #' @param object A \linkS4class{CrcBiomeScreen} object.
+#' @param value A data.frame (or matrix) containing normalized abundance data.
 #'
 #' @return A \linkS4class{CrcBiomeScreen} object with
+<<<<<<< Updated upstream
 #' a  data.frame (or matrix) containing normalized abundance data.
+=======
+#' a data.frame (or matrix) containing normalized abundance data.
+>>>>>>> Stashed changes
 #' @examples
 #' toy_obj <- CreateCrcBiomeScreenObject(
 #'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
@@ -424,11 +438,30 @@ setReplaceMethod("setTaxaData", "CrcBiomeScreen", function(object, value) {
 #' @export
 setGeneric("getNormalizedData",
            function(object) standardGeneric("getNormalizedData"))
+<<<<<<< Updated upstream
+=======
+
+#' @rdname getNormalizedData
+#' @export
+setGeneric("getNormalizedData<-",
+           function(object, value) standardGeneric("getNormalizedData<-"))
+>>>>>>> Stashed changes
 
 #' @describeIn getNormalizedData Retrieve normalized abundance data.
 setMethod("getNormalizedData", "CrcBiomeScreen",
           function(object) object@NormalizedData)
 
+<<<<<<< Updated upstream
+=======
+#' @describeIn getNormalizedData Set normalized abundance data.
+setReplaceMethod("getNormalizedData", "CrcBiomeScreen",
+                 function(object, value) {
+                   object@NormalizedData <- value
+                   validObject(object)
+                   return(object)
+                 })
+
+>>>>>>> Stashed changes
 #' @title setNormalizedData<-: Setter for NormalizedData slot
 #' of CrcBiomeScreen object
 #' @name setNormalizedData-setter

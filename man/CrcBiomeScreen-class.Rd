@@ -3,6 +3,7 @@
 \docType{class}
 \name{CrcBiomeScreen-class}
 \alias{CrcBiomeScreen-class}
+\alias{CrcBiomeScreenObject-class}
 \title{CrcBiomeScreen Class}
 \value{
 A \linkS4class{CrcBiomeScreen} object.
