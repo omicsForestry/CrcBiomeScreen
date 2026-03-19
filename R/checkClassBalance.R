@@ -29,8 +29,8 @@
 #' taxa_info <- data.frame(Taxa = "TaxaA", stringsAsFactors = FALSE)
 #' sample_info <- data.frame(
 #'   number_reads = c(10000, 10000, 12000, 12000),
-#'   condition     = train_labels,
-#'   row.names     = paste0("S", 1:4),
+#'   condition = train_labels,
+#'   row.names = paste0("S", 1:4),
 #'   stringsAsFactors = FALSE
 #' )
 #'
@@ -42,22 +42,21 @@
 #' )
 #'
 #' # Add minimal ModelData needed for class balance check
-#' toy_obj@ModelData <- list(
+#' slot(toy_obj, "ModelData") <- list(
 #'   TrainLabel = train_labels
 #' )
 #'
-#' # Check class balance
-#' checkClassBalance(toy_obj@ModelData$TrainLabel)
+#' checkClassBalance(getModelData(toy_obj)$TrainLabel)
 checkClassBalance <- function(labels,
                               outdir = tempdir(),
                               threshold = 0.5,
                               plot = TRUE) {
-    # Convert to factor
+  # Convert to factor
   labels <- as.factor(labels)
   class_counts <- table(labels)
   class_props <- prop.table(class_counts)
 
-    # Identify minority classes
+  # Identify minority classes
   is_imbalanced <- any(class_props < threshold | class_props > (1 - threshold))
   suggestion <- if (is_imbalanced) {
     "Unbalanced: Using class weights is recommended."
@@ -65,7 +64,7 @@ checkClassBalance <- function(labels,
     "Balanced: Class weights are likely unnecessary."
   }
 
-    # Optional plot
+  # Optional plot
   if (plot) {
     pdf(file.path(outdir, "class_balance_plot.pdf"), width = 8, height = 6)
     barplot(class_counts,
@@ -78,14 +77,14 @@ checkClassBalance <- function(labels,
     dev.off()
   }
 
-    # Print summary
+  # Print summary
   message("Class counts:\n")
   message(class_counts)
   message("Class proportions:\n")
   message(round(class_props, 3))
   message("Balance status:\n", suggestion, "\n")
 
-    # Return result
+  # Return result
   return(list(
     class_counts = class_counts,
     class_proportions = class_props,

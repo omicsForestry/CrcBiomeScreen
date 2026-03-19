@@ -32,12 +32,16 @@ from a CrcBiomeScreen object.
 
 }}
 \examples{
+rel_abund <- data.frame(Sample1 = 10, Sample2 = 20)
+rownames(rel_abund) <- "TaxaA"
+
 toy_obj <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = data.frame(TaxaA = c(10, 20)),
-  TaxaData = data.frame(Taxa = "TaxaA"),
+  RelativeAbundance = rel_abund,
+  TaxaData = data.frame(Taxa = "TaxaA", row.names = "TaxaA"),
   SampleData = data.frame(
-    number_reads = 10000,
-    condition = "control"
+    number_reads = c(10000, 10000),
+    condition = c("control", "CRC"),
+    row.names = c("Sample1", "Sample2")
   )
 )
 

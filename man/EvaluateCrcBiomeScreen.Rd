@@ -51,7 +51,7 @@ result <- EvaluateCrcBiomeScreen(
   predictions = pred,
   true_labels = labels,
   TrueLabel = "CRC",
-  PlotAUC = FALSE  # disable plotting for speed/safety
+  PlotAUC = FALSE # disable plotting for speed/safety
 )
 
 result$AUC

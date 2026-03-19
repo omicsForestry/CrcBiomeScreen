@@ -33,18 +33,18 @@
 #'   predictions = pred,
 #'   true_labels = labels,
 #'   TrueLabel = "CRC",
-#'   PlotAUC = FALSE  # disable plotting for speed/safety
+#'   PlotAUC = FALSE # disable plotting for speed/safety
 #' )
 #'
 #' result$AUC
-
 EvaluateCrcBiomeScreen <- function(
-    predictions,
-    outdir = tempdir(),
-    true_labels,
-    TrueLabel = NULL,
-    TaskName = "ModelEvaluation",
-    PlotAUC = FALSE) {   # default FALSE for safety
+  predictions,
+  outdir = tempdir(),
+  true_labels,
+  TrueLabel = NULL,
+  TaskName = "ModelEvaluation",
+  PlotAUC = FALSE
+) { # default FALSE for safety
 
   if (is.null(TrueLabel)) {
     stop("Please specify the 'TrueLabel' (the positive class).")
@@ -66,7 +66,7 @@ EvaluateCrcBiomeScreen <- function(
   auc.value <- pROC::auc(roc.curve)
 
   if (PlotAUC) {
-    pdf(file.path(outdir,paste0("roc.curve.", TaskName, ".pdf")))
+    pdf(file.path(outdir, paste0("roc.curve.", TaskName, ".pdf")))
     plot(roc.curve, print.auc = TRUE, print.thres = TRUE)
     dev.off()
   }
@@ -76,4 +76,3 @@ EvaluateCrcBiomeScreen <- function(
     AUC = auc.value
   ))
 }
-

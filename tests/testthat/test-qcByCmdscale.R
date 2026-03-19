@@ -1,5 +1,4 @@
 test_that("qcByCmdscale works correctly", {
-  skip_on_bioc()
   if (!requireNamespace("curatedMetagenomicData", quietly = TRUE)) {
     skip("curatedMetagenomicData not available")
   }

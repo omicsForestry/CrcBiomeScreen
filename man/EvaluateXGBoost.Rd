@@ -34,7 +34,7 @@ Evaluate the XGBoost model
 
 # Toy data for testing
 train_df <- data.frame(x = c(1, 2), TrainLabel = factor(c("control", "CRC")))
-test_df  <- data.frame(x = c(3, 4))
+test_df <- data.frame(x = c(3, 4))
 
 obj <- new("CrcBiomeScreen",
   AbsoluteAbundance = data.frame(),
@@ -49,7 +49,7 @@ obj <- new("CrcBiomeScreen",
   ),
   ModelResult = list(
     XGBoost = list(
-      model = list(dummy_model = TRUE)  # placeholder model
+      model = list(dummy_model = TRUE) # placeholder model
     )
   )
 )

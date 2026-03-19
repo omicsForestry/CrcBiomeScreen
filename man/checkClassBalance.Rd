@@ -41,8 +41,8 @@ rownames(rel_abund) <- "TaxaA"
 taxa_info <- data.frame(Taxa = "TaxaA", stringsAsFactors = FALSE)
 sample_info <- data.frame(
   number_reads = c(10000, 10000, 12000, 12000),
-  condition     = train_labels,
-  row.names     = paste0("S", 1:4),
+  condition = train_labels,
+  row.names = paste0("S", 1:4),
   stringsAsFactors = FALSE
 )
 
@@ -54,10 +54,9 @@ toy_obj <- CreateCrcBiomeScreenObject(
 )
 
 # Add minimal ModelData needed for class balance check
-toy_obj@ModelData <- list(
+slot(toy_obj, "ModelData") <- list(
   TrainLabel = train_labels
 )
 
-# Check class balance
-checkClassBalance(toy_obj@ModelData$TrainLabel)
+checkClassBalance(getModelData(toy_obj)$TrainLabel)
 }

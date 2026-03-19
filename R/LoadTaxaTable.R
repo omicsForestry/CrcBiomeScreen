@@ -24,8 +24,8 @@
 #' # Sample metadata with required 'number_reads' column
 #' sample_info <- data.frame(
 #'   number_reads = c(10000, 12000),
-#'   condition    = c("control", "CRC"),
-#'   row.names    = c("S1", "S2"),
+#'   condition = c("control", "CRC"),
+#'   row.names = c("S1", "S2"),
 #'   stringsAsFactors = FALSE
 #' )
 #'
@@ -44,7 +44,7 @@
 #'
 #' # External taxonomy table to be merged in by LoadTaxaTable
 #' my_taxa_table <- data.frame(
-#'   ASV_ID   = "TaxaA",
+#'   ASV_ID = "TaxaA",
 #'   Taxonomy = "D_0__Bacteria;D_1__Firmicutes;D_2__Clostridia",
 #'   stringsAsFactors = FALSE
 #' )
@@ -52,8 +52,8 @@
 #' # Load taxonomy table into the CrcBiomeScreen object
 #' toy_obj <- LoadTaxaTable(
 #'   CrcBiomeScreenObject = toy_obj,
-#'   taxa_table  = my_taxa_table,
-#'   id_column   = "ASV_ID",
+#'   taxa_table = my_taxa_table,
+#'   id_column = "ASV_ID",
 #'   taxa_column = "Taxonomy"
 #' )
 #'
@@ -64,19 +64,22 @@ LoadTaxaTable <- function(CrcBiomeScreenObject,
                           taxa_table,
                           id_column,
                           taxa_column) {
-
   # --- Input Validation ---
-  if (!inherits(CrcBiomeScreenObject, "CrcBiomeScreen"))
+  if (!inherits(CrcBiomeScreenObject, "CrcBiomeScreen")) {
     stop("Input must be a CrcBiomeScreen object.")
+  }
 
-  if (!is.data.frame(taxa_table))
+  if (!is.data.frame(taxa_table)) {
     stop("'taxa_table' must be a data frame.")
+  }
 
-  if (!id_column %in% colnames(taxa_table))
+  if (!id_column %in% colnames(taxa_table)) {
     stop(sprintf("Column '%s' not found in taxa_table.", id_column))
+  }
 
-  if (!taxa_column %in% colnames(taxa_table))
+  if (!taxa_column %in% colnames(taxa_table)) {
     stop(sprintf("Column '%s' not found in taxa_table.", taxa_column))
+  }
 
 
   # --- Process new taxonomy table ---
@@ -119,4 +122,3 @@ LoadTaxaTable <- function(CrcBiomeScreenObject,
   CrcBiomeScreenObject@TaxaData <- merged
   return(CrcBiomeScreenObject)
 }
-

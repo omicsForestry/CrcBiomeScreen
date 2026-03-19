@@ -42,18 +42,18 @@ sample_info <- data.frame(
 # Construct a minimal CrcBiomeScreen object
 toy_obj <- new(
   "CrcBiomeScreen",
-  AbsoluteAbundance   = data.frame(),
-  RelativeAbundance   = data.frame(),
-  TaxaData            = data.frame(),
-  SampleData          = sample_info,
-  NormalizedData      = norm_data,
-  TaxaLevelData       = NULL,
+  AbsoluteAbundance = data.frame(),
+  RelativeAbundance = data.frame(),
+  TaxaData = data.frame(),
+  SampleData = sample_info,
+  NormalizedData = norm_data,
+  TaxaLevelData = NULL,
   OrginalNormalizedData = NULL,
-  ValidationData      = NULL,
-  ModelData           = NULL,
-  ModelResult         = NULL,
-  EvaluateResult      = list(),
-  PredictResult       = NULL
+  ValidationData = NULL,
+  ModelData = NULL,
+  ModelResult = NULL,
+  EvaluateResult = list(),
+  PredictResult = NULL
 )
 
 # Filter to keep only CRC and control samples
@@ -63,6 +63,5 @@ filtered_obj <- FilterDataSet(
   condition_col = "study_condition"
 )
 
-# Inspect filtered SampleData
-filtered_obj@SampleData
+getSampleData(filtered_obj)
 }

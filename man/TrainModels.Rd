@@ -36,12 +36,33 @@ A \linkS4class{CrcBiomeScreenObject} with training results.
 Train the different models
 }
 \examples{
- \donttest{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
-  model_type = "RF",
-  TaskName = "ToyData_RF",
-  ClassWeights = TRUE,
-  TrueLabel = "CRC",
-  num_cores = 10
-)}
+
+train_df <- data.frame(
+  FeatureA = c(1, 2, 3, 4),
+  TrainLabel = factor(c("control", "CRC", "control", "CRC"))
+)
+
+toy_obj <- new("CrcBiomeScreen",
+  AbsoluteAbundance = data.frame(),
+  RelativeAbundance = data.frame(),
+  TaxaData = data.frame(),
+  SampleData = data.frame(),
+  ModelData = list(
+    Training = train_df,
+    TrainLabel = train_df$TrainLabel
+  )
+)
+
+if (interactive()) {
+  toy_obj <- TrainModels(
+    CrcBiomeScreenObject = toy_obj,
+    model_type = "RF",
+    TaskName = "ToyData_RF",
+    ClassWeights = TRUE,
+    TrueLabel = "CRC",
+    n_cv = 2,
+    num_cores = 1
+  )
+}
 
 }

@@ -1,9 +1,4 @@
 test_that("NormalizeData works correctly", {
-  skip_on_bioc()
-<<<<<<< Updated upstream
-=======
-  skip_if_not_installed("curatedMetagenomicData")
->>>>>>> Stashed changes
   library(curatedMetagenomicData)
   toydata <- curatedMetagenomicData(
     "ThomasAM_2018a.relative_abundance",

@@ -34,7 +34,7 @@ Evaluate the Random Forest model
 
 # Toy training + test matrices
 train_df <- data.frame(x = c(1, 2), TrainLabel = factor(c("control", "CRC")))
-test_df  <- data.frame(x = c(3, 4))
+test_df <- data.frame(x = c(3, 4))
 
 # Build minimal CrcBiomeScreen object
 obj <- new("CrcBiomeScreen",

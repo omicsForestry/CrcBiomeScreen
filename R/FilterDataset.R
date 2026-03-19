@@ -25,18 +25,18 @@
 #' # Construct a minimal CrcBiomeScreen object
 #' toy_obj <- new(
 #'   "CrcBiomeScreen",
-#'   AbsoluteAbundance   = data.frame(),
-#'   RelativeAbundance   = data.frame(),
-#'   TaxaData            = data.frame(),
-#'   SampleData          = sample_info,
-#'   NormalizedData      = norm_data,
-#'   TaxaLevelData       = NULL,
+#'   AbsoluteAbundance = data.frame(),
+#'   RelativeAbundance = data.frame(),
+#'   TaxaData = data.frame(),
+#'   SampleData = sample_info,
+#'   NormalizedData = norm_data,
+#'   TaxaLevelData = NULL,
 #'   OrginalNormalizedData = NULL,
-#'   ValidationData      = NULL,
-#'   ModelData           = NULL,
-#'   ModelResult         = NULL,
-#'   EvaluateResult      = list(),
-#'   PredictResult       = NULL
+#'   ValidationData = NULL,
+#'   ModelData = NULL,
+#'   ModelResult = NULL,
+#'   EvaluateResult = list(),
+#'   PredictResult = NULL
 #' )
 #'
 #' # Filter to keep only CRC and control samples
@@ -46,13 +46,10 @@
 #'   condition_col = "study_condition"
 #' )
 #'
-#' # Inspect filtered SampleData
-#' filtered_obj@SampleData
-
+#' getSampleData(filtered_obj)
 FilterDataSet <- function(CrcBiomeScreenObject = NULL,
                           label = NULL,
                           condition_col = "study_condition") {
-
   if (is.null(CrcBiomeScreenObject)) stop("CrcBiomeScreenObject cannot be NULL.")
   if (is.null(label)) stop("Label cannot be NULL.")
   if (!condition_col %in% colnames(CrcBiomeScreenObject@SampleData)) {
@@ -61,7 +58,7 @@ FilterDataSet <- function(CrcBiomeScreenObject = NULL,
 
   # Filter the data based on the specified label
   sample_condition <- CrcBiomeScreenObject@SampleData[[condition_col]]
-  data <- CrcBiomeScreenObject@NormalizedData[sample_condition %in% label,]
+  data <- CrcBiomeScreenObject@NormalizedData[sample_condition %in% label, ]
   sampledata <- CrcBiomeScreenObject@SampleData[sample_condition %in% label, ]
 
   # Checck if any data is found

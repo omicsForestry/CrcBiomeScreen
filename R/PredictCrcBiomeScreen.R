@@ -17,27 +17,7 @@
 #' )
 #' rownames(newdata) <- c("S1", "S2")
 #'
-#' # Create a minimal CrcBiomeScreen object with a fake RF model
-#' # Instead of training, we attach a dummy model object whose predict()
-#' # method returns fixed probabilities.
-#'
-#' fake_rf_model <- structure(
-#'   list(),
-#'   class = "fakeRF"
-#' )
-#'
-#' # Define a simple predict method for this fake model
-#' predict.fakeRF <- function(object, data, type = "response") {
-#'   probs <- matrix(
-#'     c(0.8, 0.2,   # S1: control=0.8, CRC=0.2
-#'       0.3, 0.7),  # S2: control=0.3, CRC=0.7
-#'     ncol = 2,
-#'     byrow = TRUE
-#'   )
-#'   colnames(probs) <- c("control", "CRC")
-#'   list(predictions = probs)
-#' }
-#'
+#' # Create a minimal CrcBiomeScreen object
 #' toy_obj <- new(
 #'   "CrcBiomeScreen",
 #'   AbsoluteAbundance = data.frame(),
@@ -45,25 +25,23 @@
 #'   TaxaData = data.frame(),
 #'   SampleData = data.frame(),
 #'   ModelResult = list(),
-#'   EvaluateResult = list(
-#'     RF = list(RF.Model = fake_rf_model)
+#'   EvaluateResult = list()
+#' )
+#'
+#' if (interactive()) {
+#'   pred_obj <- PredictCrcBiomeScreen(
+#'     CrcBiomeScreenObject = toy_obj,
+#'     newdata = newdata,
+#'     model_type = "RF"
 #'   )
-#' )
 #'
-#' # Run prediction
-#' pred_obj <- PredictCrcBiomeScreen(
-#'   CrcBiomeScreenObject = toy_obj,
-#'   newdata = newdata,
-#'   model_type = "RF"
-#' )
-#'
-#' pred_obj@PredictResult$RF
-
-
+#'   print(getPredictResult(pred_obj)$RF)
+#' }
 PredictCrcBiomeScreen <- function(
-    CrcBiomeScreenObject,
-    newdata,
-    model_type = c("RF", "XGBoost")) {
+  CrcBiomeScreenObject,
+  newdata,
+  model_type = c("RF", "XGBoost")
+) {
   colnames(newdata) <- make.names(colnames(newdata))
   if (model_type == "RF") {
     model <- CrcBiomeScreenObject@EvaluateResult$RF$RF.Model
@@ -80,4 +58,3 @@ PredictCrcBiomeScreen <- function(
   CrcBiomeScreenObject@PredictResult[[model_type]] <- predictions
   return(CrcBiomeScreenObject)
 }
-

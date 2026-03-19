@@ -36,8 +36,8 @@ rel_abund <- data.frame(
 # Sample metadata with required 'number_reads' column
 sample_info <- data.frame(
   number_reads = c(10000, 12000),
-  condition    = c("control", "CRC"),
-  row.names    = c("S1", "S2"),
+  condition = c("control", "CRC"),
+  row.names = c("S1", "S2"),
   stringsAsFactors = FALSE
 )
 
@@ -56,7 +56,7 @@ toy_obj <- CreateCrcBiomeScreenObject(
 
 # External taxonomy table to be merged in by LoadTaxaTable
 my_taxa_table <- data.frame(
-  ASV_ID   = "TaxaA",
+  ASV_ID = "TaxaA",
   Taxonomy = "D_0__Bacteria;D_1__Firmicutes;D_2__Clostridia",
   stringsAsFactors = FALSE
 )
@@ -64,8 +64,8 @@ my_taxa_table <- data.frame(
 # Load taxonomy table into the CrcBiomeScreen object
 toy_obj <- LoadTaxaTable(
   CrcBiomeScreenObject = toy_obj,
-  taxa_table  = my_taxa_table,
-  id_column   = "ASV_ID",
+  taxa_table = my_taxa_table,
+  id_column = "ASV_ID",
   taxa_column = "Taxonomy"
 )
 

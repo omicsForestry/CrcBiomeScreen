@@ -53,8 +53,7 @@ obj <- CreateCrcBiomeScreenObject(
   SampleData = sample_info
 )
 
-# Add minimal ModelData (required input shape)
-obj@ModelData <- list(
+slot(obj, "ModelData") <- list(
   Training   = data.frame(x = c(1, 2)),
   Test       = data.frame(x = c(3, 4)),
   TrainLabel = factor(c("control", "CRC")),
@@ -62,12 +61,12 @@ obj@ModelData <- list(
 )
 
 # Insert dummy model results so EvaluateModel() can run without training
-# obj@ModelResult <- list(
+# slot(obj, "ModelResult") <- list(
 # RF = list(best.params = list(
 #   num.trees = 1, mtry = 1, node_size = 1, sample_size = 1
 # )),
 #  XGBoost = list(model = list(dummy = TRUE))
-#)
+# )
 
 # NOT RUN: Real evaluation requires pROC + ranger etc.
 # obj <- EvaluateModel(obj, model_type = "RF", TaskName = "toy", TrueLabel = "CRC")
