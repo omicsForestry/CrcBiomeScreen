@@ -72,7 +72,6 @@
 #'
 #' getSampleData(qc_obj)
 #'
-#'
 qcByCmdscale <- function(CrcBiomeScreenObject,
                          TaskName = NULL,
                          outdir = tempdir(),
@@ -102,9 +101,9 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
 
   # Print outlier sample IDs
   message("Outlier sample IDs detected:")
-  message(paste(outliers, collapse = "\n"))
+  message(paste0(outliers, collapse = "\n"))
 
-  if(!is.null(outliers)){
+  if (!is.null(outliers)) {
     message(sprintf("Number of outliers detected: %d", length(outliers)))
     # Ensure IsOutlier is a factor for color mapping
     plot_df <- data.frame(
@@ -115,29 +114,29 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
     )
     plot_df$IsOutlier <- factor(plot_df$IsOutlier, levels = c(FALSE, TRUE))
 
-    if(plot == TRUE){
-    # Output file
-    pdf_name <- paste0("cmdscale_", TaskName, "_", normalize_method, ".pdf")
+    if (plot == TRUE) {
+      # Output file
+      pdf_name <- paste0("cmdscale_", TaskName, "_", normalize_method, ".pdf")
 
-    # Create plot
-    p <- ggplot2::ggplot(plot_df, aes(x = Dim1, y = Dim2)) +
-      geom_point(color = "grey50", size = 2) +
-      geom_point(
-        data = subset(plot_df, IsOutlier == TRUE),
-        ggplot2::aes(x = Dim1, y = Dim2),
-        color = "red", size = 2, shape = 1, stroke = 1.2
-      ) +
-      geom_text(aes(label = SampleID, color = IsOutlier), size = 3, vjust = -0.6) +
-      ggplot2::scale_color_manual(values = c(`FALSE` = "black", `TRUE` = "red")) +
-      labs(
-        title = paste0("cmdscale_", TaskName, " (", normalize_method, ")"),
-        x = "PCoA 1", y = "PCoA 2"
-      ) +
-      theme_minimal() +
-      theme(legend.position = "none")
+      # Create plot
+      p <- ggplot2::ggplot(plot_df, aes(x = Dim1, y = Dim2)) +
+        geom_point(color = "grey50", size = 2) +
+        geom_point(
+          data = subset(plot_df, IsOutlier == TRUE),
+          ggplot2::aes(x = Dim1, y = Dim2),
+          color = "red", size = 2, shape = 1, stroke = 1.2
+        ) +
+        geom_text(aes(label = SampleID, color = IsOutlier), size = 3, vjust = -0.6) +
+        ggplot2::scale_color_manual(values = c(`FALSE` = "black", `TRUE` = "red")) +
+        labs(
+          title = paste0("cmdscale_", TaskName, " (", normalize_method, ")"),
+          x = "PCoA 1", y = "PCoA 2"
+        ) +
+        theme_minimal() +
+        theme(legend.position = "none")
 
-    # Save PDF
-    ggsave(file.path(outdir,pdf_name), plot = p, width = 12, height = 5)
+      # Save PDF
+      ggsave(file.path(outdir, pdf_name), plot = p, width = 12, height = 5)
     }
   } else {
     message("No outliers detected.")
@@ -147,11 +146,11 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
   CrcBiomeScreenObject@OrginalNormalizedData <- study_data
   CrcBiomeScreenObject@NormalizedData <- study_data[!is_outlier, , drop = FALSE]
   CrcBiomeScreenObject@SampleData <- CrcBiomeScreenObject@SampleData[!is_outlier, , drop = FALSE]
-  if(!is.null(outliers)){
+  if (!is.null(outliers)) {
     attr(outliers, "QC") <- TaskName
     attr(outliers, "OutlierSamples") <- length(outliers)
     CrcBiomeScreenObject@OutlierSamples <- outliers
-  } else{
+  } else {
     CrcBiomeScreenObject@OutlierSamples <- character(0)
   }
 

@@ -35,8 +35,7 @@
 #'   SampleData = sample_info
 #' )
 #'
-#' # Add minimal ModelData (required input shape)
-#' obj@ModelData <- list(
+#' slot(obj, "ModelData") <- list(
 #'   Training   = data.frame(x = c(1, 2)),
 #'   Test       = data.frame(x = c(3, 4)),
 #'   TrainLabel = factor(c("control", "CRC")),
@@ -44,25 +43,23 @@
 #' )
 #'
 #' # Insert dummy model results so EvaluateModel() can run without training
-#' # obj@ModelResult <- list(
+#' # slot(obj, "ModelResult") <- list(
 #' # RF = list(best.params = list(
 #' #   num.trees = 1, mtry = 1, node_size = 1, sample_size = 1
 #' # )),
 #' #  XGBoost = list(model = list(dummy = TRUE))
-#' #)
+#' # )
 #'
 #' # NOT RUN: Real evaluation requires pROC + ranger etc.
 #' # obj <- EvaluateModel(obj, model_type = "RF", TaskName = "toy", TrueLabel = "CRC")
 #'
 #' obj
-
 EvaluateModel <- function(CrcBiomeScreenObject = NULL,
                           model_type = c("RF", "XGBoost"),
                           outdir = tempdir(),
                           TaskName = NULL,
                           TrueLabel = NULL,
                           PlotAUC = NULL) {
-  
   # Ensure output directory exists
   if (!dir.exists(outdir)) {
     dir.create(outdir, recursive = TRUE)
@@ -71,7 +68,7 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
   if (is.null(CrcBiomeScreenObject@EvaluateResult)) {
     CrcBiomeScreenObject@EvaluateResult <- list()
   }
-  
+
   withr::with_seed(123, {
     if ("RF" %in% model_type) {
       CrcBiomeScreenObject <- EvaluateRF(
@@ -101,7 +98,6 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
 }
 
 
-
 #' Evaluate the Random Forest model
 #'
 #' @param CrcBiomeScreenObject A CrcBiomeScreenObject containing the model data and results
@@ -119,7 +115,7 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
 #'
 #' # Toy training + test matrices
 #' train_df <- data.frame(x = c(1, 2), TrainLabel = factor(c("control", "CRC")))
-#' test_df  <- data.frame(x = c(3, 4))
+#' test_df <- data.frame(x = c(3, 4))
 #'
 #' # Build minimal CrcBiomeScreen object
 #' obj <- new("CrcBiomeScreen",
@@ -144,7 +140,6 @@ EvaluateModel <- function(CrcBiomeScreenObject = NULL,
 #' # out <- EvaluateRF(obj, TaskName = "toy", TrueLabel = "CRC")
 #'
 #' obj
-
 EvaluateRF <- function(CrcBiomeScreenObject = NULL,
                        outdir = tempdir(),
                        TaskName = NULL,
@@ -220,7 +215,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 
   # Plot
   if (PlotAUC == TRUE) {
-    pdf(file.path(outdir,paste0("roc.curve.rf.", TaskName, ".pdf")))
+    pdf(file.path(outdir, paste0("roc.curve.rf.", TaskName, ".pdf")))
     plot(roc.curve.rf, print.auc = TRUE, print.thres = TRUE)
     dev.off()
   }
@@ -247,7 +242,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 #'
 #' # Toy data for testing
 #' train_df <- data.frame(x = c(1, 2), TrainLabel = factor(c("control", "CRC")))
-#' test_df  <- data.frame(x = c(3, 4))
+#' test_df <- data.frame(x = c(3, 4))
 #'
 #' obj <- new("CrcBiomeScreen",
 #'   AbsoluteAbundance = data.frame(),
@@ -262,7 +257,7 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 #'   ),
 #'   ModelResult = list(
 #'     XGBoost = list(
-#'       model = list(dummy_model = TRUE)  # placeholder model
+#'       model = list(dummy_model = TRUE) # placeholder model
 #'     )
 #'   )
 #' )
@@ -271,7 +266,6 @@ EvaluateRF <- function(CrcBiomeScreenObject = NULL,
 #' # out <- EvaluateXGBoost(obj, TaskName = "toy", TrueLabel = "CRC")
 #'
 #' obj
-
 EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
                             outdir = tempdir(),
                             TaskName = NULL,
@@ -310,7 +304,7 @@ EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
 
   # Plot the ROC curve
   if (PlotAUC == TRUE) {
-    pdf(file.path(outdir,"roc.curve.xgb.", TaskName, ".pdf"))
+    pdf(file.path(outdir, "roc.curve.xgb.", TaskName, ".pdf"))
     plot(roc.curve.xgb, print.auc = TRUE, print.thres = TRUE)
     dev.off()
   }

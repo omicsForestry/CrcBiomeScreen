@@ -48,51 +48,53 @@
 #' # Construct minimal CrcBiomeScreen object
 #' toy_obj <- new(
 #'   "CrcBiomeScreen",
-#'   AbsoluteAbundance   = toy_abs,
-#'   RelativeAbundance   = data.frame(),
-#'   TaxaData            = toy_taxa,
-#'   SampleData          = toy_sample,
-#'   TaxaLevelData       = NULL,
-#'   NormalizedData      = NULL,
+#'   AbsoluteAbundance = toy_abs,
+#'   RelativeAbundance = data.frame(),
+#'   TaxaData = toy_taxa,
+#'   SampleData = toy_sample,
+#'   TaxaLevelData = NULL,
+#'   NormalizedData = NULL,
 #'   OrginalNormalizedData = NULL,
-#'   ValidationData      = NULL,
-#'   ModelData           = NULL,
-#'   ModelResult         = NULL,
-#'   EvaluateResult      = list(),
-#'   PredictResult       = NULL
+#'   ValidationData = NULL,
+#'   ModelData = NULL,
+#'   ModelResult = NULL,
+#'   EvaluateResult = list(),
+#'   PredictResult = NULL
 #' )
 #'
 #' # Apply taxonomy splitting + keep genus level
 #' toy_obj <- SplitTaxas(toy_obj)
 #' genus_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
 #'
-#' # Inspect genus-level abundance
-#' genus_obj@TaxaLevelData$GenusLevelData
+#' slot(genus_obj, "TaxaLevelData")$GenusLevelData
 #'
 KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
-
   # Extract and validate data
   taxa_df <- as.data.frame(getTaxaData(CrcBiomeScreenObject), stringsAsFactors = FALSE)
-  ab_df   <- as.data.frame(getAbsoluteAbundance(CrcBiomeScreenObject), stringsAsFactors = FALSE)
+  ab_df <- as.data.frame(getAbsoluteAbundance(CrcBiomeScreenObject), stringsAsFactors = FALSE)
 
   valid_levels <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
-  if (!level %in% valid_levels)
-    stop("Invalid level. Choose one of: ", paste0(valid_levels, collapse = ", "))
+  if (!level %in% valid_levels) {
+    stop("Invalid level. Choose one of: ", paste(valid_levels, collapse = ", "))
+  }
 
-  if (!level %in% colnames(taxa_df))
-    stop(paste0("Column '", level, "' not found in TaxaData."))
+  if (!level %in% colnames(taxa_df)) {
+    stop("column '", level, "' not found in TaxaData.")
+  }
 
   # Define helper: pick most appropriate grouping name
   pick_group <- function(row) {
     idx <- match(level, valid_levels)
     for (i in idx:1) {
-      val <- row[[ valid_levels[i] ]]
-      if (!is.na(val) && nzchar(as.character(val)))
+      val <- row[[valid_levels[i]]]
+      if (!is.na(val) && nzchar(as.character(val))) {
         return(as.character(val))
+      }
     }
     # fallback to row name if all missing
-    if (!is.na(row[["OriginalTaxa"]]) && nzchar(as.character(row[["OriginalTaxa"]])))
+    if (!is.na(row[["OriginalTaxa"]]) && nzchar(as.character(row[["OriginalTaxa"]]))) {
       return(as.character(row[["OriginalTaxa"]]))
+    }
     return(NA_character_)
   }
 

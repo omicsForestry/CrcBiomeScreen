@@ -89,5 +89,4 @@ qc_obj <- qcByCmdscale(
 
 getSampleData(qc_obj)
 
-
 }

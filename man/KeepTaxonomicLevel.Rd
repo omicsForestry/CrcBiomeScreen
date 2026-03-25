@@ -55,25 +55,24 @@ toy_sample <- data.frame(
 # Construct minimal CrcBiomeScreen object
 toy_obj <- new(
   "CrcBiomeScreen",
-  AbsoluteAbundance   = toy_abs,
-  RelativeAbundance   = data.frame(),
-  TaxaData            = toy_taxa,
-  SampleData          = toy_sample,
-  TaxaLevelData       = NULL,
-  NormalizedData      = NULL,
+  AbsoluteAbundance = toy_abs,
+  RelativeAbundance = data.frame(),
+  TaxaData = toy_taxa,
+  SampleData = toy_sample,
+  TaxaLevelData = NULL,
+  NormalizedData = NULL,
   OrginalNormalizedData = NULL,
-  ValidationData      = NULL,
-  ModelData           = NULL,
-  ModelResult         = NULL,
-  EvaluateResult      = list(),
-  PredictResult       = NULL
+  ValidationData = NULL,
+  ModelData = NULL,
+  ModelResult = NULL,
+  EvaluateResult = list(),
+  PredictResult = NULL
 )
 
 # Apply taxonomy splitting + keep genus level
 toy_obj <- SplitTaxas(toy_obj)
 genus_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
 
-# Inspect genus-level abundance
-genus_obj@TaxaLevelData$GenusLevelData
+slot(genus_obj, "TaxaLevelData")$GenusLevelData
 
 }

@@ -52,7 +52,6 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
                        TaskName = NULL,
                        TrueLabel = NULL,
                        num_cores = NULL) {
-
   folds.rf <- caret::createFolds(CrcBiomeScreenObject@ModelData$TrainLabel, k = k.rf)
 
   # Calculate the number of cores

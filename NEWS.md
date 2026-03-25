@@ -1,7 +1,33 @@
 # CrcBiomeScreen (development version)
 
-# CrcBiomeScreen 0.99.0 (2025-10-21)
+# CrcBiomeScreen 0.99.12
+--------------------------------------
 
+This release focuses on resolving critical `R CMD check` errors, warnings, and `BiocCheck` notes to ensure full compliance with the Bioconductor Build System (BBS).
+## Examples & Documentation
+* Safe Execution Blocks: Replaced problematic `\donttest{}` tags with `if (interactive())` blocks across all `@examples` 
+
+* S4 Class Accessors: Eliminated direct S4 slot access (`@`) in examples and documentation (e.g., replacing `obj@ModelData` with `getModelData(obj)` 
+or `slot()`), strictly adhering to `BiocCheck` guidelines.
+
+* Mock Data Integrity: Fixed example initializations by ensuring toy datasets 
+are correctly dimensioned and contain all required metadata columns 
+
+* Roxygen2 Updates: Fixed an unsupported `@alias` tag warning by replacing it with `@aliases` in the `CrcBiomeScreen` class definition.
+
+## Code Robustness
+* Condition Signals: Refactored condition signals (`stop()`, `warning()`,`message()`) across multiple functions 
+
+* Generic Setters: Defined the missing global generic setters 
+
+
+## Unit Tests
+* Bioconductor Execution: Removed `skip_on_bioc()` from all `testthat` files to guarantee full test execution on the Bioconductor build servers.
+
+[MAINTAINER TODO]: (Li, please add descriptions of any recent biological feature updates or other methodological changes here before merging).
+
+# CrcBiomeScreen 0.99.0 (2025-10-21)
+--------------------------------------
 ## Overview
 **CrcBiomeScreen** is an R package designed to streamline microbiome-based colorectal cancer (CRC) screening workflows.  
 It provides standardized functions for preprocessing, taxonomic data handling, machine learning model training,  

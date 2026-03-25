@@ -17,18 +17,30 @@ a data.frame containing model data.
 Accessor for ModelData slot of CrcBiomeScreen object
 }
 \examples{
+rel_abund <- data.frame(Sample1 = 10, Sample2 = 20, Sample3 = 15, Sample4 = 25)
+rownames(rel_abund) <- "TaxaA"
+
 toy_obj <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = data.frame(TaxaA = c(10, 20)),
-  TaxaData = data.frame(Taxa = "TaxaA"),
+  RelativeAbundance = rel_abund,
+  TaxaData = data.frame(Taxa = "TaxaA", row.names = "TaxaA"),
   SampleData = data.frame(
-    number_reads = 10000,
-    condition = "control"
+    number_reads = c(10000, 10000, 10000, 10000),
+    condition = c("control", "CRC", "control", "CRC"),
+    row.names = c("Sample1", "Sample2", "Sample3", "Sample4")
   )
 )
+
+slot(toy_obj, "NormalizedData") <- data.frame(
+  TaxaA = c(10, 20, 15, 25),
+  TaxaB = c(15, 25, 20, 30),
+  row.names = c("Sample1", "Sample2", "Sample3", "Sample4")
+)
+
 toy_obj <- SplitDataSet(
-CrcBiomeScreenObject,
-label = c("control", "CRC"),
-partition = 0.7
+  toy_obj,
+  label = c("control", "CRC"),
+  condition_col = "condition",
+  partition = 0.7
 )
 getModelData(toy_obj)
 

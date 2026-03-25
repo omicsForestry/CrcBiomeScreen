@@ -29,8 +29,10 @@ suppressMessages({
 
 # Create a tiny assay matrix
 assay_mat <- matrix(
-  c(10, 5,
-    20, 7),
+  c(
+    10, 5,
+    20, 7
+  ),
   nrow = 2,
   dimnames = list(c("Taxa1", "Taxa2"), c("S1", "S2"))
 )

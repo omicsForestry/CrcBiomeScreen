@@ -45,16 +45,35 @@ A \linkS4class{CrcBiomeScreenObject} with the results of the screening process, 
 Run the screening process for the microbiome data
 }
 \examples{
- \donttest{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
-  model = "RF",
-  split.requirement =
-    c(
+toy_norm <- data.frame(
+  TaxaA = runif(20),
+  TaxaB = runif(20)
+)
+rownames(toy_norm) <- paste0("Sample", 1:20)
+
+toy_sampledata <- data.frame(
+  study_condition = rep(c("control", "CRC"), each = 10),
+  row.names = paste0("Sample", 1:20)
+)
+
+toy_obj <- new("CrcBiomeScreen",
+  SampleData = toy_sampledata,
+  NormalizedData = toy_norm
+)
+
+if (interactive()) {
+  result_obj <- RunScreening(
+    obj = toy_obj,
+    model_type = "RF",
+    split.requirement = list(
       label = c("control", "CRC"),
       condition_col = "study_condition"
     ),
-  TaskName = "GMPR_NHSBCSP",
-  num_cores = 10,
-  ValidationData = ValidationData,
-  TrueLabel = "Cancer"
-)}
+    TaskName = "Toy_Test",
+    num_cores = 10,
+    partition = 0.7,
+    ValidationData = toy_obj,
+    TrueLabel = "CRC"
+  )
+}
 }

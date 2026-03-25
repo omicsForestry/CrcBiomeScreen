@@ -14,34 +14,32 @@
 #' @examples
 #' # Minimal toy object for dataset splitting
 #'
-#' # Example normalized data (4 samples × 2 taxa)
 #' toy_norm <- data.frame(
-#'   TaxaA = c(10, 20, 15, 30),
-#'   TaxaB = c( 5,  7,  6,  8)
+#'   TaxaA = runif(10, 10, 30),
+#'   TaxaB = runif(10, 5, 15)
 #' )
-#' rownames(toy_norm) <- paste0("S", 1:4)
+#' rownames(toy_norm) <- paste0("S", 1:10)
 #'
-#' # Sample metadata with conditions
 #' toy_sampledata <- data.frame(
-#'   study_condition = c("control", "CRC", "control", "CRC"),
-#'   row.names = paste0("S", 1:4)
+#'   study_condition = rep(c("control", "CRC"), each = 5),
+#'   row.names = paste0("S", 1:10)
 #' )
 #'
 #' # Construct a minimal CrcBiomeScreen object
 #' toy_obj <- new(
 #'   "CrcBiomeScreen",
-#'   AbsoluteAbundance   = data.frame(),
-#'   RelativeAbundance   = data.frame(),
-#'   TaxaData            = data.frame(),
-#'   SampleData          = toy_sampledata,
-#'   NormalizedData      = toy_norm,   # <-- IMPORTANT: SplitDataSet needs this
-#'   TaxaLevelData       = NULL,
+#'   AbsoluteAbundance = data.frame(),
+#'   RelativeAbundance = data.frame(),
+#'   TaxaData = data.frame(),
+#'   SampleData = toy_sampledata,
+#'   NormalizedData = toy_norm, # <-- IMPORTANT: SplitDataSet needs this
+#'   TaxaLevelData = NULL,
 #'   OrginalNormalizedData = NULL,
-#'   ValidationData      = NULL,
-#'   ModelData           = list(),
-#'   ModelResult         = NULL,
-#'   EvaluateResult      = list(),
-#'   PredictResult       = NULL
+#'   ValidationData = NULL,
+#'   ModelData = list(),
+#'   ModelResult = NULL,
+#'   EvaluateResult = list(),
+#'   PredictResult = NULL
 #' )
 #'
 #' # Split into training/testing sets with 70/30 ratio
@@ -53,14 +51,12 @@
 #' )
 #'
 #' # Inspect training labels
-#' toy_split@ModelData$TrainLabel
+#' getModelData(toy_split)$TrainLabel
 #'
-
 SplitDataSet <- function(CrcBiomeScreenObject = NULL,
                          label = NULL,
                          partition = NULL,
                          condition_col = "study_condition") {
-
   # Check if the required parameters are provided
   if (is.null(CrcBiomeScreenObject)) stop("CrcBiomeScreenObject cannot be NULL.")
   if (is.null(label)) stop("Label cannot be NULL.")
@@ -68,12 +64,12 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
     stop("Partition must be a value between 0 and 1.")
   }
   if (!condition_col %in% colnames(CrcBiomeScreenObject@SampleData)) {
-    stop(sprintf("Condition column", condition_col, "not found in SampleData."))
+    stop(sprintf("Condition column '%s' not found in SampleData.", condition_col))
   }
 
   # Select the data based on the label
   sample_condition <- CrcBiomeScreenObject@SampleData[[condition_col]]
-  data <- CrcBiomeScreenObject@NormalizedData[sample_condition %in% label, ]
+  data <- CrcBiomeScreenObject@NormalizedData[sample_condition %in% label, , drop = FALSE]
   sample_condition <- sample_condition[sample_condition %in% label]
 
   # Check if the data is empty
@@ -81,7 +77,8 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
 
   # Create training and test set indexes
   withr::with_seed(123, {
-  trainIndex <- caret::createDataPartition(sample_condition, p = partition, list = FALSE)})
+    trainIndex <- caret::createDataPartition(sample_condition, p = partition, list = FALSE)
+  })
 
   # Split the data
   train <- data[trainIndex, ]

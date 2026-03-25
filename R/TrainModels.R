@@ -24,13 +24,35 @@
 #' @return A \linkS4class{CrcBiomeScreenObject} with training results.
 #' @export
 #'
-#' @examples  \donttest{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
-#'   model_type = "RF",
-#'   TaskName = "ToyData_RF",
-#'   ClassWeights = TRUE,
-#'   TrueLabel = "CRC",
-#'   num_cores = 10
-#' )}
+#' @examples
+#'
+#' train_df <- data.frame(
+#'   FeatureA = c(1, 2, 3, 4),
+#'   TrainLabel = factor(c("control", "CRC", "control", "CRC"))
+#' )
+#'
+#' toy_obj <- new("CrcBiomeScreen",
+#'   AbsoluteAbundance = data.frame(),
+#'   RelativeAbundance = data.frame(),
+#'   TaxaData = data.frame(),
+#'   SampleData = data.frame(),
+#'   ModelData = list(
+#'     Training = train_df,
+#'     TrainLabel = train_df$TrainLabel
+#'   )
+#' )
+#'
+#' if (interactive()) {
+#'   toy_obj <- TrainModels(
+#'     CrcBiomeScreenObject = toy_obj,
+#'     model_type = "RF",
+#'     TaskName = "ToyData_RF",
+#'     ClassWeights = TRUE,
+#'     TrueLabel = "CRC",
+#'     n_cv = 2,
+#'     num_cores = 1
+#'   )
+#' }
 #'
 TrainModels <- function(CrcBiomeScreenObject = NULL,
                         model_type = c("RF", "XGBoost"),
@@ -54,48 +76,48 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
 
   # ---- Run RF model ----
   withr::with_seed(123, {
-  if ("RF" %in% model_type) {
-    if (ClassWeights) {
-      CrcBiomeScreenObject <- ModelingRF(
-        CrcBiomeScreenObject = CrcBiomeScreenObject,
-        k.rf = n_cv,
-        TaskName = TaskName,
-        TrueLabel = TrueLabel,
-        num_cores = num_cores
-      )
-    } else {
-      CrcBiomeScreenObject <- ModelingRF_noweights(
-        CrcBiomeScreenObject = CrcBiomeScreenObject,
-        k.rf = n_cv,
-        TaskName = TaskName,
-        TrueLabel = TrueLabel,
-        num_cores = num_cores
-      )
+    if ("RF" %in% model_type) {
+      if (ClassWeights) {
+        CrcBiomeScreenObject <- ModelingRF(
+          CrcBiomeScreenObject = CrcBiomeScreenObject,
+          k.rf = n_cv,
+          TaskName = TaskName,
+          TrueLabel = TrueLabel,
+          num_cores = num_cores
+        )
+      } else {
+        CrcBiomeScreenObject <- ModelingRF_noweights(
+          CrcBiomeScreenObject = CrcBiomeScreenObject,
+          k.rf = n_cv,
+          TaskName = TaskName,
+          TrueLabel = TrueLabel,
+          num_cores = num_cores
+        )
+      }
     }
-  }
   })
 
   # ---- Run XGBoost model ----
   withr::with_seed(123, {
-  if ("XGBoost" %in% model_type) {
-    if (ClassWeights) {
-      CrcBiomeScreenObject <- ModelingXGBoost(
-        CrcBiomeScreenObject = CrcBiomeScreenObject,
-        k.rf = n_cv,
-        TaskName = TaskName,
-        TrueLabel = TrueLabel,
-        num_cores = num_cores
-      )
-    } else {
-      CrcBiomeScreenObject <- ModelingXGBoost_noweights(
-        CrcBiomeScreenObject = CrcBiomeScreenObject,
-        k.rf = n_cv,
-        TaskName = TaskName,
-        TrueLabel = TrueLabel,
-        num_cores = num_cores
-      )
+    if ("XGBoost" %in% model_type) {
+      if (ClassWeights) {
+        CrcBiomeScreenObject <- ModelingXGBoost(
+          CrcBiomeScreenObject = CrcBiomeScreenObject,
+          k.rf = n_cv,
+          TaskName = TaskName,
+          TrueLabel = TrueLabel,
+          num_cores = num_cores
+        )
+      } else {
+        CrcBiomeScreenObject <- ModelingXGBoost_noweights(
+          CrcBiomeScreenObject = CrcBiomeScreenObject,
+          k.rf = n_cv,
+          TaskName = TaskName,
+          TrueLabel = TrueLabel,
+          num_cores = num_cores
+        )
+      }
     }
-  }
   })
   return(CrcBiomeScreenObject)
 }

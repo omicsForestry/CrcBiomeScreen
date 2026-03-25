@@ -14,24 +14,50 @@
 #'
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `PredictResult` slot for the specified model type.
 #' @export
+#' @examples
 #'
-#' @examples  \donttest{CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
-#'   model_type = "RF",
-#'   ValidationData = ValidationData_filtered_qc,
-#'   TaskName = "ValidationData_RF_Validation",
-#'   TrueLabel = "CRC",
-#'   PlotAUC = TRUE
-#' )}
+#' toy_obj <- new("CrcBiomeScreen",
+#'   AbsoluteAbundance = data.frame(),
+#'   RelativeAbundance = data.frame(),
+#'   TaxaData = data.frame(),
+#'   SampleData = data.frame(
+#'     study_condition = c("control", "CRC")
+#'   ),
+#'   EvaluateResult = list(
+#'     RF = list(RF.Model = structure(list(), class = "fakeRF"))
+#'   )
+#' )
+#'
+#' toy_val_data <- new("CrcBiomeScreen",
+#'   AbsoluteAbundance = data.frame(),
+#'   RelativeAbundance = data.frame(),
+#'   TaxaData = data.frame(),
+#'   SampleData = data.frame(
+#'     study_condition = c("control", "CRC")
+#'   )
+#' )
+#'
+#' if (interactive()) {
+#'   toy_obj <- ValidateModelOnData(
+#'     CrcBiomeScreenObject = toy_obj,
+#'     model_type = "RF",
+#'     ValidationData = toy_val_data,
+#'     TaskName = "Toy_Validation",
+#'     TrueLabel = "CRC",
+#'     PlotAUC = FALSE
+#'   )
+#' }
 #'
 ValidateModelOnData <- function(
-    CrcBiomeScreenObject = NULL,
-    model_type = NULL,
-    ValidationData = NULL,
-    TaskName = NULL,
-    TrueLabel = NULL,
-    condition_col = "study_condition",
-    PlotAUC = NULL,
-    outdir = tempdir()) {
+  CrcBiomeScreenObject = NULL,
+  model_type = NULL,
+  ValidationData = NULL,
+  TaskName = NULL,
+  TrueLabel = NULL,
+  condition_col = "study_condition",
+  PlotAUC = NULL,
+  outdir = tempdir()
+) {
   if (!condition_col %in% colnames(ValidationData@SampleData)) {
     stop(sprintf("Condition column", condition_col, "not found in SampleData."))
   }

@@ -19,33 +19,32 @@
 #'
 #' # Example taxonomic strings with up to Genus level
 #' toy_taxa <- data.frame(
-#'     Taxa = c(
-#'         "D_0__Bacteria;D_1__Firmicutes;D_2__Clostridia;D_3__Lachnospirales;D_4__Lachnospiraceae;D_5__Roseburia",
-#'         "D_0__Bacteria;D_1__Firmicutes;D_2__Bacilli;D_3__Lactobacillales;D_4__Lactobacillaceae;D_5__Lactobacillus"
-#'     ),
-#'     stringsAsFactors = FALSE
+#'   Taxa = c(
+#'     "D_0__Bacteria;D_1__Firmicutes;D_2__Clostridia;D_3__Lachnospirales;D_4__Lachnospiraceae;D_5__Roseburia",
+#'     "D_0__Bacteria;D_1__Firmicutes;D_2__Bacilli;D_3__Lactobacillales;D_4__Lactobacillaceae;D_5__Lactobacillus"
+#'   ),
+#'   stringsAsFactors = FALSE
 #' )
 #'
 #' # Minimal object containing only the TaxaData slot needed for splitting
 #' toy_obj <- new(
-#'     "CrcBiomeScreen",
-#'     AbsoluteAbundance   = data.frame(),
-#'     RelativeAbundance   = data.frame(),
-#'     TaxaData            = toy_taxa,
-#'     SampleData          = data.frame(),
-#'     TaxaLevelData       = NULL,
-#'     NormalizedData      = NULL,
-#'     OrginalNormalizedData = NULL,
-#'     ValidationData      = NULL,
-#'     ModelData           = NULL,
-#'     ModelResult         = NULL,
-#'     EvaluateResult      = list(),
-#'     PredictResult       = NULL
+#'   "CrcBiomeScreen",
+#'   AbsoluteAbundance = data.frame(),
+#'   RelativeAbundance = data.frame(),
+#'   TaxaData = toy_taxa,
+#'   SampleData = data.frame(),
+#'   TaxaLevelData = NULL,
+#'   NormalizedData = NULL,
+#'   OrginalNormalizedData = NULL,
+#'   ValidationData = NULL,
+#'   ModelData = NULL,
+#'   ModelResult = NULL,
+#'   EvaluateResult = list(),
+#'   PredictResult = NULL
 #' )
 #'
 #' # Run taxonomic splitting
 #' SplitTaxas(toy_obj)
-
 SplitTaxas <- function(CrcBiomeScreenObject) {
   taxa_data <- getTaxaData(CrcBiomeScreenObject)
 
@@ -63,55 +62,74 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
     sep <- "\\|"
     style <- "qiime"
   } else if (any(grepl("\\|", taxa_vec))) {
-    taxa_vec2 <- taxa_vec; sep <- "\\|"; style <- "metaphlan"
+    taxa_vec2 <- taxa_vec
+    sep <- "\\|"
+    style <- "metaphlan"
   } else if (any(grepl(";", taxa_vec))) {
-    taxa_vec2 <- taxa_vec; sep <- ";"; style <- "semi"
+    taxa_vec2 <- taxa_vec
+    sep <- ";"
+    style <- "semi"
   } else if (any(grepl("__", taxa_vec))) {
-    taxa_vec2 <- taxa_vec; sep <- "\\."; style <- "dot"
+    taxa_vec2 <- taxa_vec
+    sep <- "\\."
+    style <- "dot"
   } else if (any(grepl("_", taxa_vec))) {
-    taxa_vec2 <- taxa_vec; sep <- "_"; style <- "underscore"
+    taxa_vec2 <- taxa_vec
+    sep <- "_"
+    style <- "underscore"
   } else {
-    taxa_vec2 <- taxa_vec; sep <- "\\|"; style <- "fallback"
+    taxa_vec2 <- taxa_vec
+    sep <- "\\|"
+    style <- "fallback"
   }
 
   # split into ranks
   taxa_df <- tibble::tibble(OriginalTaxa = taxa_vec, .rows = length(taxa_vec)) %>%
     dplyr::mutate(tmp = taxa_vec2) %>%
     tidyr::separate(tmp,
-                    into = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"),
-                    sep = sep, fill = "right", remove = TRUE)
+      into = c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"),
+      sep = sep, fill = "right", remove = TRUE
+    )
 
   # cleanup prefixes
   remove_prefix <- function(x) {
-    if (is.na(x) || x == "" || x == "__") return(NA_character_)
+    if (is.na(x) || x == "" || x == "__") {
+      return(NA_character_)
+    }
     x <- trimws(x)
-    x <- sub("^D_\\d+__", "", x)      # D_0__ style
+    x <- sub("^D_\\d+__", "", x) # D_0__ style
     x <- sub("^[a-zA-Z]{1,2}__", "", x) # k__, p__, g__ ...
-    x <- sub("^[a-zA-Z]_", "", x)     # g_ style
+    x <- sub("^[a-zA-Z]_", "", x) # g_ style
     x <- trimws(x)
-    if (x == "" || x == "__") return(NA_character_)
+    if (x == "" || x == "__") {
+      return(NA_character_)
+    }
     return(x)
   }
-  taxa_df <- taxa_df %>% mutate(across(Kingdom:Species, ~vapply(., remove_prefix, FUN.VALUE = character(1))))
+  taxa_df <- taxa_df %>% mutate(across(Kingdom:Species, ~ vapply(., remove_prefix, FUN.VALUE = character(1))))
 
   # handle bad labels: attach to parent but avoid duplicate suffixes
-  bad_labels <- c("uncultured","unclassified","unknown")
+  bad_labels <- c("uncultured", "unclassified", "unknown")
   clean_parent <- function(x) {
-    if (is.na(x)) return(NA_character_)
+    if (is.na(x)) {
+      return(NA_character_)
+    }
     # remove existing suffixes for parent candidate
     x <- gsub("(_uncultured)+$", "_uncultured", x)
     x <- gsub("(_unclassified)+$", "_unclassified", x)
     x <- gsub("(_unknown)+$", "_unknown", x)
     # if parent itself is NA, return NA
-    if (is.na(x) || x == "") return(NA_character_)
+    if (is.na(x) || x == "") {
+      return(NA_character_)
+    }
     # strip trailing suffix for building new suffix (so we don't get a_b_uncultured_uncultured)
     x <- sub("(_uncultured|_unclassified|_unknown)$", "", x)
     return(x)
   }
 
-  for (i in 2:length(c("Kingdom","Phylum","Class","Order","Family","Genus","Species"))) {
-    lvl <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")[i]
-    parent <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")[i-1]
+  for (i in 2:length(c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species"))) {
+    lvl <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")[i]
+    parent <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")[i - 1]
     cur <- taxa_df[[lvl]]
     par <- taxa_df[[parent]]
     replace_idx <- which(!is.na(cur) & tolower(cur) %in% bad_labels & !is.na(par))
@@ -130,9 +148,14 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
   # final cleanup: collapse repeated suffixes like _uncultured_uncultured -> _uncultured
   taxa_df <- taxa_df %>%
     mutate(across(Kingdom:Species, ~ ifelse(is.na(.), NA_character_,
-                                            gsub("(_uncultured)+$", "_uncultured",
-                                                 gsub("(_unclassified)+$", "_unclassified",
-                                                      gsub("(_unknown)+$", "_unknown", .))))))
+      gsub(
+        "(_uncultured)+$", "_uncultured",
+        gsub(
+          "(_unclassified)+$", "_unclassified",
+          gsub("(_unknown)+$", "_unknown", .)
+        )
+      )
+    )))
 
   CrcBiomeScreenObject@TaxaData <- as.data.frame(taxa_df, stringsAsFactors = FALSE)
   rownames(CrcBiomeScreenObject@TaxaData) <- taxa_df$OriginalTaxa
@@ -140,5 +163,3 @@ SplitTaxas <- function(CrcBiomeScreenObject) {
 
   return(CrcBiomeScreenObject)
 }
-
-

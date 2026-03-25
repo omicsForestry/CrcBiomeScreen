@@ -41,13 +41,11 @@
 #' # )
 #'
 #' obj
-
 ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  k.rf = n_cv,
                                  TaskName = NULL,
                                  TrueLabel = NULL,
                                  num_cores = NULL) {
-
   # ---- Main function logic ----
   folds.rf <- caret::createFolds(CrcBiomeScreenObject@ModelData$TrainLabel, k = k.rf)
 

@@ -37,11 +37,9 @@
 #' # TaskName = "toy_XGB_nw",
 #' # TrueLabel = c("control", "CRC"),
 #' # num_cores = 1
-#' #)
+#' # )
 #'
 #' obj
-
-
 ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
                                       k.rf = 10,
                                       repeats = 5,
@@ -87,10 +85,13 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
     old_warn <- getOption("warn")
     options(warn = -1)
     sink(tempfile())
-    on.exit({
-      sink(NULL)
-      options(warn = old_warn)
-    }, add = TRUE)
+    on.exit(
+      {
+        sink(NULL)
+        options(warn = old_warn)
+      },
+      add = TRUE
+    )
 
     model_fit <- caret::train(
       label_train ~ .,

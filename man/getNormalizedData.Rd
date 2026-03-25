@@ -2,36 +2,50 @@
 % Please edit documentation in R/CreateCrcBiomeScreenObject.R
 \name{getNormalizedData}
 \alias{getNormalizedData}
+\alias{getNormalizedData<-}
 \alias{getNormalizedData,CrcBiomeScreen-method}
+\alias{getNormalizedData<-,CrcBiomeScreen-method}
 \title{Accessor for NormalizedData slot of CrcBiomeScreen object}
 \usage{
 getNormalizedData(object)
 
+getNormalizedData(object) <- value
+
 \S4method{getNormalizedData}{CrcBiomeScreen}(object)
+
+\S4method{getNormalizedData}{CrcBiomeScreen}(object) <- value
 }
 \arguments{
 \item{object}{A \linkS4class{CrcBiomeScreen} object.}
+
+\item{value}{A data.frame (or matrix) containing normalized abundance data.}
 }
 \value{
 A \linkS4class{CrcBiomeScreen} object with
-a  data.frame (or matrix) containing normalized abundance data.
+a data.frame (or matrix) containing normalized abundance data.
 }
 \description{
-Retrieve normalized abundance data
-from a \linkS4class{CrcBiomeScreen} object.
+Retrieve or set normalized abundance data
+from/in a \linkS4class{CrcBiomeScreen} object.
 }
 \section{Methods (by class)}{
 \itemize{
 \item \code{getNormalizedData(CrcBiomeScreen)}: Retrieve normalized abundance data.
 
+\item \code{getNormalizedData(CrcBiomeScreen) <- value}: Set normalized abundance data.
+
 }}
 \examples{
+rel_abund <- data.frame(Sample1 = 10, Sample2 = 20)
+rownames(rel_abund) <- "TaxaA"
+
 toy_obj <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = data.frame(TaxaA = c(10, 20)),
-  TaxaData = data.frame(Taxa = "TaxaA"),
+  RelativeAbundance = rel_abund,
+  TaxaData = data.frame(Taxa = "TaxaA", row.names = "TaxaA"),
   SampleData = data.frame(
-    number_reads = 10000,
-    condition = "control"
+    number_reads = c(10000, 10000),
+    condition = c("control", "CRC"),
+    row.names = c("Sample1", "Sample2")
   )
 )
 

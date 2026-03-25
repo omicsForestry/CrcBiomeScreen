@@ -20,8 +20,10 @@
 #'
 #' # Create a tiny assay matrix
 #' assay_mat <- matrix(
-#'   c(10, 5,
-#'     20, 7),
+#'   c(
+#'     10, 5,
+#'     20, 7
+#'   ),
 #'   nrow = 2,
 #'   dimnames = list(c("Taxa1", "Taxa2"), c("S1", "S2"))
 #' )
@@ -49,7 +51,6 @@
 #'
 #' # Inspect object
 #' obj
-
 CreateCrcBiomeScreenObjectFromTSE <- function(tse, assay_name = NULL) {
   if (!inherits(tse, "TreeSummarizedExperiment")) {
     stop("Input must be a TreeSummarizedExperiment object.")
