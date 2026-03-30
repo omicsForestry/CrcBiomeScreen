@@ -10,7 +10,7 @@
 #' @importFrom foreach foreach %dopar% %do%
 #' @importFrom caret createFolds
 #'
-#' @return A \linkS4class{CrcBiomeScreenObject} with the modelling results.
+#' @return A A \code{CrcBiomeScreen} object. with the modelling results.
 #' @export
 #'
 #' @examples
@@ -52,8 +52,6 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   folds.rf <- caret::createFolds(CrcBiomeScreenObject@ModelData$TrainLabel, k = k.rf)
 
   # Calculate the number of cores
-  # num_cores <- 10
-  # num_cores <- detectCores() - 20
   cl <- makePSOCKcluster(num_cores)
   doParallel::registerDoParallel(cl)
 

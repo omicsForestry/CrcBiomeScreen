@@ -10,10 +10,10 @@ getPredictResult(object)
 \S4method{getPredictResult}{CrcBiomeScreen}(object)
 }
 \arguments{
-\item{object}{A \linkS4class{CrcBiomeScreen} object.}
+\item{object}{A A \code{CrcBiomeScreen} object. object.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object with
+A A \code{CrcBiomeScreen} object. object with
 a  list containing fitted Prediction results.
 }
 \description{

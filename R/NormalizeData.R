@@ -6,39 +6,40 @@
 #' @param level Taxonomic level for normalization, e.g., "Genus"
 #'
 #'
-#' @return A \linkS4class{CrcBiomeScreenObject} with the updated NormalizedData.
+#' @return A A \code{CrcBiomeScreen} object. with the updated NormalizedData.
 #' @export
 #'
 #' @examples
 #' # Minimal runnable example for NormalizeData
 #'
-#' # Create toy absolute abundance matrix (2 samples × 3 taxa)
-#' abs_abund <- data.frame(
-#'   S1 = c(10, 30, 60),
-#'   S2 = c(20, 20, 60)
-#' )
-#' rownames(abs_abund) <- c("TaxaA", "TaxaB", "TaxaC")
-#'
-#' # Create toy taxonomy with a valid Genus column
+#' # Toy taxa in a simplified MetaPhlAn-like hierarchical format
 #' toy_taxa <- data.frame(
-#'   Taxa = rownames(abs_abund),
-#'   Genus = c("G1", "G2", "G3"),   # <-- REQUIRED so level="Genus" works
+#'   Taxa = c(
+#'     "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderX|D_4__FamilyX|D_5__GenusA",
+#'     "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderY|D_4__FamilyY|D_5__GenusB"
+#'   ),
 #'   stringsAsFactors = FALSE
 #' )
 #'
-#' # Sample metadata
-#' toy_samples <- data.frame(
-#'   study_condition = c("control", "CRC"),
-#'   row.names = c("S1", "S2")
+#' # Toy abundance matrix (2 taxa, 2 samples)
+#' toy_abs <- data.frame(
+#'   S1 = c(10, 5),
+#'   S2 = c(20, 15)
+#' )
+#' rownames(toy_abs) <- toy_taxa$Taxa
+#'
+#' # Dummy sample metadata
+#' toy_sample <- data.frame(
+#'   sample_id = c("S1", "S2")
 #' )
 #'
-#' # Construct toy CrcBiomeScreen object
+#' # Construct minimal CrcBiomeScreen object
 #' toy_obj <- new(
 #'   "CrcBiomeScreen",
-#'   AbsoluteAbundance   = abs_abund,
+#'   AbsoluteAbundance   = toy_abs,
 #'   RelativeAbundance   = data.frame(),
 #'   TaxaData            = toy_taxa,
-#'   SampleData          = toy_samples,
+#'   SampleData          = toy_sample,
 #'   TaxaLevelData       = NULL,
 #'   NormalizedData      = NULL,
 #'   OrginalNormalizedData = NULL,
@@ -49,22 +50,23 @@
 #'   PredictResult       = NULL
 #' )
 #'
-#' # Apply TSS normalization (always runnable)
-#' \donttest{norm_obj <- NormalizeData(toy_obj, method = "TSS", level = "Genus")
-#'
+#' # Apply taxonomy splitting + keep genus level
+#' toy_obj <- SplitTaxas(toy_obj)
+#' toy_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
+#' toy_obj <- NormalizeData(toy_obj, method = "TSS", level = "Genus")
 #' # Inspect normalized results
-#' head(norm_obj@NormalizedData)}
+#' head(getNormalizedData(toy_obj))
 
 
 NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NULL) {
-  Data <- CrcBiomeScreenObject@TaxaLevelData[[paste0(level, "LevelData")]]
-
+  Data <- t(CrcBiomeScreenObject@TaxaLevelData[[paste0(level, "LevelData")]])
   if (method == "TSS") {
     # Calculate the total number of counts in each sample
-    # total_counts = rowSums(Data)
+    total_counts = rowSums(Data)
 
     # convert the absolute abundance to relative abundance
-    Data <- Data / rowSums(Data)
+    Data <- Data / total_counts
+
   } else if (method == "GMPR") {
     if (!requireNamespace("GUniFrac", quietly = TRUE)) {
       stop("The 'GMPR' method requires the 'GUniFrac' package.\n",
@@ -73,7 +75,8 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NU
         call. = FALSE
       )
     }
-
+    # Calculate GMPR size factor
+    # Row - features, column - samples
     size.factor <- GUniFrac::GMPR(t(Data))
     size.factor[is.na(size.factor)] <- mean(size.factor, na.rm = TRUE)
     Data <- Data / size.factor
@@ -81,7 +84,7 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NU
     stop("Invalid method. Please choose either 'TSS' or 'GMPR'.")
   }
 
-  CrcBiomeScreenObject@NormalizedData <- as.data.frame(t(Data))
+  CrcBiomeScreenObject@NormalizedData <- as.data.frame(Data)
   attr(CrcBiomeScreenObject@NormalizedData, "NormalizationMethod") <- method
   attr(CrcBiomeScreenObject@NormalizedData, "Timestamp") <- Sys.time()
 

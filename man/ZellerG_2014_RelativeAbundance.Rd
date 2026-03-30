@@ -9,15 +9,13 @@ A data frame with ...
 }
 \source{
 curatedMetagenomicData package, ZellerG et al. (2014)
+A data frame (or matrix) of microbial relative abundance values from
+Zeller et al. (2014), with taxa as rows and samples as columns.
 }
 \usage{
 ZellerG_2014_RelativeAbundance
 }
-\value{
-A data frame (or matrix) of microbial relative abundance values from
-Zeller et al. (2014), with taxa as rows and samples as columns.
-}
 \description{
-A small subset of ZellerG_2014_RelativeAbundance microbiome data.
+A dataset of ZellerG_2014_RelativeAbundance microbiome data.
 }
 \keyword{datasets}

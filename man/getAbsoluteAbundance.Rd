@@ -10,10 +10,10 @@ getAbsoluteAbundance(object)
 \S4method{getAbsoluteAbundance}{CrcBiomeScreen}(object)
 }
 \arguments{
-\item{object}{A \linkS4class{CrcBiomeScreen} object.}
+\item{object}{A A \code{CrcBiomeScreen} object. object.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object with A data.frame containing
+A A \code{CrcBiomeScreen} object. object with A data.frame containing
 absolute abundance data.
 }
 \description{

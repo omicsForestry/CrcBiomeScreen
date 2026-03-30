@@ -4,10 +4,10 @@
 #' @param label A character vector specifying the label(s) to filter the dataset by.
 #' @param condition_col A character string indicating the column in the SampleData that contains the condition labels (default is "study_condition").
 #'
-#' @return A \linkS4class{CrcBiomeScreenObject} with filtered data based on the specified label.
+#' @return A A \code{CrcBiomeScreen} object. with filtered data based on the specified label.
 #' @export
 #' @examples
-#' # Create toy normalized data (5 samples × 2 taxa)
+#' # Create toy normalized data (5 samples, 2 taxa)
 #' norm_data <- data.frame(
 #'   TaxaA = c(10, 20, 15, 30, 10),
 #'   TaxaB = c(5, 7, 6, 8, 6)
@@ -47,7 +47,7 @@
 #' )
 #'
 #' # Inspect filtered SampleData
-#' filtered_obj@SampleData
+#' getSampleData(filtered_obj)
 
 FilterDataSet <- function(CrcBiomeScreenObject = NULL,
                           label = NULL,

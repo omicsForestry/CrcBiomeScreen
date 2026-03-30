@@ -36,7 +36,7 @@ A modified \code{CrcBiomeScreenObject} where:
 \item \code{OrginalNormalizedData} stores the unfiltered data matrix before QC.
 }
 
-A \linkS4class{CrcBiomeScreenObject} with outliers.
+A A \code{CrcBiomeScreen} object. with outliers.
 }
 \description{
 This function performs quality control on microbiome data by applying classical

@@ -18,6 +18,8 @@ EvaluateModel(
 
 \item{model_type}{A character vector indicating the type of model to evaluate. Options are "RF" for Random Forest and "XGBoost" for XGBoost.}
 
+\item{outdir}{A character string. Path to the output directory where results (PDFs, RDS) should be saved. Defaults to tempdir().}
+
 \item{TaskName}{A character string used to label the output files and results.}
 
 \item{TrueLabel}{The true label for the classification task, which is used to evaluate the model's performance.}
@@ -25,50 +27,14 @@ EvaluateModel(
 \item{PlotAUC}{A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object with with the evaluation results stored in the \code{EvaluateResult} slot.
+A A \code{CrcBiomeScreen} object. object with with the evaluation results stored in the \code{EvaluateResult} slot.
 }
 \description{
 Evaluate the model to select the optimal model
 }
 \examples{
-# Minimal runnable example demonstrating EvaluateModel setup
-
-# Create small toy relative abundance matrix
-rel_abund <- data.frame(S1 = 10, S2 = 20)
-rownames(rel_abund) <- "TaxaA"
-
-# Sample metadata (required for CreateCrcBiomeScreenObject)
-sample_info <- data.frame(
-  number_reads = c(10000, 12000),
-  condition = c("control", "CRC"),
-  row.names = c("S1", "S2")
-)
-
-# Build a minimal CrcBiomeScreen object
-obj <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = rel_abund,
-  TaxaData = data.frame(Taxa = "TaxaA"),
-  SampleData = sample_info
-)
-
-# Add minimal ModelData (required input shape)
-obj@ModelData <- list(
-  Training   = data.frame(x = c(1, 2)),
-  Test       = data.frame(x = c(3, 4)),
-  TrainLabel = factor(c("control", "CRC")),
-  TestLabel  = factor(c("control", "CRC"))
-)
-
-# Insert dummy model results so EvaluateModel() can run without training
-# obj@ModelResult <- list(
-# RF = list(best.params = list(
-#   num.trees = 1, mtry = 1, node_size = 1, sample_size = 1
-# )),
-#  XGBoost = list(model = list(dummy = TRUE))
-#)
-
-# NOT RUN: Real evaluation requires pROC + ranger etc.
-# obj <- EvaluateModel(obj, model_type = "RF", TaskName = "toy", TrueLabel = "CRC")
-
-obj
+\donttest{
+# EvaluateModel() should be used after TrainModels() has been run.
+# See the package vignette for a complete end-to-end example.
+}
 }

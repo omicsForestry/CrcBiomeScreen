@@ -13,7 +13,7 @@
 #'
 #' @importFrom pROC roc auc
 #'
-#' @return A \linkS4class{CrcBiomeScreen} object with updated slots containing the ROC curve object and the AUC value.
+#' @return A A \code{CrcBiomeScreen} object. object with updated slots containing the ROC curve object and the AUC value.
 #' @export
 #'
 #' @examples
@@ -66,7 +66,7 @@ EvaluateCrcBiomeScreen <- function(
   auc.value <- pROC::auc(roc.curve)
 
   if (PlotAUC) {
-    pdf(file.path(outdir,paste0("roc.curve.", TaskName, ".pdf")))
+    pdf(file.path(outdir, sprintf("roc.curve.%s.pdf", TaskName)))
     plot(roc.curve, print.auc = TRUE, print.thres = TRUE)
     dev.off()
   }

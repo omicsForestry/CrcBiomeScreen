@@ -21,10 +21,10 @@
 #' @importFrom withr with_seed
 #'
 #'
-#' @return A \linkS4class{CrcBiomeScreenObject} with training results.
+#' @return A A \code{CrcBiomeScreen} object. with training results.
 #' @export
 #'
-#' @examples  \donttest{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
+#' @examples  \dontrun{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
 #'   model_type = "RF",
 #'   TaskName = "ToyData_RF",
 #'   ClassWeights = TRUE,
@@ -43,9 +43,12 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   if ("RF" %in% model_type && !requireNamespace("ranger", quietly = TRUE)) {
     stop("The RF model in TrainModels() requires the 'ranger' package. Please install it with install.packages('ranger').")
   }
+
+  # XGBoost disabled
   if ("XGBoost" %in% model_type && !requireNamespace("xgboost", quietly = TRUE)) {
-    stop("The XGBoost model in TrainModels() requires the 'xgboost' package. Please install it with install.packages('xgboost').")
-  }
+    stop("The XGBoost model in TrainModels() requires the 'xgboost' package. Please install it with install.packages('xgboost').",
+    "with caret and recent versions of xgboost. ",
+    "Please use model_type = 'RF' instead.")}
 
   # ---- Input check ----
   if (is.null(CrcBiomeScreenObject@ModelData)) {
@@ -78,6 +81,11 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   # ---- Run XGBoost model ----
   withr::with_seed(123, {
   if ("XGBoost" %in% model_type) {
+    stop(
+      "XGBoost is temporarily disabled due to compatibility issues ",
+      "with caret and recent versions of xgboost. ",
+      "Please use model_type = 'RF' instead."
+    )
     if (ClassWeights) {
       CrcBiomeScreenObject <- ModelingXGBoost(
         CrcBiomeScreenObject = CrcBiomeScreenObject,

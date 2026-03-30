@@ -7,10 +7,10 @@
 SplitTaxas(CrcBiomeScreenObject)
 }
 \arguments{
-\item{CrcBiomeScreenObject}{A \linkS4class{CrcBiomeScreen} object.}
+\item{CrcBiomeScreenObject}{A A \code{CrcBiomeScreen} object. object.}
 }
 \value{
-A \linkS4class{CrcBiomeScreenObject} with TaxaData.
+A A \code{CrcBiomeScreen} object. with TaxaData.
 }
 \description{
 This function automatically detects the taxonomy string format (e.g., MetaPhlAn, QIIME, SILVA, GTDB),
@@ -24,9 +24,10 @@ and refines labels such as "uncultured" or "unclassified" by appending the paren
 # Example taxonomic strings with up to Genus level
 toy_taxa <- data.frame(
     Taxa = c(
-        "D_0__Bacteria;D_1__Firmicutes;D_2__Clostridia;D_3__Lachnospirales;D_4__Lachnospiraceae;D_5__Roseburia",
-        "D_0__Bacteria;D_1__Firmicutes;D_2__Bacilli;D_3__Lactobacillales;D_4__Lactobacillaceae;D_5__Lactobacillus"
-    ),
+        "D_0__Bacteria;D_1__Firmicutes;D_2__Clostridia;D_3__Lachnospirales;
+        D_4__Lachnospiraceae;D_5__Roseburia","D_0__Bacteria;D_1__Firmicutes;
+        D_2__Bacilli;D_3__Lactobacillales;D_4__Lactobacillaceae;
+        D_5__Lactobacillus"),
     stringsAsFactors = FALSE
 )
 

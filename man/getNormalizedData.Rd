@@ -10,15 +10,15 @@ getNormalizedData(object)
 \S4method{getNormalizedData}{CrcBiomeScreen}(object)
 }
 \arguments{
-\item{object}{A \linkS4class{CrcBiomeScreen} object.}
+\item{object}{A A \code{CrcBiomeScreen} object. object.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object with
+A A \code{CrcBiomeScreen} object. object with
 a  data.frame (or matrix) containing normalized abundance data.
 }
 \description{
 Retrieve normalized abundance data
-from a \linkS4class{CrcBiomeScreen} object.
+from a A \code{CrcBiomeScreen} object. object.
 }
 \section{Methods (by class)}{
 \itemize{

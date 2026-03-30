@@ -3,21 +3,20 @@
 \name{getOutlierSamples}
 \alias{getOutlierSamples}
 \alias{getOutlierSamples,CrcBiomeScreen-method}
-\title{Accessor for OutlierSamples slot of CrcBiomeScreen object}
+\title{Accessor for OutlierSamples}
 \usage{
 getOutlierSamples(object)
 
 \S4method{getOutlierSamples}{CrcBiomeScreen}(object)
 }
 \arguments{
-\item{object}{A \linkS4class{CrcBiomeScreen} object.}
+\item{object}{A A \code{CrcBiomeScreen} object. object.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object with
-a list containing OutlierSamples results.
+A character vector of detected outlier sample IDs, or NULL if no outliers have been recorded.
 }
 \description{
-Accessor for OutlierSamples slot of CrcBiomeScreen object
+Accessor for OutlierSamples
 }
 \section{Methods (by class)}{
 \itemize{
@@ -26,23 +25,6 @@ from a CrcBiomeScreen object.
 
 }}
 \examples{
-toy_obj <- CreateCrcBiomeScreenObject(
-RelativeAbundance = data.frame(
-  S1 = 10,
- S2 = 20,
-  row.names = "TaxaA"
-),
-TaxaData = data.frame(
-  Taxa = "TaxaA",
-  stringsAsFactors = FALSE
-),
-SampleData = data.frame(
-  number_reads = c(10000, 2000),
-  condition = c("control", "control"),
-  row.names = c("S1", "S2"),
-  stringsAsFactors = FALSE
-))
-
-toy_obj@OutlierSamples <- c("S1")
-getOutlierSamples(toy_obj)
+# getOutlierSamples() is typically used after running qcByCmdscale().
+# See the package vignette for a complete workflow example.
 }

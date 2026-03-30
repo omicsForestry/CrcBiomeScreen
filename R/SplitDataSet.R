@@ -8,13 +8,13 @@
 #' @importFrom dplyr mutate across
 #' @importFrom tidyr separate
 #'
-#' @return A \linkS4class{CrcBiomeScreenObject} with CrcBiomeScreenObject@ModelData
+#' @return A A \code{CrcBiomeScreen} object. with CrcBiomeScreenObject@ModelData
 #' @export
 #'
 #' @examples
 #' # Minimal toy object for dataset splitting
 #'
-#' # Example normalized data (4 samples × 2 taxa)
+#' # Example normalized data (4 samples, 2 taxa)
 #' toy_norm <- data.frame(
 #'   TaxaA = c(10, 20, 15, 30),
 #'   TaxaB = c( 5,  7,  6,  8)
@@ -34,7 +34,7 @@
 #'   RelativeAbundance   = data.frame(),
 #'   TaxaData            = data.frame(),
 #'   SampleData          = toy_sampledata,
-#'   NormalizedData      = toy_norm,   # <-- IMPORTANT: SplitDataSet needs this
+#'   NormalizedData      = toy_norm,   # IMPORTANT: SplitDataSet needs this
 #'   TaxaLevelData       = NULL,
 #'   OrginalNormalizedData = NULL,
 #'   ValidationData      = NULL,
@@ -53,7 +53,7 @@
 #' )
 #'
 #' # Inspect training labels
-#' toy_split@ModelData$TrainLabel
+#' getModelData(toy_split)$TrainLabel
 #'
 
 SplitDataSet <- function(CrcBiomeScreenObject = NULL,
@@ -90,8 +90,6 @@ SplitDataSet <- function(CrcBiomeScreenObject = NULL,
   # Add labels to the training and test sets
   train_label <- sample_condition[trainIndex]
   test_label <- sample_condition[-trainIndex]
-  #   train[[condition_col]] <- as.factor(train_label)
-  #   test[[condition_col]] <- as.factor(test_label)
 
   # Create a list to store the training and test sets
   ModelData <- list(

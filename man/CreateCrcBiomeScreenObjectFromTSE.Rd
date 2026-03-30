@@ -12,11 +12,11 @@ CreateCrcBiomeScreenObjectFromTSE(tse, assay_name = NULL)
 \item{assay_name}{Which assay to use (default: "counts" or "relative_abundance").}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object.
+A A \code{CrcBiomeScreen} object. object.
 }
 \description{
 Wrapper function to directly convert a TreeSummarizedExperiment object
-into a \linkS4class{CrcBiomeScreen} S4 object for downstream analysis.
+into a A \code{CrcBiomeScreen} object. S4 object for downstream analysis.
 }
 \examples{
 # Runnable example using a minimal mock TreeSummarizedExperiment

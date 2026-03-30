@@ -30,13 +30,13 @@ TrainModels(
 \item{num_cores}{Set the number of the cores in parallel computing}
 }
 \value{
-A \linkS4class{CrcBiomeScreenObject} with training results.
+A A \code{CrcBiomeScreen} object. with training results.
 }
 \description{
 Train the different models
 }
 \examples{
- \donttest{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
+ \dontrun{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
   model_type = "RF",
   TaskName = "ToyData_RF",
   ClassWeights = TRUE,

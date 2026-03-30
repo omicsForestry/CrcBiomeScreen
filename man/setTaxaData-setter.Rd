@@ -11,13 +11,13 @@ setTaxaData(object) <- value
 \S4method{setTaxaData}{CrcBiomeScreen}(object) <- value
 }
 \arguments{
-\item{object}{A \linkS4class{CrcBiomeScreen} object.}
+\item{object}{A A \code{CrcBiomeScreen} object. object.}
 
 \item{value}{A data.frame containing updated taxonomic annotations.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object with
-a modified \linkS4class{CrcBiomeScreen} object.
+A A \code{CrcBiomeScreen} object. object with
+a modified A \code{CrcBiomeScreen} object. object.
 }
 \description{
 setTaxaData<-: Setter for TaxaData slot of CrcBiomeScreen object

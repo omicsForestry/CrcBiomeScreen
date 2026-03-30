@@ -9,12 +9,12 @@
 #' @param id_column The name of the column in `taxa_table` that contains the sequence IDs (ASV/OTU names).
 #' @param taxa_column The name of the column in `taxa_table` that contains the taxonomic lineage string.
 #'
-#' @return The \linkS4class{CrcBiomeScreenObject} with the loaded taxa table.
+#' @return The A \code{CrcBiomeScreen} object. with the loaded taxa table.
 #' @export
 #' @examples
 #' ## Minimal example using CreateCrcBiomeScreenObject and LoadTaxaTable
 #'
-#' # Toy relative abundance matrix: 1 taxon (row) × 2 samples (columns)
+#' # Toy relative abundance matrix: 1 taxa (row), 2 samples (columns)
 #' rel_abund <- data.frame(
 #'   S1 = 10,
 #'   S2 = 20,

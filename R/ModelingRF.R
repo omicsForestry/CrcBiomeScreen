@@ -10,7 +10,7 @@
 #' @importFrom foreach foreach %dopar% %do%
 #' @importFrom caret createFolds
 #'
-#' @return A \linkS4class{CrcBiomeScreenObject} with the modelling results.
+#' @return A A \code{CrcBiomeScreen} object. with the modelling results.
 #' @export
 #'
 #' @examples

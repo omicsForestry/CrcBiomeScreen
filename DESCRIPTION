@@ -1,6 +1,6 @@
 Package: CrcBiomeScreen
 Title: An R package for colorectal cancer screening and microbiome analysis
-Version: 0.99.12
+Version: 0.99.13
 Authors@R: c(person("Chengxin", "Li",
                   email = "ngzh5554@leeds.ac.uk",
                   role = c("cre", "aut"),
@@ -58,8 +58,7 @@ Imports:
     ranger,
     utils,
     graphics,
-    grDevices,
-    xgboost
+    grDevices
 Suggests:
     rstatix,
     MASS,
@@ -80,7 +79,8 @@ Suggests:
     knitr,
     rmarkdown,
     BiocStyle,
-    curatedMetagenomicData
+    curatedMetagenomicData,
+    xgboost
 VignetteBuilder: knitr
 LazyData: false
 URL: https://github.com/omicsForestry/CrcBiomeScreen

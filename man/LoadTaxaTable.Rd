@@ -17,7 +17,7 @@ and another for the corresponding taxonomic lineage string.}
 \item{taxa_column}{The name of the column in \code{taxa_table} that contains the taxonomic lineage string.}
 }
 \value{
-The \linkS4class{CrcBiomeScreenObject} with the loaded taxa table.
+The A \code{CrcBiomeScreen} object. with the loaded taxa table.
 }
 \description{
 This function allows users to load their own taxonomic assignments for ASV/OTU data.
@@ -26,7 +26,7 @@ The input table should map sequence IDs to their full taxonomic lineage.
 \examples{
 ## Minimal example using CreateCrcBiomeScreenObject and LoadTaxaTable
 
-# Toy relative abundance matrix: 1 taxon (row) × 2 samples (columns)
+# Toy relative abundance matrix: 1 taxa (row), 2 samples (columns)
 rel_abund <- data.frame(
   S1 = 10,
   S2 = 20,

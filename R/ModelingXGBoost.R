@@ -12,7 +12,7 @@
 #' @importFrom doParallel registerDoParallel
 #' @importFrom caret train trainControl twoClassSummary
 #'
-#' @return A \linkS4class{CrcBiomeScreenObject} with the modelling results.
+#' @return A A \code{CrcBiomeScreen} object. with the modelling results.
 #' @export
 #'
 #' @examples
@@ -70,16 +70,12 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   train_data <- CrcBiomeScreenObject@ModelData$Training
   label_train <- CrcBiomeScreenObject@ModelData$TrainLabel
   label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject@ModelData$TrainLabel))
-  # # Suppose Positive is majority class.  Upweight Negative by ratio:
-  # w_pos <- 1
-  # w_neg <- nrow(train_data[train_data$Class=="Positive",]) /
-  #         nrow(train_data[train_data$Class=="Negative",])
-  # weights <- ifelse(train_data$Class=="Positive", w_pos, w_neg)
 
   class_counts <- table(label_train)
   positive_class <- names(which.max(class_counts))
   negative_class <- names(class_counts)[names(class_counts) != positive_class]
 
+  # Suppose Positive is majority class.  Upweight Negative by ratio:
   w_pos <- 1
   w_neg <- nrow(train_data[label_train == positive_class, ]) /
     nrow(train_data[label_train == negative_class, ])
@@ -92,10 +88,7 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
     repeats = repeats,
     summaryFunction = getFromNamespace("twoClassSummary", "caret"),
     classProbs = TRUE
-    # allowParallel = TRUE
   )
-
-  # model_weights <- model_weights[CrcBiomeScreenObject@ModelData$TrainLabel]
 
   train_data <- as.data.frame(train_data)
   train_data$label_train <- as.factor(label_train)

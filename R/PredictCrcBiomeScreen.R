@@ -4,13 +4,13 @@
 #' @param newdata The data frame or matrix of new features to predict on.
 #' @param model_type The type of model to use for prediction ("RF" or "XGBoost").
 #'
-#' @return A \linkS4class{CrcBiomeScreenObject} with a data frame containing sample-specific predictions.
+#' @return A A \code{CrcBiomeScreen} object. with a data frame containing sample-specific predictions.
 #' @export
 #'
 #' @examples
 #' # --- Minimal runnable example ---
 #'
-#' # Create a tiny toy dataset (2 samples × 2 features)
+#' # Create a tiny toy dataset (2 samples, 2 features)
 #' newdata <- data.frame(
 #'   Feature1 = c(0.2, 0.8),
 #'   Feature2 = c(0.7, 0.3)
@@ -57,7 +57,7 @@
 #'   model_type = "RF"
 #' )
 #'
-#' pred_obj@PredictResult$RF
+#' getPredictResult(pred_obj)$RF
 
 
 PredictCrcBiomeScreen <- function(

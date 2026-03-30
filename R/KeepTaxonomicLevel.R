@@ -10,14 +10,14 @@
 #' @return The CrcBiomeScreenObject with a new data frame aggregated at the specified level.
 #' @title Summarize abundance data at a given taxonomic level
 #' @description
-#' Aggregate absolute abundance data in a \linkS4class{CrcBiomeScreen} object
+#' Aggregate absolute abundance data in a A \code{CrcBiomeScreen} object. object
 #' to a specified taxonomic level (e.g. "Genus" or "Family").
 #'
-#' @param CrcBiomeScreenObject A \linkS4class{CrcBiomeScreen} object.
+#' @param CrcBiomeScreenObject A A \code{CrcBiomeScreen} object. object.
 #' @param level Taxonomic level to summarize to. One of
 #' "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species".
 #'
-#' @return The same \linkS4class{CrcBiomeScreen} object, updated with a slot
+#' @return The same A \code{CrcBiomeScreen} object. object, updated with a slot
 #' \code{@TaxaLevelData} a new data frame in
 #' \code{@GenusLevelData} (or the corresponding level).
 #' @export
@@ -33,7 +33,7 @@
 #'   stringsAsFactors = FALSE
 #' )
 #'
-#' # Toy abundance matrix (2 taxa × 2 samples)
+#' # Toy abundance matrix (2 taxa, 2 samples)
 #' toy_abs <- data.frame(
 #'   S1 = c(10, 5),
 #'   S2 = c(20, 15)
@@ -67,7 +67,7 @@
 #' genus_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
 #'
 #' # Inspect genus-level abundance
-#' genus_obj@TaxaLevelData$GenusLevelData
+#' getTaxaLevelData(genus_obj)$GenusLevelData
 #'
 KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
 
@@ -77,10 +77,14 @@ KeepTaxonomicLevel <- function(CrcBiomeScreenObject, level = "Genus") {
 
   valid_levels <- c("Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species")
   if (!level %in% valid_levels)
-    stop("Invalid level. Choose one of: ", paste0(valid_levels, collapse = ", "))
+    stop(sprintf(
+      "Invalid level '%s'. Choose one of: %s",
+      level,
+      paste0(valid_levels, collapse = ", ")
+    ))
 
   if (!level %in% colnames(taxa_df))
-    stop(paste0("Column '", level, "' not found in TaxaData."))
+    stop(sprintf("Column '%s' not found in TaxaData.", level))
 
   # Define helper: pick most appropriate grouping name
   pick_group <- function(row) {

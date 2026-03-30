@@ -39,13 +39,13 @@ RunScreening(
 \item{num_cores}{Set the number of cores for parallel computing, default is NULL}
 }
 \value{
-A \linkS4class{CrcBiomeScreenObject} with the results of the screening process, including model training, evaluation, and validation.
+A A \code{CrcBiomeScreen} object. with the results of the screening process, including model training, evaluation, and validation.
 }
 \description{
 Run the screening process for the microbiome data
 }
 \examples{
- \donttest{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
+ \dontrun{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
   model = "RF",
   split.requirement =
     c(

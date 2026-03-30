@@ -15,7 +15,7 @@
 #' @return A CrcBiomeScreenObject with the evaluation results stored in the `PredictResult` slot for the specified model type.
 #' @export
 #'
-#' @examples  \donttest{CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
+#' @examples  \dontrun{CrcBiomeScreenObject <- ValidateModelOnData(CrcBiomeScreenObject,
 #'   model_type = "RF",
 #'   ValidationData = ValidationData_filtered_qc,
 #'   TaskName = "ValidationData_RF_Validation",
@@ -35,7 +35,10 @@ ValidateModelOnData <- function(
   if (!condition_col %in% colnames(ValidationData@SampleData)) {
     stop(sprintf("Condition column", condition_col, "not found in SampleData."))
   }
-  colnames(getNormalizedData(ValidationData)) <- make.names(colnames(getNormalizedData(ValidationData)))
+
+  x <- getNormalizedData(ValidationData)
+  colnames(x) <- make.names(colnames(x))
+  ValidationData@NormalizedData <- x
   # Load the model
   if (model_type == "RF") {
     rf.model <- CrcBiomeScreenObject@EvaluateResult$RF$RF.Model

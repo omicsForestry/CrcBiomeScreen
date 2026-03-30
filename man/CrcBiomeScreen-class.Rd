@@ -5,7 +5,7 @@
 \alias{CrcBiomeScreen-class}
 \title{CrcBiomeScreen Class}
 \value{
-A \linkS4class{CrcBiomeScreen} object.
+A A \code{CrcBiomeScreen} object. object.
 }
 \description{
 An S4 container for CRC microbiome screening data, including abundance

@@ -19,7 +19,7 @@ imbalanced dataset}
 \item{plot}{Choose to have the figures or not}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object with updated slots.
+A A \code{CrcBiomeScreen} object. object with updated slots.
 }
 \description{
 Check the sample distribution of the dataset and
@@ -27,37 +27,6 @@ give the suggestion if need the class weight or not
 }
 \examples{
 # Small toy example for runnable demonstration
-
-# Fake labels for the training set
 train_labels <- factor(c("control", "CRC", "control", "CRC"))
-
-# Create a tiny relative abundance matrix (1 taxa × 4 samples)
-rel_abund <- data.frame(
-  S1 = 10, S2 = 20, S3 = 30, S4 = 40
-)
-rownames(rel_abund) <- "TaxaA"
-
-# Minimal taxonomy and sample metadata
-taxa_info <- data.frame(Taxa = "TaxaA", stringsAsFactors = FALSE)
-sample_info <- data.frame(
-  number_reads = c(10000, 10000, 12000, 12000),
-  condition     = train_labels,
-  row.names     = paste0("S", 1:4),
-  stringsAsFactors = FALSE
-)
-
-# Build CrcBiomeScreen object
-toy_obj <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = rel_abund,
-  TaxaData          = taxa_info,
-  SampleData        = sample_info
-)
-
-# Add minimal ModelData needed for class balance check
-toy_obj@ModelData <- list(
-  TrainLabel = train_labels
-)
-
-# Check class balance
-checkClassBalance(toy_obj@ModelData$TrainLabel)
+checkClassBalance(train_labels)
 }

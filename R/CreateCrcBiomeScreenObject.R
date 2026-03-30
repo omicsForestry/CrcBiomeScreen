@@ -19,7 +19,7 @@
 #' If only relative abundance data are supplied, absolute abundance is estimated
 #' using the total number of reads in \code{SampleData$number_reads}.
 #'
-#' @return A \linkS4class{CrcBiomeScreen} object.
+#' @return A A \code{CrcBiomeScreen} object. object.
 #' \itemize{
 #'   \item \code{AbsoluteAbundance}: Absolute abundance data.
 #'   \item \code{RelativeAbundance}: Relative abundance data.
@@ -34,7 +34,7 @@
 #'   \code{PredictResult}: Optional model results and evaluation outputs
 #' }
 #'
-#' @seealso \linkS4class{CrcBiomeScreen}
+#' @seealso A \code{CrcBiomeScreen} object.
 #'
 #' @importFrom rlang sym
 #' @importFrom methods new validObject
@@ -123,6 +123,7 @@ CreateCrcBiomeScreenObject <- function(
       TaxaLevelData = NULL,
       NormalizedData = NULL,
       OrginalNormalizedData = NULL,
+      OutlierSamples = "character",
       ValidationData = NULL,
       ModelData = NULL,
       ModelResult = NULL,
@@ -132,7 +133,6 @@ CreateCrcBiomeScreenObject <- function(
 
 # Accessor methods ---------------------------------------------------------
 #' @title CrcBiomeScreen Class
-#' @alias CrcBiomeScreenObject-class
 #' @description
 #' An S4 container for CRC microbiome screening data, including abundance
 #' matrices, taxonomy, sample metadata, and model results.
@@ -150,7 +150,7 @@ CreateCrcBiomeScreenObject <- function(
 #' @slot EvaluateResult List of evaluation metrics (RF, XGBoost, etc.).
 #' @slot PredictResult Predictions for external data.
 #'
-#' @return A \linkS4class{CrcBiomeScreen} object.
+#' @return A A \code{CrcBiomeScreen} object. object.
 setClass(
   "CrcBiomeScreen",
   slots = c(
@@ -171,8 +171,8 @@ setClass(
 )
 
 #' @title Accessor for AbsoluteAbundance slot of CrcBiomeScreen object
-#' @param object A \linkS4class{CrcBiomeScreen} object.
-#' @return A \linkS4class{CrcBiomeScreen} object with A data.frame containing
+#' @param object A A \code{CrcBiomeScreen} object. object.
+#' @return A A \code{CrcBiomeScreen} object. object with A data.frame containing
 #' absolute abundance data.
 #'
 #' @examples
@@ -199,8 +199,8 @@ setMethod("getAbsoluteAbundance", "CrcBiomeScreen",
           function(object) object@AbsoluteAbundance)
 
 #' @title Accessor for RelativeAbundance slot of CrcBiomeScreen object
-#' @param object A \linkS4class{CrcBiomeScreen} object.
-#' @return A \linkS4class{CrcBiomeScreen} object with
+#' @param object A A \code{CrcBiomeScreen} object. object.
+#' @return A A \code{CrcBiomeScreen} object. object with
 #' a data.frame containing relative abundance data.
 #' @examples
 #' toy_obj <- CreateCrcBiomeScreenObject(
@@ -222,8 +222,8 @@ setMethod("getRelativeAbundance", "CrcBiomeScreen",
           function(object) object@RelativeAbundance)
 
 #' @title Accessor for SampleData slot of CrcBiomeScreen object
-#' @param object A \linkS4class{CrcBiomeScreen} object.
-#' @return A \linkS4class{CrcBiomeScreen} object with
+#' @param object A A \code{CrcBiomeScreen} object. object.
+#' @return A A \code{CrcBiomeScreen} object. object with
 #' a data.frame containing sample metadata.
 #' @examples
 #' toy_obj <- CreateCrcBiomeScreenObject(
@@ -243,23 +243,34 @@ setGeneric("getSampleData", function(object) standardGeneric("getSampleData"))
 setMethod("getSampleData", "CrcBiomeScreen", function(object) object@SampleData)
 
 #' @title Accessor for ModelData slot of CrcBiomeScreen object
-#' @param object A \linkS4class{CrcBiomeScreen} object.
-#' @return A \linkS4class{CrcBiomeScreen} object with
+#' @param object A A \code{CrcBiomeScreen} object. object.
+#' @return A A \code{CrcBiomeScreen} object. object with
 #' a data.frame containing model data.
 #' @examples
+#' rel_abund <- data.frame(
+#'   S1 = c(10),
+#'   S2 = c(20)
+#' )
+#' rownames(rel_abund) <- "TaxaA"
+#'
+#' toy_taxa <- data.frame(
+#'   Taxa = "TaxaA",
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' toy_sample <- data.frame(
+#'   number_reads = c(10000, 10000),
+#'   condition = c("control", "CRC"),
+#'   row.names = c("S1", "S2"),
+#'   stringsAsFactors = FALSE
+#' )
+#'
 #' toy_obj <- CreateCrcBiomeScreenObject(
-#'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
-#'   TaxaData = data.frame(Taxa = "TaxaA"),
-#'   SampleData = data.frame(
-#'     number_reads = c(10000, 10000),
-#'     condition = c("control", "CRC")
-#'   )
+#'   RelativeAbundance = rel_abund,
+#'   TaxaData = toy_taxa,
+#'   SampleData = toy_sample
 #' )
-#' toy_obj <- SplitDataSet(
-#'   toy_obj,
-#'   label = c("control", "CRC"),
-#'   partition = 0.7
-#' )
+#'
 #' getModelData(toy_obj)
 #'
 #' @export
@@ -269,8 +280,8 @@ setGeneric("getModelData", function(object) standardGeneric("getModelData"))
 setMethod("getModelData", "CrcBiomeScreen", function(object) object@ModelData)
 
 #' @title Accessor for TaxaData slot of CrcBiomeScreen object
-#' @param object A \linkS4class{CrcBiomeScreen} object.
-#' @return A \linkS4class{CrcBiomeScreen} object with
+#' @param object A A \code{CrcBiomeScreen} object. object.
+#' @return A A \code{CrcBiomeScreen} object. object with
 #' a  data.frame containing taxonomic annotations.
 #' @examples
 #' toy_obj <- CreateCrcBiomeScreenObject(
@@ -290,8 +301,8 @@ setGeneric("getTaxaData", function(object) standardGeneric("getTaxaData"))
 setMethod("getTaxaData", "CrcBiomeScreen", function(object) object@TaxaData)
 
 #' @title Accessor for ModelResult slot of CrcBiomeScreen object
-#' @param object A \linkS4class{CrcBiomeScreen} object.
-#' @return A \linkS4class{CrcBiomeScreen} object with
+#' @param object A A \code{CrcBiomeScreen} object. object.
+#' @return A A \code{CrcBiomeScreen} object. object with
 #' a list containing fitted model results.
 #' @examples
 #' toy_obj <- CreateCrcBiomeScreenObject(
@@ -311,30 +322,13 @@ setGeneric("getModelResult", function(object) standardGeneric("getModelResult"))
 setMethod("getModelResult", "CrcBiomeScreen",
           function(object) object@ModelResult)
 
-#' @title Accessor for OutlierSamples slot of CrcBiomeScreen object
-#' @param object A \linkS4class{CrcBiomeScreen} object.
-#' @return A \linkS4class{CrcBiomeScreen} object with
-#' a list containing OutlierSamples results.
+#' @title Accessor for OutlierSamples
+#' @param object A A \code{CrcBiomeScreen} object. object.
+#' @return A character vector of detected outlier sample IDs, or NULL if no outliers have been recorded.
 #' @examples
-#' toy_obj <- CreateCrcBiomeScreenObject(
-#' RelativeAbundance = data.frame(
-#'   S1 = 10,
-#'  S2 = 20,
-#'   row.names = "TaxaA"
-#' ),
-#' TaxaData = data.frame(
-#'   Taxa = "TaxaA",
-#'   stringsAsFactors = FALSE
-#' ),
-#' SampleData = data.frame(
-#'   number_reads = c(10000, 2000),
-#'   condition = c("control", "control"),
-#'   row.names = c("S1", "S2"),
-#'   stringsAsFactors = FALSE
-#' ))
-#'
-#' toy_obj@OutlierSamples <- c("S1")
-#' getOutlierSamples(toy_obj)
+#' # getOutlierSamples() is typically used after running qcByCmdscale().
+#' # See the package vignette for a complete workflow example.
+#' @export
 #' @export
 setGeneric("getOutlierSamples",
            function(object) standardGeneric("getOutlierSamples"))
@@ -345,8 +339,8 @@ setMethod("getOutlierSamples", "CrcBiomeScreen",
 
 
 #' @title Accessor for PredictResult slot of CrcBiomeScreen object
-#' @param object A \linkS4class{CrcBiomeScreen} object.
-#' @return A \linkS4class{CrcBiomeScreen} object with
+#' @param object A A \code{CrcBiomeScreen} object. object.
+#' @return A A \code{CrcBiomeScreen} object. object with
 #' a  list containing fitted Prediction results.
 #' @examples
 #' toy_obj <- CreateCrcBiomeScreenObject(
@@ -372,11 +366,11 @@ setMethod("getPredictResult", "CrcBiomeScreen",
 #' @aliases setTaxaData<-
 #' @usage setTaxaData(object) <- value
 #'
-#' @param object A \linkS4class{CrcBiomeScreen} object.
+#' @param object A A \code{CrcBiomeScreen} object. object.
 #' @param value A data.frame containing updated taxonomic annotations.
 #'
-#' @return A \linkS4class{CrcBiomeScreen} object with
-#' a modified \linkS4class{CrcBiomeScreen} object.
+#' @return A A \code{CrcBiomeScreen} object. object with
+#' a modified A \code{CrcBiomeScreen} object. object.
 #' @examples
 #' toy_obj <- CreateCrcBiomeScreenObject(
 #'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
@@ -405,10 +399,10 @@ setReplaceMethod("setTaxaData", "CrcBiomeScreen", function(object, value) {
 #' @name getNormalizedData
 #'
 #' @description Retrieve normalized abundance data
-#' from a \linkS4class{CrcBiomeScreen} object.
-#' @param object A \linkS4class{CrcBiomeScreen} object.
+#' from a A \code{CrcBiomeScreen} object. object.
+#' @param object A A \code{CrcBiomeScreen} object. object.
 #'
-#' @return A \linkS4class{CrcBiomeScreen} object with
+#' @return A A \code{CrcBiomeScreen} object. object with
 #' a  data.frame (or matrix) containing normalized abundance data.
 #' @examples
 #' toy_obj <- CreateCrcBiomeScreenObject(
@@ -435,11 +429,11 @@ setMethod("getNormalizedData", "CrcBiomeScreen",
 #' @aliases setNormalizedData<-
 #' @usage setNormalizedData(object) <- value
 #'
-#' @param object A \linkS4class{CrcBiomeScreen} object.
+#' @param object A A \code{CrcBiomeScreen} object. object.
 #' @param value A data.frame or matrix containing normalized abundance data.
 #'
-#' @return A \linkS4class{CrcBiomeScreen} object with
-#' a  modified \linkS4class{CrcBiomeScreen} object.
+#' @return A A \code{CrcBiomeScreen} object. object with
+#' a  modified A \code{CrcBiomeScreen} object. object.
 #' @examples
 #' toy_obj <- CreateCrcBiomeScreenObject(
 #'   RelativeAbundance = data.frame(TaxaA = c(10, 20)),
@@ -464,3 +458,67 @@ setReplaceMethod("setNormalizedData", "CrcBiomeScreen"
   validObject(object)
   return(object)
 })
+
+#' @title Accessor for TaxaLevelData slot
+#' @name getTaxaLevelData
+#'
+#' @description
+#' Retrieve the TaxaLevelData slot from a A \code{CrcBiomeScreen} object. object.
+#'
+#' @param object A A \code{CrcBiomeScreen} object. object.
+#'
+#' @return A list containing taxonomic-level abundance data
+#' (e.g., genus-level or species-level data).
+#'
+#' @examples
+#'
+#' # Toy taxa in a simplified MetaPhlAn-like hierarchical format
+#' toy_taxa <- data.frame(
+#'   Taxa = c(
+#'     "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderX|D_4__FamilyX|D_5__GenusA",
+#'     "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderY|D_4__FamilyY|D_5__GenusB"
+#'   ),
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' # Toy abundance matrix (2 taxa, 2 samples)
+#' toy_abs <- data.frame(
+#'   S1 = c(10, 5),
+#'   S2 = c(20, 15)
+#' )
+#' rownames(toy_abs) <- toy_taxa$Taxa
+#'
+#' # Dummy sample metadata
+#' toy_sample <- data.frame(
+#'   sample_id = c("S1", "S2")
+#' )
+#'
+#' # Construct minimal CrcBiomeScreen object
+#' toy_obj <- new(
+#'   "CrcBiomeScreen",
+#'   AbsoluteAbundance   = toy_abs,
+#'   RelativeAbundance   = data.frame(),
+#'   TaxaData            = toy_taxa,
+#'   SampleData          = toy_sample,
+#'   TaxaLevelData       = NULL,
+#'   NormalizedData      = NULL,
+#'   OrginalNormalizedData = NULL,
+#'   ValidationData      = NULL,
+#'   ModelData           = NULL,
+#'   ModelResult         = NULL,
+#'   EvaluateResult      = list(),
+#'   PredictResult       = NULL
+#' )
+#'
+#' # Apply taxonomy splitting + keep genus level
+#' toy_obj <- SplitTaxas(toy_obj)
+#' genus_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
+#'
+#' # Inspect genus-level abundance
+#' getTaxaLevelData(genus_obj)$GenusLevelData
+#'
+#' @export
+setGeneric("getTaxaLevelData", function(object) standardGeneric("getTaxaLevelData"))
+#' @rdname getTaxaLevelData
+setMethod("getTaxaLevelData", "CrcBiomeScreen",
+          function(object) object@TaxaLevelData)

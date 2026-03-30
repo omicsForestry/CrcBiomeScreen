@@ -34,7 +34,7 @@
 #' A PDF plot is saved to the working directory, showing sample positions in MDS space
 #' with outliers highlighted in red.
 #'
-#' @return A \linkS4class{CrcBiomeScreenObject} with outliers.
+#' @return A A \code{CrcBiomeScreen} object. with outliers.
 #' @export
 #'
 #' @examples

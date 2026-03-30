@@ -1,14 +1,12 @@
 # RStudio project files
 *.Rproj
 .Rproj.user/
-
 # macOS metadata
 .DS_Store
 *.swq
-
 # temporary files
 *.Rhistory
 *.RData
-
 /doc/
 /Meta/
+class_balance_plot.pdf

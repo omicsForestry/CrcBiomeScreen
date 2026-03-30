@@ -12,13 +12,13 @@ setNormalizedData(object) <- value
 \S4method{setNormalizedData}{CrcBiomeScreen}(object) <- value
 }
 \arguments{
-\item{object}{A \linkS4class{CrcBiomeScreen} object.}
+\item{object}{A A \code{CrcBiomeScreen} object. object.}
 
 \item{value}{A data.frame or matrix containing normalized abundance data.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object with
-a  modified \linkS4class{CrcBiomeScreen} object.
+A A \code{CrcBiomeScreen} object. object with
+a  modified A \code{CrcBiomeScreen} object. object.
 }
 \description{
 setNormalizedData<-: Setter for NormalizedData slot

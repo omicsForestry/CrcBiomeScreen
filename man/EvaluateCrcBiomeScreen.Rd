@@ -28,7 +28,7 @@ containing columns for probability scores for each class.}
 \item{PlotAUC}{A logical value indicating whether to plot the AUC curve.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object with updated slots containing the ROC curve object and the AUC value.
+A A \code{CrcBiomeScreen} object. object with updated slots containing the ROC curve object and the AUC value.
 }
 \description{
 This function calculates performance metrics (e.g., AUC) and plots the

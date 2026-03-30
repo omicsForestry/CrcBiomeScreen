@@ -27,7 +27,7 @@ ModelingXGBoost_noweights(
 \item{num_cores}{Set the number of the cores in parallel computing}
 }
 \value{
-A \linkS4class{CrcBiomeScreenObject} with the modelling results.
+A A \code{CrcBiomeScreen} object. with the modelling results.
 }
 \description{
 The packaging function for XGBoost modeling without using class weights

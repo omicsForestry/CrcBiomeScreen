@@ -5,13 +5,13 @@
 #' retains the original taxonomy string in a new column (`OriginalTaxa`),
 #' and refines labels such as "uncultured" or "unclassified" by appending the parent rank.
 #'
-#' @param CrcBiomeScreenObject A \linkS4class{CrcBiomeScreen} object.
+#' @param CrcBiomeScreenObject A A \code{CrcBiomeScreen} object. object.
 #' @importFrom dplyr mutate across
 #' @importFrom tidyr separate
 #' @importFrom tibble tibble
 #' @importFrom magrittr %>%
 #'
-#' @return A \linkS4class{CrcBiomeScreenObject} with TaxaData.
+#' @return A A \code{CrcBiomeScreen} object. with TaxaData.
 #' @export
 #'
 #' @examples
@@ -20,9 +20,10 @@
 #' # Example taxonomic strings with up to Genus level
 #' toy_taxa <- data.frame(
 #'     Taxa = c(
-#'         "D_0__Bacteria;D_1__Firmicutes;D_2__Clostridia;D_3__Lachnospirales;D_4__Lachnospiraceae;D_5__Roseburia",
-#'         "D_0__Bacteria;D_1__Firmicutes;D_2__Bacilli;D_3__Lactobacillales;D_4__Lactobacillaceae;D_5__Lactobacillus"
-#'     ),
+#'         "D_0__Bacteria;D_1__Firmicutes;D_2__Clostridia;D_3__Lachnospirales;
+#'         D_4__Lachnospiraceae;D_5__Roseburia","D_0__Bacteria;D_1__Firmicutes;
+#'         D_2__Bacilli;D_3__Lactobacillales;D_4__Lactobacillaceae;
+#'         D_5__Lactobacillus"),
 #'     stringsAsFactors = FALSE
 #' )
 #'

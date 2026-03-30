@@ -21,7 +21,7 @@ SplitDataSet(
 \item{condition_col}{The colname of label in SampleData}
 }
 \value{
-A \linkS4class{CrcBiomeScreenObject} with CrcBiomeScreenObject@ModelData
+A A \code{CrcBiomeScreen} object. with CrcBiomeScreenObject@ModelData
 }
 \description{
 Split the dataset into training and test sets
@@ -29,7 +29,7 @@ Split the dataset into training and test sets
 \examples{
 # Minimal toy object for dataset splitting
 
-# Example normalized data (4 samples × 2 taxa)
+# Example normalized data (4 samples, 2 taxa)
 toy_norm <- data.frame(
   TaxaA = c(10, 20, 15, 30),
   TaxaB = c( 5,  7,  6,  8)
@@ -49,7 +49,7 @@ toy_obj <- new(
   RelativeAbundance   = data.frame(),
   TaxaData            = data.frame(),
   SampleData          = toy_sampledata,
-  NormalizedData      = toy_norm,   # <-- IMPORTANT: SplitDataSet needs this
+  NormalizedData      = toy_norm,   # IMPORTANT: SplitDataSet needs this
   TaxaLevelData       = NULL,
   OrginalNormalizedData = NULL,
   ValidationData      = NULL,
@@ -68,6 +68,6 @@ toy_split <- SplitDataSet(
 )
 
 # Inspect training labels
-toy_split@ModelData$TrainLabel
+getModelData(toy_split)$TrainLabel
 
 }

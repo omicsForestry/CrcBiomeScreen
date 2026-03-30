@@ -7,7 +7,7 @@
 KeepTaxonomicLevel(CrcBiomeScreenObject, level = "Genus")
 }
 \arguments{
-\item{CrcBiomeScreenObject}{A \linkS4class{CrcBiomeScreen} object.}
+\item{CrcBiomeScreenObject}{A A \code{CrcBiomeScreen} object. object.}
 
 \item{level}{Taxonomic level to summarize to. One of
 "Kingdom", "Phylum", "Class", "Order", "Family", "Genus", "Species".}
@@ -15,12 +15,12 @@ KeepTaxonomicLevel(CrcBiomeScreenObject, level = "Genus")
 \value{
 The CrcBiomeScreenObject with a new data frame aggregated at the specified level.
 
-The same \linkS4class{CrcBiomeScreen} object, updated with a slot
+The same A \code{CrcBiomeScreen} object. object, updated with a slot
 \code{@TaxaLevelData} a new data frame in
 \code{@GenusLevelData} (or the corresponding level).
 }
 \description{
-Aggregate absolute abundance data in a \linkS4class{CrcBiomeScreen} object
+Aggregate absolute abundance data in a A \code{CrcBiomeScreen} object. object
 to a specified taxonomic level (e.g. "Genus" or "Family").
 }
 \details{
@@ -40,7 +40,7 @@ toy_taxa <- data.frame(
   stringsAsFactors = FALSE
 )
 
-# Toy abundance matrix (2 taxa × 2 samples)
+# Toy abundance matrix (2 taxa, 2 samples)
 toy_abs <- data.frame(
   S1 = c(10, 5),
   S2 = c(20, 15)
@@ -74,6 +74,6 @@ toy_obj <- SplitTaxas(toy_obj)
 genus_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
 
 # Inspect genus-level abundance
-genus_obj@TaxaLevelData$GenusLevelData
+getTaxaLevelData(genus_obj)$GenusLevelData
 
 }

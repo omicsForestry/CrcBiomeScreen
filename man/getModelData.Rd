@@ -7,29 +7,40 @@
 getModelData(object)
 }
 \arguments{
-\item{object}{A \linkS4class{CrcBiomeScreen} object.}
+\item{object}{A A \code{CrcBiomeScreen} object. object.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object with
+A A \code{CrcBiomeScreen} object. object with
 a data.frame containing model data.
 }
 \description{
 Accessor for ModelData slot of CrcBiomeScreen object
 }
 \examples{
+rel_abund <- data.frame(
+  S1 = c(10),
+  S2 = c(20)
+)
+rownames(rel_abund) <- "TaxaA"
+
+toy_taxa <- data.frame(
+  Taxa = "TaxaA",
+  stringsAsFactors = FALSE
+)
+
+toy_sample <- data.frame(
+  number_reads = c(10000, 10000),
+  condition = c("control", "CRC"),
+  row.names = c("S1", "S2"),
+  stringsAsFactors = FALSE
+)
+
 toy_obj <- CreateCrcBiomeScreenObject(
-  RelativeAbundance = data.frame(TaxaA = c(10, 20)),
-  TaxaData = data.frame(Taxa = "TaxaA"),
-  SampleData = data.frame(
-    number_reads = 10000,
-    condition = "control"
-  )
+  RelativeAbundance = rel_abund,
+  TaxaData = toy_taxa,
+  SampleData = toy_sample
 )
-toy_obj <- SplitDataSet(
-CrcBiomeScreenObject,
-label = c("control", "CRC"),
-partition = 0.7
-)
+
 getModelData(toy_obj)
 
 }

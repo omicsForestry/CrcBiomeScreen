@@ -18,7 +18,7 @@ PredictCrcBiomeScreen(
 \item{model_type}{The type of model to use for prediction ("RF" or "XGBoost").}
 }
 \value{
-A \linkS4class{CrcBiomeScreenObject} with a data frame containing sample-specific predictions.
+A A \code{CrcBiomeScreen} object. with a data frame containing sample-specific predictions.
 }
 \description{
 Predict the class and probabilities for new data
@@ -26,7 +26,7 @@ Predict the class and probabilities for new data
 \examples{
 # --- Minimal runnable example ---
 
-# Create a tiny toy dataset (2 samples × 2 features)
+# Create a tiny toy dataset (2 samples, 2 features)
 newdata <- data.frame(
   Feature1 = c(0.2, 0.8),
   Feature2 = c(0.7, 0.3)
@@ -73,5 +73,5 @@ pred_obj <- PredictCrcBiomeScreen(
   model_type = "RF"
 )
 
-pred_obj@PredictResult$RF
+getPredictResult(pred_obj)$RF
 }

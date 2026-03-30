@@ -1,11 +1,11 @@
 #' @title Create a CrcBiomeScreen object from TreeSummarizedExperiment
 #' @description
 #' Wrapper function to directly convert a TreeSummarizedExperiment object
-#' into a \linkS4class{CrcBiomeScreen} S4 object for downstream analysis.
+#' into a A \code{CrcBiomeScreen} object. S4 object for downstream analysis.
 #'
 #' @param tse A TreeSummarizedExperiment object containing microbiome data.
 #' @param assay_name Which assay to use (default: "counts" or "relative_abundance").
-#' @return A \linkS4class{CrcBiomeScreen} object.
+#' @return A A \code{CrcBiomeScreen} object. object.
 #' @importFrom SummarizedExperiment assay rowData colData assayNames
 #' @export
 #'

@@ -21,7 +21,7 @@ CreateCrcBiomeScreenObject(
 \item{RelativeAbundance}{A numeric matrix or data frame containing relative abundance data.}
 }
 \value{
-A \linkS4class{CrcBiomeScreen} object.
+A A \code{CrcBiomeScreen} object. object.
 \itemize{
 \item \code{AbsoluteAbundance}: Absolute abundance data.
 \item \code{RelativeAbundance}: Relative abundance data.
@@ -78,5 +78,5 @@ obj <- CreateCrcBiomeScreenObject(
 
 }
 \seealso{
-\linkS4class{CrcBiomeScreen}
+A \code{CrcBiomeScreen} object.
 }

@@ -84,6 +84,13 @@ This ensures data provenance and reproducibility across the full workflow.
 - Provide reproducible benchmarking across public CRC datasets.
 
 ---
+## Version 0.99.13
+
+- Fixed vignette and example issues
+- Temporarily disabled XGBoost execution due to compatibility issues with caret
+- Improved documentation and S4 accessor usage
+
+---
 
 **Maintainer:** Li Chengxin (University of Leeds)  
 **Date:** 2025-10-21  

@@ -18,13 +18,13 @@ FilterDataSet(
 \item{condition_col}{A character string indicating the column in the SampleData that contains the condition labels (default is "study_condition").}
 }
 \value{
-A \linkS4class{CrcBiomeScreenObject} with filtered data based on the specified label.
+A A \code{CrcBiomeScreen} object. with filtered data based on the specified label.
 }
 \description{
 Filter the CrcBiomeScreenObject dataset based on a specific label
 }
 \examples{
-# Create toy normalized data (5 samples × 2 taxa)
+# Create toy normalized data (5 samples, 2 taxa)
 norm_data <- data.frame(
   TaxaA = c(10, 20, 15, 30, 10),
   TaxaB = c(5, 7, 6, 8, 6)
@@ -64,5 +64,5 @@ filtered_obj <- FilterDataSet(
 )
 
 # Inspect filtered SampleData
-filtered_obj@SampleData
+getSampleData(filtered_obj)
 }
