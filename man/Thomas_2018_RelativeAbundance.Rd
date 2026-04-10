@@ -3,20 +3,21 @@
 \docType{data}
 \name{Thomas_2018_RelativeAbundance}
 \alias{Thomas_2018_RelativeAbundance}
-\title{Thomas_2018_RelativeAbundance}
+\title{Thomas 2018 relative abundance dataset}
 \format{
-A data frame with ...
+A named list containing relative abundance objects for demonstration.
 }
 \source{
-curatedMetagenomicData package, Thomas et al. 2018.
-A data frame (or matrix) of relative abundance values derived from
-Thomas et al. (2018), where rows correspond to microbial taxa and
-columns correspond to samples.
+curatedMetagenomicData
 }
 \usage{
 Thomas_2018_RelativeAbundance
 }
 \description{
-A dataset: Thomas_2018_RelativeAbundance microbiome data.
+A relative abundance dataset derived from curatedMetagenomicData and included
+for package examples.
+2021-03-31.ThomasAM_2018a.relative_abundance:
+Formal class 'TreeSummarizedExperiment' from
+package "TreeSummarizedExperiment" with 14 slots.
 }
 \keyword{datasets}

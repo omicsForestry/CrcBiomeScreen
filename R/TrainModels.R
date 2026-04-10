@@ -24,14 +24,36 @@
 #' @return A A \code{CrcBiomeScreen} object. with training results.
 #' @export
 #'
-#' @examples  \dontrun{CrcBiomeScreenObject <- TrainModels(CrcBiomeScreenObject,
-#'   model_type = "RF",
-#'   TaskName = "ToyData_RF",
-#'   ClassWeights = TRUE,
-#'   TrueLabel = "CRC",
-#'   num_cores = 10
-#' )}
+#' @examples
+#' set.seed(123)
+#' toy_data <- matrix(rpois(6 * 10, 50), nrow = 6)
+#' colnames(toy_data) <- paste0("S", 1:10)
+#' rownames(toy_data) <- paste0("Taxa", 1:6)
 #'
+#' toy_taxa <- data.frame(Taxa = rownames(toy_data))
+#' toy_sample <- data.frame(
+#'   study_condition = rep(c("control", "CRC"), each = 5),
+#'   row.names = colnames(toy_data)
+#' )
+#'
+#' obj <- CreateCrcBiomeScreenObject(
+#'   AbsoluteAbundance = as.data.frame(toy_data),
+#'   TaxaData = toy_taxa,
+#'   SampleData = toy_sample
+#' )
+#' obj <- SplitTaxas(obj)
+#' obj <- KeepTaxonomicLevel(obj, level = "Genus")
+#' obj <- NormalizeData(obj, method = "TSS", level = "Genus")
+#' obj <- SplitDataSet(obj, label = c("control","CRC"), partition = 0.7)
+#'
+#' obj <- TrainModels(
+#'   obj,
+#'   model_type = "RF",
+#'   TrueLabel = "CRC",
+#'   n_cv = 2,
+#'   num_cores = 1
+#' )
+
 TrainModels <- function(CrcBiomeScreenObject = NULL,
                         model_type = c("RF", "XGBoost"),
                         ClassWeights = TRUE,

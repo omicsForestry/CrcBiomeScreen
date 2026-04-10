@@ -55,21 +55,31 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
 
   folds.rf <- caret::createFolds(CrcBiomeScreenObject@ModelData$TrainLabel, k = k.rf)
 
+  p <- ncol(CrcBiomeScreenObject@ModelData$Training)
+  mtry_vals <- unique(pmin(c(1, 2, 3, 5, 10, 15, 20, 25), p))
+  mtry_vals <- mtry_vals[mtry_vals >= 1]
+
   # Calculate the number of cores
   cl <- makePSOCKcluster(num_cores)
   doParallel::registerDoParallel(cl)
 
   # tuneGrid for ranger
   grid.rf <- expand.grid(
-    mtry = seq(5, 25, by = 5),
+    mtry = mtry_vals,
     node_size = seq(3, 15, by = 2),
     sample_size = c(.55, .632, .70, .80),
     num.trees = seq(300, 600, by = 100),
     AUC = 0
   )
 
+  p <- ncol(CrcBiomeScreenObject@ModelData$Training)
+  if (max(grid.rf$mtry) > p) {
+    warning(paste("mtry grid exceeds number of features (p =", p, "), clipping mtry to p."))
+    grid.rf <- grid.rf[grid.rf$mtry <= p, ]
+  }
+
   # Using ranger random forest for faster implementation
-  grid.rf$AUC <- foreach(i = seq_len(nrow(grid.rf)), .combine = c, .packages = c("ranger", "pROC")) %dopar% {
+  grid.rf$AUC <- foreach(i = seq_len(nrow(grid.rf)), .combine = c, .packages = c("ranger", "pROC")) %do% {
     aucs <- vapply(seq_len(k.rf), function(j) {
       val.indices <- folds.rf[[j]]
       val.data <- CrcBiomeScreenObject@ModelData$Training[val.indices, ]

@@ -1,10 +1,11 @@
-#' Thomas_2018_RelativeAbundance
+#' Thomas 2018 relative abundance dataset
 #'
-#' A dataset: Thomas_2018_RelativeAbundance microbiome data.
+#' A relative abundance dataset derived from curatedMetagenomicData and included
+#' for package examples.
+#' 2021-03-31.ThomasAM_2018a.relative_abundance:
+#' Formal class 'TreeSummarizedExperiment' from
+#' package "TreeSummarizedExperiment" with 14 slots.
 #'
-#' @format A data frame with ...
-#' @source curatedMetagenomicData package, Thomas et al. 2018.
-#' A data frame (or matrix) of relative abundance values derived from
-#' Thomas et al. (2018), where rows correspond to microbial taxa and
-#' columns correspond to samples.
+#' @format A named list containing relative abundance objects for demonstration.
+#' @source curatedMetagenomicData
 "Thomas_2018_RelativeAbundance"

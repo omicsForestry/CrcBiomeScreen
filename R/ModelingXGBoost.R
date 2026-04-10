@@ -66,6 +66,7 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
     min_child_weight = 1,
     subsample = c(0.5, 0.75, 1)
   )
+
   # Prepare training data
   train_data <- CrcBiomeScreenObject@ModelData$Training
   label_train <- CrcBiomeScreenObject@ModelData$TrainLabel

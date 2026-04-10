@@ -3,19 +3,21 @@
 \docType{data}
 \name{ZellerG_2014_RelativeAbundance}
 \alias{ZellerG_2014_RelativeAbundance}
-\title{ZellerG_2014_RelativeAbundance}
+\title{Zeller 2014 relative abundance dataset}
 \format{
-A data frame with ...
+A named list containing relative abundance objects for demonstration.
 }
 \source{
-curatedMetagenomicData package, ZellerG et al. (2014)
-A data frame (or matrix) of microbial relative abundance values from
-Zeller et al. (2014), with taxa as rows and samples as columns.
+curatedMetagenomicData
 }
 \usage{
 ZellerG_2014_RelativeAbundance
 }
 \description{
-A dataset of ZellerG_2014_RelativeAbundance microbiome data.
+A relative abundance dataset derived from curatedMetagenomicData and included
+for package examples.
+2021-03-31.ZellerG_2014.relative_abundance:
+Formal class 'TreeSummarizedExperiment' from
+package "TreeSummarizedExperiment" with 14 slots.
 }
 \keyword{datasets}

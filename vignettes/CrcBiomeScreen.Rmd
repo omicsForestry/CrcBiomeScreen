@@ -33,16 +33,32 @@ The Bioconductor ecosystem provides a standardized environment for reproducible 
 
 Existing Bioconductor packages such as `microbiome`, `microbiomeMarker`, and `curatedMetagenomicData` provide powerful tools for microbiome data access, visualization, and differential abundance testing. However, there remains a gap in standardized machine learning workflows tailored for disease screening and cross-cohort validation. `CrcBiomeScreen` addresses this need by providing:
 
-- **Integrated preprocessing**: automated taxonomic splitting, filtering, and normalization (TSS and GMPR);
-- **Modeling interface**: built-in machine learning modules for Random Forest and XGBoost classification with class weighting for imbalanced data;
-- **Evaluation framework**: functions for cross-validation, ROC/F1-based performance metrics, and external validation;
-- **Quality control utilities**: MDS-based sample outlier detection and contamination-aware filtering.
+-   **Integrated preprocessing**: automated taxonomic splitting, filtering, and normalization (TSS and GMPR);
+-   **Modeling interface**: built-in machine learning modules for Random Forest and XGBoost classification with class weighting for imbalanced data;
+-   **Evaluation framework**: functions for cross-validation, ROC/F1-based performance metrics, and external validation;
+-   **Quality control utilities**: MDS-based sample outlier detection and contamination-aware filtering.
 
 By bridging microbiome features with reproducible machine learning pipelines, `CrcBiomeScreen` complements existing Bioconductor tools and provides a flexible platform for developing, benchmarking, and validating microbiome-based predictive models.
 
+> Note: This vignette is organized in two parts:
+
+> (1) a fully executable toy workflow for reproducibility during package checking, and
+> (2) a full-scale workflow using real cohort data for reference.
+
+> The toy workflow mirrors the complete analysis pipeline, while the full workflow illustrates how to apply the same steps to a real data set.
+
 ## Installation
 
-Install the development version of the package from GitHub:
+Install from the Bioconductor repository:
+
+```{r, eval = FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("CrcBiomeScreen")
+```
+
+Install the development version of the package from GitHub(development version):
 
 ```{r, eval = FALSE}
 install.packages(c("remotes"))
@@ -57,12 +73,13 @@ library(CrcBiomeScreen)
 
 # Getting started
 
-Full model training is disabled during vignette build because it exceeds SPB time limits.
-All other steps are fully executable to illustrate real package behavior.
+Full model training is disabled during vignette build because it exceeds SPB time limits. All other steps are fully executable to illustrate real package behavior.
 
 The core workflow of `CrcBiomeScreen` involves several key steps: data loading and pre-processing, normalization, model training, evaluation, and validation. All functions are designed to work with the `CrcBiomeScreenObject`, which is the main data structure used throughout the package.
 
-## Data preparation
+## Exploring the data structure
+
+### Data preparation
 
 First, we need to load the example data and create a `CrcBiomeScreenObject` This object is the primary input for all downstream functions in the package.
 
@@ -105,36 +122,39 @@ dim(getRelativeAbundance(CrcBiomeScreenObject))
 summary(getSampleData(CrcBiomeScreenObject)$age)
 ```
 
-## Taxonomic data processing
+### Taxonomic data processing
 
 The package offers robust functions to process raw taxonomic strings, splitting them into multiple hierarchical levels and allowing you to filter to a specific taxonomic rank. This ensures your data is clean and ready for downstream analysis.
 
-### Supported formats  
-Currently, the function supports multiple formats of taxonomic strings, including **MetaPhlAn**, **QIIME**, **SILVA**, etc.  
-Users do not need to manually specify the delimiter (`;`, `.`, `|`, `_`), since the function automatically detects the correct separator.  
+#### Supported formats
 
-### Original taxa column  
-For reproducibility and traceability, the output contains an additional column `OriginalTaxa` that preserves the original input string.  
+Currently, the function supports multiple formats of taxonomic strings, including **MetaPhlAn**, **QIIME**, **SILVA**, etc.\
+Users do not need to manually specify the delimiter (`;`, `.`, `|`, `_`), since the function automatically detects the correct separator.
 
-### Special handling of *uncultured* and *unclassified*  
-If a taxonomic entry at a given rank is `"uncultured"` or `"unclassified"`, the function appends this label to the higher-level taxa.  
+#### Original taxa column
+
+For reproducibility and traceability, the output contains an additional column `OriginalTaxa` that preserves the original input string.
+
+#### Special handling of *uncultured* and *unclassified*
+
+If a taxonomic entry at a given rank is `"uncultured"` or `"unclassified"`, the function appends this label to the higher-level taxa.
 
 For example:
 
-| Input                                                                                   | Processed output (Genus)          |
-|-----------------------------------------------------------------------------------------|-----------------------------------|
-| `D_0__Bacteria.D_1__Firmicutes.D_2__Clostridia.D_3__Ruminococcaceae.D_4__uncultured`   | `Ruminococcaceae_uncultured`      |
+| Input | Processed output (Genus) |
+|--------------------------------------------------|----------------------|
+| `D_0__Bacteria.D_1__Firmicutes.D_2__Clostridia.D_3__Ruminococcaceae.D_4__uncultured` | `Ruminococcaceae_uncultured` |
 | `k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Enterobacteriales; f__Enterobacteriaceae; g__unclassified` | `Enterobacteriaceae_unclassified` |
 
-### Choosing a Taxonomic Level
+#### Choosing a Taxonomic Level
 
 You don't have to be limited to just the genus level. Use the `KeepTaxonomicLevel()` function to select the rank you need, whether it's **family**, **genus**, or **species**. The function will automatically group taxa at the specified level. For the situation where there are two levels of unclassified, it will retain one level with unclassified.
 
-### Handling Data Without Taxonomic Strings
+#### Handling Data Without Taxonomic Strings
 
-For data like **ASVs** or **OTUs** that do not contain taxonomic information in their names, you can use the `LoadTaxaTable()` function to import a separate table that maps each sequence ID to its full taxonomic lineage. This provides maximum flexibility for any type of input data. The use of this function can be seen in the documentation of the function. 
+For data like **ASVs** or **OTUs** that do not contain taxonomic information in their names, you can use the `LoadTaxaTable()` function to import a separate table that maps each sequence ID to its full taxonomic lineage. This provides maximum flexibility for any type of input data. The use of this function can be seen in the documentation of the function.
 
-### Example  
+#### Example
 
 ```{r, eval = TRUE}
 # Split the taxa into multiple levels[If not done already]
@@ -157,7 +177,7 @@ head(getTaxaData(CrcBiomeScreenObject))
 dim(getTaxaData(CrcBiomeScreenObject))
 ```
 
-## Data normalization
+### Data normalization
 
 `CrcBiomeScreen` supports multiple normalization methods. Here we demonstrate both GMPR and TSS normalization:
 
@@ -171,7 +191,259 @@ CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", leve
 
 **Note**: GMPR normalization is generally recommended for microbiome data as it is more robust to compositional effects and outliers compared to TSS normalization.
 
-# Validation data preparation
+
+# Runnable toy workflow setup
+
+## Setup the toy dataset
+
+```{r, eval = TRUE}
+set.seed(123)
+# -------------------------
+# Toy taxonomy
+# -------------------------
+toy_taxa_strings <- c(
+  "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderA|D_4__FamilyA|D_5__GenusA",
+  "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderB|D_4__FamilyB|D_5__GenusB",
+  "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderC|D_4__FamilyC|D_5__GenusC",
+  "D_0__Bacteria|D_1__Bacteroidetes|D_2__Bacteroidia|D_3__OrderD|D_4__FamilyD|D_5__GenusD",
+  "D_0__Bacteria|D_1__Bacteroidetes|D_2__Bacteroidia|D_3__OrderE|D_4__FamilyE|D_5__GenusE",
+  "D_0__Bacteria|D_1__Proteobacteria|D_2__Gammaproteobacteria|D_3__OrderF|D_4__FamilyF|D_5__GenusF"
+)
+
+toy_taxa <- data.frame(
+  Taxa = toy_taxa_strings,
+  stringsAsFactors = FALSE
+)
+
+# -------------------------
+# Toy training abundance
+# 6 taxa x 12 samples
+# -------------------------
+train_samples <- paste0("S", 1:12)
+
+toy_abs <- matrix(
+  c(
+    rpois(6 * 6, lambda = 54.8887777),   # controls
+    rpois(6 * 6, lambda = 55)    # CRC
+  ),
+  nrow = 6,
+  ncol = 12
+)
+
+rownames(toy_abs) <- toy_taxa_strings
+colnames(toy_abs) <- train_samples
+toy_abs <- as.data.frame(toy_abs)
+
+toy_sample <- data.frame(
+  number_reads = rep(10000, 12),
+  study_condition = c(rep("control", 6), rep("CRC", 6)),
+  row.names = train_samples,
+  stringsAsFactors = FALSE
+)
+
+# -------------------------
+# 1. Create toy training data
+# -------------------------
+
+toy_obj <- CreateCrcBiomeScreenObject(
+  AbsoluteAbundance = toy_abs,
+  TaxaData = toy_taxa,
+  SampleData = toy_sample
+)
+
+# -------------------------
+# 2. Keep one taxonomic level and normalize
+# -------------------------
+
+toy_obj <- SplitTaxas(toy_obj)
+toy_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
+toy_obj <- NormalizeData(toy_obj, method = "TSS", level = "Genus")
+
+# -------------------------
+# 3. Split dataset
+# -------------------------
+toy_obj <- SplitDataSet(
+  toy_obj,
+  label = c("control", "CRC"),
+  partition = 0.7
+)
+```
+
+## Model training and evaluation
+
+```{r, eval = FALSE}
+# -------------------------------
+# 4. Train and Evaluate RF model
+# -------------------------------
+toy_obj <- TrainModels(
+  toy_obj,
+  model_type = "RF",
+  TaskName = "toy_rf",
+  ClassWeights = FALSE,
+  TrueLabel = "CRC",
+  num_cores = 1,
+  n_cv = 2
+)
+
+toy_obj <- EvaluateModel(
+  toy_obj,
+  model_type = "RF",
+  TaskName = "ToyData_RF_Test",
+  TrueLabel = "CRC",
+  PlotAUC = FALSE
+)
+```
+
+## External validation
+
+```{r, eval = FALSE}
+# -------------------------
+# 5. Create toy validation data
+# -------------------------
+val_taxa_strings <- c(
+  "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderA|D_4__FamilyA|D_5__GenusA",
+  "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderB|D_4__FamilyB|D_5__GenusB",
+  "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderC|D_4__FamilyC|D_5__GenusC",
+  "D_0__Bacteria|D_1__Bacteroidetes|D_2__Bacteroidia|D_3__OrderD|D_4__FamilyD|D_5__GenusD",
+  "D_0__Bacteria|D_1__Bacteroidetes|D_2__Bacteroidia|D_3__OrderE|D_4__FamilyE|D_5__GenusE",
+  "D_0__Bacteria|D_1__Proteobacteria|D_2__Gammaproteobacteria|D_3__OrderF|D_4__FamilyF|D_5__GenusF"
+)
+
+val_taxa <- data.frame(
+  Taxa = val_taxa_strings,
+  stringsAsFactors = FALSE
+)
+
+val_samples <- paste0("V", 1:8)
+
+val_abund <- matrix(
+  c(
+    rpois(6 * 4, lambda = 38),
+    rpois(6 * 4, lambda = 48)
+  ),
+  nrow = 6,
+  ncol = 8
+)
+
+rownames(val_abund) <- val_taxa_strings
+colnames(val_abund) <- val_samples
+
+val_abund <- as.data.frame(val_abund)
+
+val_sample <- data.frame(
+  number_reads = rep(10000, 8),
+  study_condition = c(rep("control", 4), rep("CRC", 4)),
+  condition = c(rep("control", 4), rep("CRC", 4)),
+  row.names = val_samples,
+  stringsAsFactors = FALSE
+)
+
+val_obj <- CreateCrcBiomeScreenObject(
+  AbsoluteAbundance = val_abund,
+  TaxaData = val_taxa,
+  SampleData = val_sample
+)
+
+val_obj <- SplitTaxas(val_obj)
+val_obj <- KeepTaxonomicLevel(val_obj, level = "Genus")
+val_obj <- NormalizeData(val_obj, method = "TSS", level = "Genus")
+
+# -------------------------
+# 6. Align features
+# -------------------------
+train_norm <- getNormalizedData(toy_obj)
+val_norm <- getNormalizedData(val_obj)
+
+common_features <- intersect(colnames(train_norm), colnames(val_norm))
+
+setNormalizedData(toy_obj) <- train_norm[, common_features, drop = FALSE]
+setNormalizedData(val_obj) <- val_norm[, common_features, drop = FALSE]
+
+# -------------------------
+# 7. Validate model
+# -------------------------
+validated_obj <- ValidateModelOnData(
+  toy_obj,
+  ValidationData = val_obj,
+  model_type = "RF",
+  TaskName = "toy_validation",
+  TrueLabel = "CRC",
+  PlotAUC = FALSE
+)
+```
+
+## Full screening workflow in one step
+
+```{r, eval = FALSE}
+# ----------------------------------
+# 8. Minimal end-to-end RunScreening
+# ----------------------------------
+toy_obj2 <- CreateCrcBiomeScreenObject(
+  AbsoluteAbundance = toy_abs,
+  TaxaData = toy_taxa,
+  SampleData = toy_sample
+)
+
+toy_obj2 <- SplitTaxas(toy_obj2)
+toy_obj2 <- KeepTaxonomicLevel(toy_obj2, level = "Genus")
+toy_obj2 <- NormalizeData(toy_obj2, method = "TSS", level = "Genus")
+
+toy_obj2 <- RunScreening(
+  obj = toy_obj2,
+  model_type = "RF",
+  partition = 0.7,
+  split.requirement = list(
+    label = c("control", "CRC"),
+    condition_col = "study_condition"
+  ),
+  ClassWeights = FALSE,
+  n_cv = 2,
+  num_cores = 1,
+  TaskName = "RF_TSS_toydata",
+  ValidationData = val_obj,
+  TrueLabel = "CRC"
+)
+```
+
+## Get the the raw prediction scores for each sample
+
+```{r, eval = FALSE}
+# -------------------------
+# 9. Prediction on new data
+# -------------------------
+toy_obj <- PredictCrcBiomeScreen(
+  toy_obj,
+  newdata = getNormalizedData(val_obj),
+  model_type = "RF"
+)
+
+# Inspect the predictions
+head(getPredictResult(toy_obj)$RF)
+#>      control       CRC
+#> V1 0.5122222 0.4877778
+#> V2 0.6066667 0.3933333
+#> V3 0.4205556 0.5794444
+#> V4 0.5255556 0.4744444
+#> V5 0.4772222 0.5227778
+#> V6 0.4677778 0.5322222
+predictions <- getPredictResult(toy_obj)$RF
+
+# -------------------------
+# 10. Evaluate predictions
+# -------------------------
+
+evaluation_results <- EvaluateCrcBiomeScreen(
+  predictions = predictions,
+  true_labels = getSampleData(val_obj)$study_condition,
+  TrueLabel = "CRC",
+  TaskName = "Toy_Prediction_Eval"
+)
+
+```
+
+# Full-scale workflow using real cohort data for reference
+
+## Validation data preparation
 
 For robust model evaluation, it's important to prepare independent validation data:
 
@@ -205,9 +477,9 @@ setNormalizedData(ValidationData) <- val_norm
 setNormalizedData(CrcBiomeScreenObject) <- crc_norm
 ```
 
-# Model training and evaluation
+## Model training and evaluation
 
-## Data filtering and splitting
+### Data filtering and splitting
 
 Before model training, we need to filter the data to include only CRC and control samples, then split into training and test sets:
 
@@ -234,7 +506,7 @@ CrcBiomeScreenObject <- SplitDataSet(
 )
 ```
 
-## Quality control
+### Quality control
 
 Quality control using classical multidimensional scaling can help identify potential batch effects or outliers:
 
@@ -250,17 +522,14 @@ CrcBiomeScreenObject <- qcByCmdscale(
 # Check class balance in the training data
 checkClassBalance(getModelData(CrcBiomeScreenObject)$TrainLabel)
 ```
-Model training is computationally intensive (cross-validation, tuning, ensemble models) and may exceed build time limits on the Bioconductor single package builder (SPB).
-Therefore the vignette shows the full code but does not execute it.
-Users can run the complete workflow on their own machines with adequate resources.
 
-## Model training
+Model training is computationally intensive (cross-validation, tuning, ensemble models) and may exceed build time limits on the Bioconductor single package builder (SPB). Therefore the vignette shows the full code but does not execute it. Users can run the complete workflow on their own machines with adequate resources.
 
-Training machine-learning models for microbiome classification often requires repeated cross-validation, hyperparameter search, and ensemble methods.
-These steps are computationally demanding and cannot be executed within the 15-minute limit of the Bioconductor build system.
+### Model training and Evaluation
 
-For this reason, the full training code is provided for users, but is not executed when building the vignette.
-Users may run the pipeline locally to reproduce the complete analysis.
+Training machine-learning models for microbiome classification often requires repeated cross-validation, hyperparameter search, and ensemble methods. These steps are computationally demanding and cannot be executed within the 15-minute limit of the Bioconductor build system.
+
+For this reason, the full training code is provided for users, but is not executed when building the vignette. Users may run the pipeline locally to reproduce the complete analysis.
 
 `CrcBiomeScreen` supports two machine learning algorithms: Random Forest and XGBoost. Both models can be trained with class balancing to handle imbalanced datasets:
 
@@ -284,20 +553,14 @@ CrcBiomeScreenObject <- TrainModels(
   TrueLabel = "CRC",
   num_cores = 1
 )
-```
 
-## Model evaluation
-
-Evaluate the trained models on the test set:
-
-```{r evaluation, eval=FALSE}
 # Evaluate Random Forest model
 CrcBiomeScreenObject <- EvaluateModel(
   CrcBiomeScreenObject,
   model_type = "RF",
   TaskName = "ToyData_RF_Test",
   TrueLabel = "CRC",
-  PlotAUC = TRUE
+  PlotAUC = FALSE
 )
 
 # Evaluate XGBoost model
@@ -306,13 +569,13 @@ CrcBiomeScreenObject <- EvaluateModel(
   model_type = "XGBoost",
   TaskName = "ToyData_XGBoost_Test",
   TrueLabel = "CRC",
-  PlotAUC = TRUE
+  PlotAUC = FALSE
 )
 ```
 
 The evaluation will generate ROC curves and calculate performance metrics such as AUC, sensitivity, and specificity.
 
-# External validation
+## External validation
 
 To ensure the robustness and generalizability of the trained models, external validation on independent datasets is crucial:
 
@@ -339,7 +602,7 @@ ValidationData_filtered_qc <- ValidateModelOnData(
   ValidationData = ValidationData_filtered_qc,
   TaskName = "ValidationData_RF_Validation",
   TrueLabel = "CRC",
-  PlotAUC = TRUE
+  PlotAUC = FALSE
 )
 
 # Validate XGBoost model on external data
@@ -349,15 +612,16 @@ ValidationData_filtered_qc <- ValidateModelOnData(
   ValidationData = ValidationData_filtered_qc,
   TaskName = "ValidationData_XGBoost_Validation",
   TrueLabel = "CRC",
-  PlotAUC = TRUE
+  PlotAUC = FALSE
 )
 ```
 
-# Prediction & Evaluation
+## Prediction & Evaluation
 
 Once you've trained a model, you'll want to apply it to new data and assess its performance. Our package offers a streamlined, two-step process for this: first, generate predictions on your new dataset, and then, if true labels are available, evaluate the model's accuracy. This modular approach allows for flexibility, whether you're predicting outcomes for unknown samples or measuring model quality on a validation set.
 
-## Step 1: Predict on New Data
+### Step 1: Predict on New Data
+
 Use the PredictCrcBiomeScreen() function to generate prediction probabilities for your new dataset. This function takes your trained CrcBiomeScreenObject and the new data, returning the raw prediction scores for each sample.
 
 ```{r, eval = FALSE}
@@ -375,7 +639,8 @@ head(getPredictResult(ValidationData_filtered_qc)$RF)
 predictions <- getPredictResult(ValidationData_filtered_qc)$RF
 ```
 
-## Step 2: Evaluate Model Performance
+### Step 2: Evaluate Model Performance
+
 If your new dataset includes known true labels, you can evaluate the model's performance using the EvaluateCrcBiomeScreen() function. This function takes the predictions generated in the previous step and the true_labels to calculate key metrics like the AUC and plot the ROC curve.
 
 ```{r, eval = FALSE}
@@ -394,7 +659,7 @@ evaluation_results <- EvaluateCrcBiomeScreen(
 print(evaluation_results$AUC)
 ```
 
-### Streamlined Screening Workflow
+## Streamlined Screening Workflow
 
 For users who want to run the entire screening workflow in one step, `CrcBiomeScreen` provides the `RunScreening()` function. This function encapsulates the complete process from data preparation to model validation, offering a comprehensive and easy-to-use solution.
 
@@ -535,47 +800,48 @@ ValidationData_filtered_qc <- RunScreening(
 
 This function performs the complete workflow, including:
 
-  * **Data normalization**: Standardizes data to a common scale.
-  * **Data filtering and splitting**: Prepares the data for modeling by selecting and partitioning it into training and testing sets.
-  * **Model training with cross-validation**: Trains the specified model (`RF` or `XGBoost`) using k-fold cross-validation to ensure robustness.
-  * **Model evaluation on the test set**: Assesses the model's performance on a held-out test set to get an unbiased estimate of its predictive power.
-  * **External validation** (if `ValidationData` is provided): Applies the trained model to an entirely independent dataset to confirm its generalizability and real-world applicability. This step also stores the individual sample predictions and evaluation metrics in the `CrcBiomeScreenObject`.
-  
+-   **Data normalization**: Standardizes data to a common scale.
+-   **Data filtering and splitting**: Prepares the data for modeling by selecting and partitioning it into training and testing sets.
+-   **Model training with cross-validation**: Trains the specified model (`RF` or `XGBoost`) using k-fold cross-validation to ensure robustness.
+-   **Model evaluation on the test set**: Assesses the model's performance on a held-out test set to get an unbiased estimate of its predictive power.
+-   **External validation** (if `ValidationData` is provided): Applies the trained model to an entirely independent dataset to confirm its generalizability and real-world applicability. This step also stores the individual sample predictions and evaluation metrics in the `CrcBiomeScreenObject`.
 
 # Best practices and recommendations
 
 ## Normalization method selection
 
-- **GMPR**: Recommended for most microbiome datasets, especially when dealing with compositional data and potential outliers
-- **TSS**: Simpler approach, suitable for well-balanced datasets without extreme outliers
+-   **GMPR**: Recommended for most microbiome datasets, especially when dealing with compositional data and potential outliers
+-   **TSS**: Simpler approach, suitable for well-balanced datasets without extreme outliers
 
 ## Model selection
 
-- **Random Forest**: Generally robust and interpretable, good baseline choice
-- **XGBoost**: Often provides better performance but may require more careful hyperparameter tuning
+-   **Random Forest**: Generally robust and interpretable, good baseline choice
+-   **XGBoost**: Often provides better performance but may require more careful hyperparameter tuning
 
 ## Validation strategies
 
-- Always use external validation datasets when available
-- Consider cross-validation for model selection and hyperparameter tuning
-- Ensure consistent preprocessing between training and validation data
+-   Always use external validation datasets when available
+-   Consider cross-validation for model selection and hyperparameter tuning
+-   Ensure consistent preprocessing between training and validation data
 
 ## Class imbalance
 
-- Enable `ClassWeights = TRUE` when dealing with imbalanced datasets
-- Monitor both sensitivity and specificity, not just overall accuracy
-- Consider stratified sampling when splitting datasets
+-   Enable `ClassWeights = TRUE` when dealing with imbalanced datasets
+-   Monitor both sensitivity and specificity, not just overall accuracy
+-   Consider stratified sampling when splitting datasets
 
 # Troubleshooting
 
 ## Common issues and solutions
 
 ### Feature mismatch between datasets
+
 Ensure that both training and validation datasets have been processed identically and contain overlapping features.
 
 ### Memory issues with large datasets
-- Reduce the number of features by applying more stringent filtering
-- Use fewer CPU cores (`num_cores` parameter) to reduce memory usage
+
+-   Reduce the number of features by applying more stringent filtering
+-   Use fewer CPU cores (`num_cores` parameter) to reduce memory usage
 
 # Session information
 
@@ -591,6 +857,6 @@ If you use `CrcBiomeScreen` in your research, please cite:
 
 [Package citation information]
 
-For questions, bug reports, or feature requests, please visit the GitHub repository: https://github.com/iChronostasis/CrcBiomeScreen
+For questions, bug reports, or feature requests, please visit the GitHub repository: <https://github.com/iChronostasis/CrcBiomeScreen>
 
 **Note**: This vignette demonstrates the basic usage of `CrcBiomeScreen`. For more advanced usage and customization options, please refer to the function documentation and additional tutorials.

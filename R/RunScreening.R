@@ -19,18 +19,117 @@
 #' @return A A \code{CrcBiomeScreen} object. with the results of the screening process, including model training, evaluation, and validation.
 #' @export
 #'
-#' @examples  \dontrun{CrcBiomeScreenObject <- RunScreening(CrcBiomeScreenObject,
-#'   model = "RF",
-#'   split.requirement =
-#'     c(
-#'       label = c("control", "CRC"),
-#'       condition_col = "study_condition"
-#'     ),
-#'   TaskName = "GMPR_NHSBCSP",
-#'   num_cores = 10,
-#'   ValidationData = ValidationData,
-#'   TrueLabel = "Cancer"
-#' )}
+#' @examples
+#' set.seed(123)
+#'
+#' # -------------------------
+#' # Toy taxonomy
+#' # -------------------------
+#' toy_taxa_strings <- c(
+#'   "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderA|D_4__FamilyA|D_5__GenusA",
+#'   "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderB|D_4__FamilyB|D_5__GenusB",
+#'   "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderC|D_4__FamilyC|D_5__GenusC",
+#'   "D_0__Bacteria|D_1__Bacteroidetes|D_2__Bacteroidia|D_3__OrderD|D_4__FamilyD|D_5__GenusD",
+#'   "D_0__Bacteria|D_1__Bacteroidetes|D_2__Bacteroidia|D_3__OrderE|D_4__FamilyE|D_5__GenusE",
+#'   "D_0__Bacteria|D_1__Proteobacteria|D_2__Gammaproteobacteria|D_3__OrderF|D_4__FamilyF|D_5__GenusF"
+#' )
+#'
+#' toy_taxa <- data.frame(
+#'   Taxa = toy_taxa_strings,
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' # -------------------------
+#' # Toy training data
+#' # -------------------------
+#' train_samples <- paste0("S", 1:12)
+#'
+#' toy_abs <- matrix(
+#'   c(
+#'     rpois(6 * 6, lambda = 54.8887777),
+#'     rpois(6 * 6, lambda = 55)
+#'   ),
+#'   nrow = 6,
+#'   ncol = 12
+#' )
+#'
+#' rownames(toy_abs) <- toy_taxa_strings
+#' colnames(toy_abs) <- train_samples
+#' toy_abs <- as.data.frame(toy_abs)
+#'
+#' toy_sample <- data.frame(
+#'   number_reads = rep(10000, 12),
+#'   study_condition = c(rep("control", 6), rep("CRC", 6)),
+#'   row.names = train_samples,
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' obj <- CreateCrcBiomeScreenObject(
+#'   AbsoluteAbundance = toy_abs,
+#'   TaxaData = toy_taxa,
+#'   SampleData = toy_sample
+#' )
+#'
+#' obj <- SplitTaxas(obj)
+#' obj <- KeepTaxonomicLevel(obj, level = "Genus")
+#' obj <- NormalizeData(obj, method = "TSS", level = "Genus")
+#'
+#' # -------------------------
+#' # Toy validation data
+#' # -------------------------
+#' val_taxa <- data.frame(
+#'   Taxa = toy_taxa_strings,
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' val_samples <- paste0("V", 1:8)
+#'
+#' val_abund <- matrix(
+#'   c(
+#'     rpois(6 * 4, lambda = 38),
+#'     rpois(6 * 4, lambda = 48)
+#'   ),
+#'   nrow = 6,
+#'   ncol = 8
+#' )
+#'
+#' rownames(val_abund) <- toy_taxa_strings
+#' colnames(val_abund) <- val_samples
+#' val_abund <- as.data.frame(val_abund)
+#'
+#' val_sample <- data.frame(
+#'   number_reads = rep(10000, 8),
+#'   study_condition = c(rep("control", 4), rep("CRC", 4)),
+#'   condition = c(rep("control", 4), rep("CRC", 4)),
+#'   row.names = val_samples,
+#'   stringsAsFactors = FALSE
+#' )
+#'
+#' val_obj <- CreateCrcBiomeScreenObject(
+#'   AbsoluteAbundance = val_abund,
+#'   TaxaData = val_taxa,
+#'   SampleData = val_sample
+#' )
+#'
+#' val_obj <- SplitTaxas(val_obj)
+#' val_obj <- KeepTaxonomicLevel(val_obj, level = "Genus")
+#' val_obj <- NormalizeData(val_obj, method = "TSS", level = "Genus")
+#'
+#' obj <- RunScreening(
+#'   obj = obj,
+#'   model_type = "RF",
+#'   partition = 0.7,
+#'   split.requirement = list(
+#'     label = c("control", "CRC"),
+#'     condition_col = "study_condition"
+#'   ),
+#'   ClassWeights = FALSE,
+#'   n_cv = 2,
+#'   num_cores = 1,
+#'   TaskName = "RF_TSS_toydata",
+#'   ValidationData = val_obj,
+#'   TrueLabel = "CRC"
+#' )
 
 RunScreening <- function(obj,
                          model_type = NULL, # c("RF", "XGBoost")

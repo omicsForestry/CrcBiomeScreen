@@ -91,8 +91,13 @@ This ensures data provenance and reproducibility across the full workflow.
 - Improved documentation and S4 accessor usage
 
 ---
+## Version 0.99.14(2026-04-10)
 
-**Maintainer:** Li Chengxin (University of Leeds)  
+- runnable toy workflow added to vignette
+- examples updated for TrainModels, ValidateModelOnData, RunScreening
+- documentation for included datasets completed
+	
+**Maintainer:** Chengxin Li (University of Leeds)  
 **Date:** 2025-10-21  
 **License:** MIT  
 **Repository:** [https://github.com/omicsForestry/CrcBiomeScreen](https://github.com/omicsForestry/CrcBiomeScreen)
