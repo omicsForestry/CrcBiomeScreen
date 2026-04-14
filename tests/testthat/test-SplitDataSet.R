@@ -1,24 +1,55 @@
 test_that("NormalizeData works correctly", {
-  skip_on_bioc()
-  library(curatedMetagenomicData)
-  toydata <- curatedMetagenomicData(
-    "ThomasAM_2018a.relative_abundance",
-    dryrun = FALSE, rownames = "short"
+  set.seed(123)
+  library(CrcBiomeScreen)
+  toy_taxa_strings <- c(
+    "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderA|D_4__FamilyA|D_5__GenusA",
+    "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderB|D_4__FamilyB|D_5__GenusB",
+    "D_0__Bacteria|D_1__Firmicutes|D_2__Clostridia|D_3__OrderC|D_4__FamilyC|D_5__GenusC",
+    "D_0__Bacteria|D_1__Bacteroidetes|D_2__Bacteroidia|D_3__OrderD|D_4__FamilyD|D_5__GenusD",
+    "D_0__Bacteria|D_1__Bacteroidetes|D_2__Bacteroidia|D_3__OrderE|D_4__FamilyE|D_5__GenusE",
+    "D_0__Bacteria|D_1__Proteobacteria|D_2__Gammaproteobacteria|D_3__OrderF|D_4__FamilyF|D_5__GenusF"
   )
 
-  toydata_object <- CreateCrcBiomeScreenObject(
-    RelativeAbundance = toydata[[1]]@assays@data@listData$relative_abundance,
-    TaxaData = toydata[[1]]@rowLinks$nodeLab,
-    SampleData = toydata[[1]]@colData
+  toy_taxa <- data.frame(
+    Taxa = toy_taxa_strings,
+    stringsAsFactors = FALSE
   )
-  toydata_object <- SplitTaxas(toydata_object)
-  toydata_object <- KeepTaxonomicLevel(toydata_object,level="Genus")
+  train_samples <- paste0("S", 1:12)
 
-  toydata_object <- NormalizeData(toydata_object, method = "GMPR",level="Genus")
-  k <- 0.6
-  toydata_object <- SplitDataSet(toydata_object, label = c("control", "CRC"), partition = k)
+  toy_abs <- matrix(
+    c(
+      rpois(6 * 6, lambda = 54.8887777),   # controls
+      rpois(6 * 6, lambda = 55)    # CRC
+    ),
+    nrow = 6,
+    ncol = 12
+  )
 
-  md <- toydata_object@ModelData
+  rownames(toy_abs) <- toy_taxa_strings
+  colnames(toy_abs) <- train_samples
+  toy_abs <- as.data.frame(toy_abs)
+
+  toy_sample <- data.frame(
+    number_reads = rep(10000, 12),
+    study_condition = c(rep("control", 6), rep("CRC", 6)),
+    row.names = train_samples,
+    stringsAsFactors = FALSE
+  )
+  toy_obj <- CreateCrcBiomeScreenObject(
+    AbsoluteAbundance = toy_abs,
+    TaxaData = toy_taxa,
+    SampleData = toy_sample
+  )
+  toy_obj <- SplitTaxas(toy_obj)
+  toy_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
+  toy_obj <- NormalizeData(toy_obj, method = "TSS", level = "Genus")
+  toy_obj <- SplitDataSet(
+    toy_obj,
+    label = c("control", "CRC"),
+    partition = 0.7
+  )
+
+  md <- getModelData(toy_obj)
 
   expect_true(is.list(md))
   expect_s3_class(md[["Training"]], "data.frame")

@@ -194,6 +194,8 @@ CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", leve
 
 # Runnable toy workflow setup
 
+- More explaination and details could check the Full-scale modeling workflow using real cohort data for reference section below.
+
 ## Setup the toy dataset
 
 ```{r, eval = TRUE}
@@ -267,11 +269,22 @@ toy_obj <- SplitDataSet(
   label = c("control", "CRC"),
   partition = 0.7
 )
+
+# Perform quality control using cmdscale
+toy_obj <- qcByCmdscale(
+  toy_obj,
+  TaskName = "toy_obj",
+  normalize_method = "TSS",
+  plot = FALSE
+)
+
+# Check class balance in the training data
+checkClassBalance(getModelData(toy_obj)$TrainLabel)
 ```
 
 ## Model training and evaluation
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # -------------------------------
 # 4. Train and Evaluate RF model
 # -------------------------------
@@ -296,7 +309,7 @@ toy_obj <- EvaluateModel(
 
 ## External validation
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # -------------------------
 # 5. Create toy validation data
 # -------------------------
@@ -374,7 +387,7 @@ validated_obj <- ValidateModelOnData(
 
 ## Full screening workflow in one step
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # ----------------------------------
 # 8. Minimal end-to-end RunScreening
 # ----------------------------------
@@ -407,7 +420,7 @@ toy_obj2 <- RunScreening(
 
 ## Get the the raw prediction scores for each sample
 
-```{r, eval = FALSE}
+```{r, eval = TRUE}
 # -------------------------
 # 9. Prediction on new data
 # -------------------------
@@ -441,43 +454,7 @@ evaluation_results <- EvaluateCrcBiomeScreen(
 
 ```
 
-# Full-scale workflow using real cohort data for reference
-
-## Validation data preparation
-
-For robust model evaluation, it's important to prepare independent validation data:
-
-```{r, eval = TRUE}
-# Load validation data
-data("ZellerG_2014_RelativeAbundance")
-
-ValidationData_tse <- ZellerG_2014_RelativeAbundance$`2021-03-31.ZellerG_2014.relative_abundance`
-
-# Create CrcBiomeScreenObject for validation data
-ValidationData <- CreateCrcBiomeScreenObjectFromTSE(ValidationData_tse)
-
-# Process validation data similarly to training data
-# ValidationData <- SplitTaxas(ValidationData)
-taxa <- getTaxaData(ValidationData)
-colnames(taxa) <- c("Kingdom","Phylum","Class","Order","Family","Genus","Species")
-
-setTaxaData(ValidationData) <- taxa
-
-ValidationData <- KeepTaxonomicLevel(ValidationData,level = "Genus")
-ValidationData <- NormalizeData(ValidationData, method = "GMPR", level = "Genus")
-
-# Align features between training and validation data
-val_norm <- getNormalizedData(ValidationData)
-crc_norm <- getNormalizedData(CrcBiomeScreenObject)
-# Ensure consistent features between training and validation data
-val_norm <- val_norm[, colnames(val_norm) %in% colnames(crc_norm)]
-crc_norm <- crc_norm[, colnames(crc_norm) %in% colnames(val_norm)]
-# Set back the normalized data
-setNormalizedData(ValidationData) <- val_norm
-setNormalizedData(CrcBiomeScreenObject) <- crc_norm
-```
-
-## Model training and evaluation
+# Full-scale modeling workflow using real cohort data for reference
 
 ### Data filtering and splitting
 
@@ -485,7 +462,6 @@ Before model training, we need to filter the data to include only CRC and contro
 
 ```{r, eval = TRUE}
 # Check the available labels in the data
-
 table(getSampleData(CrcBiomeScreenObject)$study_condition)
 
 # Filter data to keep only CRC and control samples
@@ -523,98 +499,17 @@ CrcBiomeScreenObject <- qcByCmdscale(
 checkClassBalance(getModelData(CrcBiomeScreenObject)$TrainLabel)
 ```
 
-Model training is computationally intensive (cross-validation, tuning, ensemble models) and may exceed build time limits on the Bioconductor single package builder (SPB). Therefore the vignette shows the full code but does not execute it. Users can run the complete workflow on their own machines with adequate resources.
-
 ### Model training and Evaluation
 
 Training machine-learning models for microbiome classification often requires repeated cross-validation, hyperparameter search, and ensemble methods. These steps are computationally demanding and cannot be executed within the 15-minute limit of the Bioconductor build system.
 
 For this reason, the full training code is provided for users, but is not executed when building the vignette. Users may run the pipeline locally to reproduce the complete analysis.
 
-`CrcBiomeScreen` supports two machine learning algorithms: Random Forest and XGBoost. Both models can be trained with class balancing to handle imbalanced datasets:
-
-```{r modeling, eval=FALSE}
-# Train Random Forest model
-CrcBiomeScreenObject <- TrainModels(
-  CrcBiomeScreenObject,
-  model_type = "RF",
-  TaskName = "ToyData_RF",
-  ClassWeights = TRUE,
-  TrueLabel = "CRC",
-  num_cores = 1
-)
-
-# Train XGBoost model
-CrcBiomeScreenObject <- TrainModels(
-  CrcBiomeScreenObject,
-  model_type = "XGBoost",
-  TaskName = "ToyData_XGBoost",
-  ClassWeights = TRUE,
-  TrueLabel = "CRC",
-  num_cores = 1
-)
-
-# Evaluate Random Forest model
-CrcBiomeScreenObject <- EvaluateModel(
-  CrcBiomeScreenObject,
-  model_type = "RF",
-  TaskName = "ToyData_RF_Test",
-  TrueLabel = "CRC",
-  PlotAUC = FALSE
-)
-
-# Evaluate XGBoost model
-CrcBiomeScreenObject <- EvaluateModel(
-  CrcBiomeScreenObject,
-  model_type = "XGBoost",
-  TaskName = "ToyData_XGBoost_Test",
-  TrueLabel = "CRC",
-  PlotAUC = FALSE
-)
-```
-
-The evaluation will generate ROC curves and calculate performance metrics such as AUC, sensitivity, and specificity.
+`CrcBiomeScreen` supports two machine learning algorithms: **Random Forest** and **XGBoost**. Both models can be trained with class balancing to handle imbalanced datasets:
 
 ## External validation
 
-To ensure the robustness and generalizability of the trained models, external validation on independent datasets is crucial:
-
-```{r, eval = FALSE}
-# Filter validation data
-ValidationData_filtered <- FilterDataSet(
-  ValidationData,
-  label = c("CRC", "control"),
-  condition_col = "study_condition"
-)
-
-# Quality control for validation data
-ValidationData_filtered_qc <- qcByCmdscale(
-  CrcBiomeScreenObject = ValidationData_filtered,
-  TaskName = "Normalize_ValidationData_filtered_qc",
-  normalize_method = "GMPR",
-  plot = FALSE
-)
-
-# Validate Random Forest model on external data
-ValidationData_filtered_qc <- ValidateModelOnData(
-  CrcBiomeScreenObject,
-  model_type = "RF",
-  ValidationData = ValidationData_filtered_qc,
-  TaskName = "ValidationData_RF_Validation",
-  TrueLabel = "CRC",
-  PlotAUC = FALSE
-)
-
-# Validate XGBoost model on external data
-ValidationData_filtered_qc <- ValidateModelOnData(
-  CrcBiomeScreenObject,
-  model_type = "XGBoost",
-  ValidationData = ValidationData_filtered_qc,
-  TaskName = "ValidationData_XGBoost_Validation",
-  TrueLabel = "CRC",
-  PlotAUC = FALSE
-)
-```
+To ensure the robustness and generalizability of the trained models, external validation on independent datasets is crucial
 
 ## Prediction & Evaluation
 
@@ -792,7 +687,7 @@ ValidationData_filtered_qc <- RunScreening(
   ClassWeights = TRUE,
   n_cv = 10,
   num_cores = 10,
-  TaskName = "XGBoost_GMPR_toydata",
+  TaskName = "RF_GMPR_toydata",
   ValidationData = ValidationData_filtered_qc,
   TrueLabel = "CRC"
 )

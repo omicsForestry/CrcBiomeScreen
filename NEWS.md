@@ -97,6 +97,11 @@ This ensures data provenance and reproducibility across the full workflow.
 - examples updated for TrainModels, ValidateModelOnData, RunScreening
 - documentation for included datasets completed
 	
+## Version 0.99.15(2026-04-14)
+
+- Standardized the format of the vignette and documentation
+
+
 **Maintainer:** Chengxin Li (University of Leeds)  
 **Date:** 2025-10-21  
 **License:** MIT  

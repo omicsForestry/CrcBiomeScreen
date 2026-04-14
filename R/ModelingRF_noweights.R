@@ -70,7 +70,10 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
 
   p <- ncol(CrcBiomeScreenObject@ModelData$Training)
   if (max(grid.rf$mtry) > p) {
-    warning(paste("mtry grid exceeds number of features (p =", p, "), clipping mtry to p."))
+    warning(sprintf(
+      "mtry grid exceeds number of features (p = %d), clipping mtry to p.",
+      p
+    ))
     grid.rf <- grid.rf[grid.rf$mtry <= p, ]
   }
 

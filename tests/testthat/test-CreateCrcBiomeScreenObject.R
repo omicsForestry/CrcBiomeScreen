@@ -1,5 +1,4 @@
 test_that("CreateCrcBiomeScreenObject works correctly", {
-  skip_on_bioc()
 
   rel_abund <- data.frame(
     S1 = c(10, 20, 70),

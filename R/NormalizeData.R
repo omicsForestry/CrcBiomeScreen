@@ -62,7 +62,7 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NU
   Data <- t(CrcBiomeScreenObject@TaxaLevelData[[paste0(level, "LevelData")]])
   if (method == "TSS") {
     # Calculate the total number of counts in each sample
-    total_counts = rowSums(Data)
+    total_counts <- rowSums(Data)
 
     # convert the absolute abundance to relative abundance
     Data <- Data / total_counts
