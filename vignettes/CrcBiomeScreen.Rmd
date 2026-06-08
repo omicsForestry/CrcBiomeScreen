@@ -305,6 +305,25 @@ toy_obj <- EvaluateModel(
   TrueLabel = "CRC",
   PlotAUC = FALSE
 )
+
+
+toy_obj <- TrainModels(
+  toy_obj,
+  model_type = "XGBoost",
+  TaskName = "toy_xgboost",
+  ClassWeights = FALSE,
+  TrueLabel = "CRC",
+  num_cores = 1,
+  n_cv = 2
+)
+
+toy_obj <- EvaluateModel(
+  toy_obj,
+  model_type = "XGBoost",
+  TaskName = "ToyData_xgboost_Test",
+  TrueLabel = "CRC",
+  PlotAUC = FALSE
+)
 ```
 
 ## External validation

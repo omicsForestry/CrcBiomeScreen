@@ -103,11 +103,11 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   # ---- Run XGBoost model ----
   withr::with_seed(123, {
   if ("XGBoost" %in% model_type) {
-    stop(
-      "XGBoost is temporarily disabled due to compatibility issues ",
-      "with caret and recent versions of xgboost. ",
-      "Please use model_type = 'RF' instead."
-    )
+    # stop(
+    #   "XGBoost is temporarily disabled due to compatibility issues ",
+    #   "with caret and recent versions of xgboost. ",
+    #   "Please use model_type = 'RF' instead."
+    # )
     if (ClassWeights) {
       CrcBiomeScreenObject <- ModelingXGBoost(
         CrcBiomeScreenObject = CrcBiomeScreenObject,

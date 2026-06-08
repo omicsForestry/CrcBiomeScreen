@@ -106,16 +106,26 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
       options(warn = old_warn)
     }, add = TRUE)
 
+    xgb_method <- .getCaretXgbTreeCompat()
     model_fit <- caret::train(
       label_train ~ .,
       data = train_data,
-      method = "xgbTree",
+      method = xgb_method,
       metric = "ROC",
       trControl = ctrl,
-      tuneGrid = tune_grid,
       weights = weights,
-      verbose = FALSE
+      tuneGrid = tune_grid
     )
+    # model_fit <- caret::train(
+    #   label_train ~ .,
+    #   data = train_data,
+    #   method = "xgbTree",
+    #   metric = "ROC",
+    #   trControl = ctrl,
+    #   tuneGrid = tune_grid,
+    #   weights = weights,
+    #   verbose = FALSE
+    # )
   })
 
   parallel::stopCluster(cl)

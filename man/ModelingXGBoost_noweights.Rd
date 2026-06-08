@@ -6,11 +6,11 @@
 \usage{
 ModelingXGBoost_noweights(
   CrcBiomeScreenObject = NULL,
-  k.rf = 10,
-  repeats = 5,
+  k.rf = 2,
+  repeats = 1,
   TaskName = NULL,
   TrueLabel = NULL,
-  num_cores = num_cores
+  num_cores = 1
 )
 }
 \arguments{
