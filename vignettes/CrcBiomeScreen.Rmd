@@ -322,7 +322,7 @@ toy_obj <- EvaluateModel(
   model_type = "RF",
   TaskName = "ToyData_RF_Test",
   TrueLabel = "CRC",
-  PlotAUC = FALSE
+  PlotAUC = TRUE
 )
 
 
@@ -340,9 +340,9 @@ toy_obj <- TrainModels(
 toy_obj <- EvaluateModel(
   toy_obj,
   model_type = "XGBoost",
-  TaskName = "ToyData_xgboost_Test",
+  TaskName = "ToyData_xgboost_test",
   TrueLabel = "CRC",
-  PlotAUC = FALSE
+  PlotAUC = TRUE
 )
 ```
 

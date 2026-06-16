@@ -275,7 +275,7 @@ EvaluateXGBoost <- function(CrcBiomeScreenObject = NULL,
 
   # Plot the ROC curve
   if (PlotAUC == TRUE) {
-    pdf(file.path(outdir,"roc.curve.xgb.", TaskName, ".pdf"))
+    pdf(file.path(outdir,paste0("roc.curve.xgb.", TaskName, ".pdf")))
     plot(roc.curve.xgb, print.auc = TRUE, print.thres = TRUE)
     dev.off()
   }
