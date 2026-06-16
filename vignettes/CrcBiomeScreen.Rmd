@@ -168,7 +168,7 @@ You don't have to be limited to just the genus level. Use the `KeepTaxonomicLeve
 
 For data like **ASVs** or **OTUs** that do not contain taxonomic information in their names, you can use the `LoadTaxaTable()` function to import a separate table that maps each sequence ID to its full taxonomic lineage. This provides maximum flexibility for any type of input data. The use of this function can be seen in the documentation of the function.
 
-#### Example
+* Example
 
 ```{r, eval = TRUE}
 # Split the taxa into multiple levels[If not done already]
