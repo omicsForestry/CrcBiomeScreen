@@ -89,12 +89,16 @@ In general, the package expects microbiome abundance data to be provided in a **
 
 The first example below uses the `Thomas_2018_RelativeAbundance` dataset and will be used for the subsequent steps in this vignette. This represents a typical use case with a more complex microbiome abundance table and associated sample metadata. The second example uses `NHSBCSP_screeningData` and is included to show an alternative input format for simpler datasets, demonstrating that the function can handle different data structures.
 
-* Expected abundance table format:
--   rows    = samples
+-   Expected abundance table format:
+
+-   rows = samples
+
 -   columns = microbial features
 
-* Expected sample metadata format:
--   rows    = samples
+-   Expected sample metadata format:
+
+-   rows = samples
+
 -   columns = sample-level variables, such as sampleID and study_condition
 
 ```{r, eval = TRUE}
@@ -152,7 +156,7 @@ If a taxonomic entry at a given rank is `"uncultured"` or `"unclassified"`, the 
 For example:
 
 | Input | Processed output (Genus) |
-|--------------------------------------------------|----------------------|
+|------------------------------------|------------------------------------|
 | `D_0__Bacteria.D_1__Firmicutes.D_2__Clostridia.D_3__Ruminococcaceae.D_4__uncultured` | `Ruminococcaceae_uncultured` |
 | `k__Bacteria; p__Proteobacteria; c__Gammaproteobacteria; o__Enterobacteriales; f__Enterobacteriaceae; g__unclassified` | `Enterobacteriaceae_unclassified` |
 
@@ -201,16 +205,17 @@ CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", leve
 
 **Note**: GMPR normalization is generally recommended for microbiome data as it is more robust to compositional effects and outliers compared to TSS normalization.
 
-> **Move to:** [Full-scale modeling workflow using real cohort data for reference](# Full-scale modeling workflow using real cohort data for reference)
--------
+## \> **Move to:** [Full-scale modeling workflow using real cohort data for reference](#%20Full-scale%20modeling%20workflow%20using%20real%20cohort%20data%20for%20reference)
+
 # Runnable toy workflow setup
 
-- More explaination and details could check the Full-scale modeling workflow using real cohort data for reference section below.
+-   More explaination and details could check the Full-scale modeling workflow using real cohort data for reference section below.
 
 ## Setup the toy dataset
 
 ```{r, eval = TRUE}
 set.seed(123)
+
 # -------------------------
 # Toy taxonomy
 # -------------------------
@@ -280,8 +285,7 @@ toy_obj <- qcByCmdscale(
   toy_obj,
   TaskName = "toy_obj",
   normalize_method = "TSS",
-  plot = T
-)
+  plot = T)
 
 # -------------------------
 # 4. Split dataset
@@ -518,12 +522,6 @@ CrcBiomeScreenObject <- FilterDataSet(
 # Verify the filtering results
 table(getSampleData(CrcBiomeScreenObject)$study_condition)
 
-# Split data into training (70%) and test (30%) sets
-CrcBiomeScreenObject <- SplitDataSet(
-  CrcBiomeScreenObject, 
-  label = c("control", "CRC"), 
-  partition = 0.7
-)
 ```
 
 ### Quality control
@@ -537,6 +535,13 @@ CrcBiomeScreenObject <- qcByCmdscale(
   TaskName = "Normalize_ToyData_filtered_qc",
   normalize_method = "GMPR",
   plot = TRUE
+)
+
+# Split data into training (70%) and test (30%) sets
+CrcBiomeScreenObject <- SplitDataSet(
+  CrcBiomeScreenObject, 
+  label = c("control", "CRC"), 
+  partition = 0.7
 )
 
 # Check class balance in the training data
@@ -558,6 +563,8 @@ To ensure the robustness and generalizability of the trained models, external va
 ## Prediction & Evaluation
 
 Once you've trained a model, you'll want to apply it to new data and assess its performance. Our package offers a streamlined, two-step process for this: first, generate predictions on your new dataset, and then, if true labels are available, evaluate the model's accuracy. This modular approach allows for flexibility, whether you're predicting outcomes for unknown samples or measuring model quality on a validation set.
+
+\*Note: The examples provided in this section are for illustration purposes only and are not intended to be run as-is.\*
 
 ### Step 1: Predict on New Data
 
@@ -696,7 +703,8 @@ ValidationData_filtered_qc <- qcByCmdscale(
 )
 
 # Run the complete screening workflow
-ValidationData_filtered_qc <- RunScreening(
+# Example with RF model
+CrcBiomeScreenObject <- RunScreening(
   # Input data
   obj = CrcBiomeScreenObject,
   # Model and data splitting
@@ -720,22 +728,46 @@ ValidationData_filtered_qc <- RunScreening(
   TrueLabel = "CRC"
 )
 
-# Example with XGBoost model
-ValidationData_filtered_qc <- RunScreening(
-  CrcBiomeScreenObject,
-  model = "RF",
-  partition = 0.7,
-  split.requirement = list(
-    label = c("control", "CRC"),
-    condition_col = "study_condition"
-  ),
-  ClassWeights = TRUE,
-  n_cv = 10,
-  num_cores = 10,
-  TaskName = "RF_GMPR_toydata",
-  ValidationData = ValidationData_filtered_qc,
-  TrueLabel = "CRC"
+
+# # Example with XGBoost model
+# ValidationData_filtered_qc <- RunScreening(
+#   CrcBiomeScreenObject,
+#   model = "XGBoost",
+#   partition = 0.7,
+#   split.requirement = list(
+#     label = c("control", "CRC"),
+#     condition_col = "study_condition"
+#   ),
+#   ClassWeights = TRUE,
+#   n_cv = 10,
+#   num_cores = 10,
+#   TaskName = "XGBoost_GMPR_toydata",
+#   ValidationData = ValidationData_filtered_qc,
+#   TrueLabel = "CRC"
+# )
+
+
+# Generate predictions for the new dataset
+ValidationData_filtered_qc <- PredictCrcBiomeScreen(
+    CrcBiomeScreenObject, 
+    newdata = getNormalizedData(ValidationData_filtered_qc), # Use the appropriate data slot from your new data
+    model_type = "RF"
 )
+# Inspect the predictions
+head(getPredictResult(ValidationData_filtered_qc)$RF)
+predictions <- getPredictResult(ValidationData_filtered_qc)$RF
+
+
+# Evaluate the predictions
+evaluation_results <- EvaluateCrcBiomeScreen(
+    predictions = predictions,
+    true_labels = getSampleData(ValidationData_filtered_qc)$study_condition, # Provide the actual true labels
+    TrueLabel = "CRC", # Specify the positive class label
+    TaskName = "MyNewDatasetEvaluation" # A name for the output plot/files
+)
+
+# View the evaluation results
+print(evaluation_results$AUC)
 ```
 
 This function performs the complete workflow, including:
