@@ -82,7 +82,7 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
   # Extract normalized data and sample IDs
   study_data <- CrcBiomeScreenObject@NormalizedData
   sampleID <- rownames(CrcBiomeScreenObject@SampleData)
-#
+
   # Safety check: samples should be arranged in rows
   if (nrow(study_data) != nrow(CrcBiomeScreenObject@SampleData)) {
     stop(
