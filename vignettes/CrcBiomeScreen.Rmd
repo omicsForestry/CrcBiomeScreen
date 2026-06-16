@@ -81,11 +81,21 @@ The core workflow of `CrcBiomeScreen` involves several key steps: data loading a
 
 ### Data preparation
 
-First, we need to load the example data and create a `CrcBiomeScreenObject` This object is the primary input for all downstream functions in the package.
+First, we need to load the example data and create a `CrcBiomeScreenObject`. This object is the primary input for all downstream functions in the package.
 
 We offer two methods for preparing your data. You only need to use one of the following examples, depending on the format of your input data.
 
-The first example below, which uses the Thomas_2018_RelativeAbundance dataset, is the one we will be using for the subsequent steps in this vignette. It represents a typical use case with a more complex dataset. The second example with NHSBCSP_screeningData is included to show an alternative input format for simpler datasets, demonstrating that the function can handle various data structures.
+In general, the package expects microbiome abundance data to be provided in a **sample-by-feature format**, where each row represents a sample and each column represents a microbial feature, such as a genus, species, ASV, or OTU. The corresponding sample metadata should also contain one row per sample, with sample identifiers matching those in the abundance table. At minimum, the metadata should include a sample identifier column and a phenotype or condition column that defines the classification task.
+
+The first example below uses the `Thomas_2018_RelativeAbundance` dataset and will be used for the subsequent steps in this vignette. This represents a typical use case with a more complex microbiome abundance table and associated sample metadata. The second example uses `NHSBCSP_screeningData` and is included to show an alternative input format for simpler datasets, demonstrating that the function can handle different data structures.
+
+* Expected abundance table format:
+-   rows    = samples
+-   columns = microbial features
+
+* Expected sample metadata format:
+-   rows    = samples
+-   columns = sample-level variables, such as sampleID and study_condition
 
 ```{r, eval = TRUE}
 # Set working directory
@@ -191,7 +201,8 @@ CrcBiomeScreenObject <- NormalizeData(CrcBiomeScreenObject, method = "TSS", leve
 
 **Note**: GMPR normalization is generally recommended for microbiome data as it is more robust to compositional effects and outliers compared to TSS normalization.
 
-
+> **Move to:** [Full-scale modeling workflow using real cohort data for reference](# Full-scale modeling workflow using real cohort data for reference)
+-------
 # Runnable toy workflow setup
 
 - More explaination and details could check the Full-scale modeling workflow using real cohort data for reference section below.
@@ -221,7 +232,7 @@ toy_taxa <- data.frame(
 # Toy training abundance
 # 6 taxa x 12 samples
 # -------------------------
-train_samples <- paste0("S", 1:12)
+toy_sampleID <- paste0("S", 1:12)
 
 toy_abs <- matrix(
   c(
@@ -233,13 +244,14 @@ toy_abs <- matrix(
 )
 
 rownames(toy_abs) <- toy_taxa_strings
-colnames(toy_abs) <- train_samples
+colnames(toy_abs) <- toy_sampleID
 toy_abs <- as.data.frame(toy_abs)
 
 toy_sample <- data.frame(
+  sampleID <- toy_sampleID,
   number_reads = rep(10000, 12),
   study_condition = c(rep("control", 6), rep("CRC", 6)),
-  row.names = train_samples,
+  row.names = toy_sampleID,
   stringsAsFactors = FALSE
 )
 
@@ -262,7 +274,17 @@ toy_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
 toy_obj <- NormalizeData(toy_obj, method = "TSS", level = "Genus")
 
 # -------------------------
-# 3. Split dataset
+# 3. Perform quality control using cmdscale
+# -------------------------
+toy_obj <- qcByCmdscale(
+  toy_obj,
+  TaskName = "toy_obj",
+  normalize_method = "TSS",
+  plot = T
+)
+
+# -------------------------
+# 4. Split dataset
 # -------------------------
 toy_obj <- SplitDataSet(
   toy_obj,
@@ -270,13 +292,6 @@ toy_obj <- SplitDataSet(
   partition = 0.7
 )
 
-# Perform quality control using cmdscale
-toy_obj <- qcByCmdscale(
-  toy_obj,
-  TaskName = "toy_obj",
-  normalize_method = "TSS",
-  plot = FALSE
-)
 
 # Check class balance in the training data
 checkClassBalance(getModelData(toy_obj)$TrainLabel)
@@ -316,6 +331,7 @@ toy_obj <- TrainModels(
   num_cores = 1,
   n_cv = 2
 )
+
 
 toy_obj <- EvaluateModel(
   toy_obj,
@@ -398,6 +414,15 @@ validated_obj <- ValidateModelOnData(
   toy_obj,
   ValidationData = val_obj,
   model_type = "RF",
+  TaskName = "toy_validation",
+  TrueLabel = "CRC",
+  PlotAUC = FALSE
+)
+
+validated_obj <- ValidateModelOnData(
+  toy_obj,
+  ValidationData = val_obj,
+  model_type = "XGBoost",
   TaskName = "toy_validation",
   TrueLabel = "CRC",
   PlotAUC = FALSE
@@ -511,7 +536,7 @@ CrcBiomeScreenObject <- qcByCmdscale(
   CrcBiomeScreenObject,
   TaskName = "Normalize_ToyData_filtered_qc",
   normalize_method = "GMPR",
-  plot = FALSE
+  plot = TRUE
 )
 
 # Check class balance in the training data
@@ -541,6 +566,7 @@ Use the PredictCrcBiomeScreen() function to generate prediction probabilities fo
 ```{r, eval = FALSE}
 # Assuming 'CrcBiomeScreenObject' contains a trained XGBoost model
 # and 'MyNewData' is your new dataset (e.g., another CrcBiomeScreenObject or a data frame).
+# ValidationData_filtered_qc - Refer to the  Streamlined Screening Workflow
 
 # Generate predictions for the new dataset
 ValidationData_filtered_qc <- PredictCrcBiomeScreen(

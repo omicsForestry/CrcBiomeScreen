@@ -56,30 +56,77 @@
 #' toy_obj <- NormalizeData(toy_obj, method = "TSS", level = "Genus")
 #' # Inspect normalized results
 #' head(getNormalizedData(toy_obj))
-
-
+#'
 NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NULL) {
   Data <- t(CrcBiomeScreenObject@TaxaLevelData[[paste0(level, "LevelData")]])
+
+  # Data format used internally:
+  # rows = samples, columns = microbial features
+  n_samples <- nrow(Data)
+  n_features <- ncol(Data)
+
   if (method == "TSS") {
     # Calculate the total number of counts in each sample
     total_counts <- rowSums(Data)
 
-    # convert the absolute abundance to relative abundance
+    if (any(total_counts == 0)) {
+      warning(
+        "Some samples have zero total counts. These samples may produce NA values ",
+        "during TSS normalisation.",
+        call. = FALSE
+      )
+    }
+
+    # Convert absolute abundance to relative abundance
     Data <- Data / total_counts
 
   } else if (method == "GMPR") {
     if (!requireNamespace("GUniFrac", quietly = TRUE)) {
-      stop("The 'GMPR' method requires the 'GUniFrac' package.\n",
+      stop(
+        "The 'GMPR' method requires the 'GUniFrac' package.\n",
         "Please install it with:\n",
         "BiocManager::install('GUniFrac')",
         call. = FALSE
       )
     }
-    # Calculate GMPR size factor
-    # Row - features, column - samples
-    size.factor <- GUniFrac::GMPR(t(Data))
+
+    # GMPR expects rows = features and columns = samples.
+    # Internally, Data has rows = samples and columns = features,
+    # so we pass t(Data) to GUniFrac::GMPR().
+    if (n_samples > n_features) {
+      warning(
+        "The number of samples is larger than the number of microbial features ",
+        "after keeping the selected taxonomic level. GUniFrac::GMPR() may issue ",
+        "a warning asking whether samples are arranged in columns. In this function, ",
+        "samples are stored in rows internally and are transposed before GMPR is run. ",
+        "If your CrcBiomeScreenObject was created correctly, this warning can usually ",
+        "be ignored.",
+        call. = FALSE
+      )
+    }
+
+    gmpr_input <- t(Data)
+
+    size.factor <- withCallingHandlers(
+      GUniFrac::GMPR(gmpr_input),
+      warning = function(w) {
+        if (grepl("Sample size is larger than OTU number", conditionMessage(w))) {
+          warning(
+            "GUniFrac::GMPR() reported that the sample size is larger than the OTU ",
+            "number. This can occur in datasets where the number of samples is genuinely ",
+            "larger than the number of features at the selected taxonomic level. ",
+            "The input has already been transposed so that rows = features and columns = samples.",
+            call. = FALSE
+          )
+          invokeRestart("muffleWarning")
+        }
+      }
+    )
+
     size.factor[is.na(size.factor)] <- mean(size.factor, na.rm = TRUE)
+
     Data <- Data / size.factor
+
   } else {
     stop("Invalid method. Please choose either 'TSS' or 'GMPR'.")
   }
@@ -87,6 +134,9 @@ NormalizeData <- function(CrcBiomeScreenObject = NULL, method = NULL, level = NU
   CrcBiomeScreenObject@NormalizedData <- as.data.frame(Data)
   attr(CrcBiomeScreenObject@NormalizedData, "NormalizationMethod") <- method
   attr(CrcBiomeScreenObject@NormalizedData, "Timestamp") <- Sys.time()
+  attr(CrcBiomeScreenObject@NormalizedData, "TaxonomicLevel") <- level
+  attr(CrcBiomeScreenObject@NormalizedData, "Samples") <- n_samples
+  attr(CrcBiomeScreenObject@NormalizedData, "Features") <- n_features
 
   return(CrcBiomeScreenObject)
 }

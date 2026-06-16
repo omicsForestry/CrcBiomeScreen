@@ -10,7 +10,7 @@ qcByCmdscale(
   outdir = tempdir(),
   normalize_method = NULL,
   threshold_sd = 1,
-  plot = TRUE
+  plot = FALSE
 )
 }
 \arguments{

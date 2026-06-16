@@ -11,7 +11,7 @@ A named list containing relative abundance objects for demonstration.
 curatedMetagenomicData
 }
 \usage{
-ZellerG_2014_RelativeAbundance
+data(ZellerG_2014_RelativeAbundance)
 }
 \description{
 A relative abundance dataset derived from curatedMetagenomicData and included
