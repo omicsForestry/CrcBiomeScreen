@@ -227,7 +227,7 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
   }
 
   # Store original normalized data
-  CrcBiomeScreenObject@OrginalNormalizedData <- study_data
+  CrcBiomeScreenObject@OriginalNormalizedData <- study_data
 
   # Remove outliers only if detected
   if (length(outliers) > 0) {
