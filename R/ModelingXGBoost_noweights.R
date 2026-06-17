@@ -45,7 +45,7 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
                                       repeats = 1,
                                       TaskName = NULL,
                                       TrueLabel = NULL,
-                                      num_cores = 1) {
+                                      num_cores = NULL) {
 
   # ---- Parallel setup ----
   cl <- NULL

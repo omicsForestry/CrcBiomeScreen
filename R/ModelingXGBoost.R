@@ -51,7 +51,7 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
                             repeats = 5,
                             TaskName = NULL,
                             TrueLabel = NULL,
-                            num_cores = 1) {
+                            num_cores = NULL) {
   # ---- Parallel setup ----
   cl <- NULL
 

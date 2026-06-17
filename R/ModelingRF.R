@@ -77,6 +77,7 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
 
     doParallel::registerDoParallel(cl)
     allow_parallel <- TRUE
+
   } else {
     foreach::registerDoSEQ()
     allow_parallel <- FALSE
@@ -88,6 +89,7 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
     }
     foreach::registerDoSEQ()
   }, add = TRUE)
+
 
   # tuneGrid for ranger
   grid.rf <- expand.grid(

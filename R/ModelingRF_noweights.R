@@ -73,6 +73,7 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
 
     doParallel::registerDoParallel(cl)
     allow_parallel <- TRUE
+
   } else {
     foreach::registerDoSEQ()
     allow_parallel <- FALSE
