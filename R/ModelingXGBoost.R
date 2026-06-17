@@ -142,8 +142,7 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
       metric = "ROC",
       trControl = ctrl,
       weights = weights,
-      tuneGrid = tune_grid,
-      nthread = num_cores
+      tuneGrid = tune_grid
     )
   })
 
