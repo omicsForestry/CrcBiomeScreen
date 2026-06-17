@@ -124,8 +124,8 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   best.params.index.rf <- which.max(grid.rf$AUC)
   best.params.rf <- grid.rf[best.params.index.rf, ]
   # Save the best parameters
-  CrcBiomeScreenObject@ModelResult$RF_noweights <- list(grid.para = grid.rf, best.params = best.params.rf)
-  attr(CrcBiomeScreenObject@ModelResult$RF_noweights, "TaskName") <- TaskName
+  CrcBiomeScreenObject@ModelResult$RF <- list(grid.para = grid.rf, best.params = best.params.rf)
+  attr(CrcBiomeScreenObject@ModelResult$RF, "TaskName") <- TaskName
 
   return(CrcBiomeScreenObject)
 }
