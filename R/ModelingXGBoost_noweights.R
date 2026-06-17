@@ -48,6 +48,8 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
                                       num_cores = 1) {
 
   # ---- Parallel setup ----
+  cl <- NULL
+
   num_cores <- as.integer(num_cores)
 
   if (is.na(num_cores) || num_cores < 1) {
@@ -68,13 +70,21 @@ ModelingXGBoost_noweights <- function(CrcBiomeScreenObject = NULL,
     }
 
     doParallel::registerDoParallel(cl)
+    allow_parallel <- TRUE
 
-    on.exit({
-      parallel::stopCluster(cl)
-      foreach::registerDoSEQ()
-    }, add = TRUE)
+  } else {
+
+    foreach::registerDoSEQ()
+    allow_parallel <- FALSE
+
   }
 
+  on.exit({
+    if (!is.null(cl)) {
+      parallel::stopCluster(cl)
+    }
+    foreach::registerDoSEQ()
+  }, add = TRUE)
   tune_grid <- expand.grid(
     nrounds = c(100, 200, 300),
     max_depth = c(3, 5, 7, 9),
