@@ -60,7 +60,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
                         n_cv = 10,
                         TaskName = NULL,
                         TrueLabel = NULL,
-                        num_cores = NULL) {
+                        num_cores = 1) {
   # For specific model types
   if ("RF" %in% model_type && !requireNamespace("ranger", quietly = TRUE)) {
     stop("The RF model in TrainModels() requires the 'ranger' package. Please install it with install.packages('ranger').")

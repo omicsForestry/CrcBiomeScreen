@@ -168,7 +168,7 @@ You don't have to be limited to just the genus level. Use the `KeepTaxonomicLeve
 
 For data like **ASVs** or **OTUs** that do not contain taxonomic information in their names, you can use the `LoadTaxaTable()` function to import a separate table that maps each sequence ID to its full taxonomic lineage. This provides maximum flexibility for any type of input data. The use of this function can be seen in the documentation of the function.
 
-* Example
+-   Example
 
 ```{r, eval = TRUE}
 # Split the taxa into multiple levels[If not done already]
@@ -554,7 +554,7 @@ Training machine-learning models for microbiome classification often requires re
 
 For this reason, the full training code is provided for users, but is not executed when building the vignette. Users may run the pipeline locally to reproduce the complete analysis.
 
-`CrcBiomeScreen` supports two machine learning algorithms: **Random Forest** and **XGBoost**. Both models can be trained with class balancing to handle imbalanced datasets:
+`CrcBiomeScreen` supports two machine learning algorithms: **Random Forest** and **XGBoost**. Both models can be trained with class balancing to handle imbalanced datasets. For Random Forest models, the `mtry` tuning grid is automatically adjusted according to the number of available features in the training data. This prevents invalid parameter settings when working with small datasets or toy examples where the number of microbial features is lower than the default `mtry` values. For XGBoost models, a predefined tuning grid is used to search across key hyperparameters, including the number of boosting iterations, tree depth, learning rate, column subsampling, and row subsampling.
 
 ## External validation
 

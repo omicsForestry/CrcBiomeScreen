@@ -46,7 +46,7 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  k.rf = n_cv,
                                  TaskName = NULL,
                                  TrueLabel = NULL,
-                                 num_cores = NULL) {
+                                 num_cores = 1) {
 
   # ---- Main function logic ----
   folds.rf <- caret::createFolds(CrcBiomeScreenObject@ModelData$TrainLabel, k = k.rf)
@@ -55,9 +55,33 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   mtry_vals <- unique(pmin(c(1, 2, 3, 5, 10, 15, 20, 25), p))
   mtry_vals <- mtry_vals[mtry_vals >= 1]
 
-  # Calculate the number of cores
-  cl <- makePSOCKcluster(num_cores)
-  doParallel::registerDoParallel(cl)
+  # ---- Parallel setup ----
+  num_cores <- as.integer(num_cores)
+
+  if (is.na(num_cores) || num_cores < 1) {
+    num_cores <- 1
+  }
+
+  if (num_cores > 1) {
+
+    if (.Platform$OS.type == "unix" &&
+        nzchar(Sys.getenv("SLURM_JOB_ID"))) {
+
+      cl <- parallel::makeForkCluster(num_cores)
+
+    } else {
+
+      cl <- parallel::makePSOCKcluster(num_cores)
+
+    }
+
+    doParallel::registerDoParallel(cl)
+
+    on.exit({
+      parallel::stopCluster(cl)
+      foreach::registerDoSEQ()
+    }, add = TRUE)
+  }
 
   # tuneGrid for ranger
   grid.rf <- expand.grid(

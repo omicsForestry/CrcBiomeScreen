@@ -51,11 +51,34 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
                             repeats = 5,
                             TaskName = NULL,
                             TrueLabel = NULL,
-                            num_cores = num_cores) {
-  # ---- Main function logic ----
-  # Parallel setup（memory friendly）
-  cl <- makePSOCKcluster(num_cores)
-  doParallel::registerDoParallel(cl)
+                            num_cores = 1) {
+  # ---- Parallel setup ----
+  num_cores <- as.integer(num_cores)
+
+  if (is.na(num_cores) || num_cores < 1) {
+    num_cores <- 1
+  }
+
+  if (num_cores > 1) {
+
+    if (.Platform$OS.type == "unix" &&
+        nzchar(Sys.getenv("SLURM_JOB_ID"))) {
+
+      cl <- parallel::makeForkCluster(num_cores)
+
+    } else {
+
+      cl <- parallel::makePSOCKcluster(num_cores)
+
+    }
+
+    doParallel::registerDoParallel(cl)
+
+    on.exit({
+      parallel::stopCluster(cl)
+      foreach::registerDoSEQ()
+    }, add = TRUE)
+  }
 
   tune_grid <- expand.grid(
     nrounds = c(100, 200, 300),
@@ -116,16 +139,6 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
       weights = weights,
       tuneGrid = tune_grid
     )
-    # model_fit <- caret::train(
-    #   label_train ~ .,
-    #   data = train_data,
-    #   method = "xgbTree",
-    #   metric = "ROC",
-    #   trControl = ctrl,
-    #   tuneGrid = tune_grid,
-    #   weights = weights,
-    #   verbose = FALSE
-    # )
   })
 
   parallel::stopCluster(cl)

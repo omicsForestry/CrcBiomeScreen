@@ -9,7 +9,7 @@ ModelingRF_noweights(
   k.rf = n_cv,
   TaskName = NULL,
   TrueLabel = NULL,
-  num_cores = NULL
+  num_cores = 1
 )
 }
 \arguments{
