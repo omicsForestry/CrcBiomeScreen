@@ -130,10 +130,6 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
     mean(aucs)
   }
 
-  # Stop the cluster
-  parallel::stopCluster(cl)
-  foreach::registerDoSEQ()
-
   # Choose the best parameters
   best.params.index.rf <- which.max(grid.rf$AUC)
   best.params.rf <- grid.rf[best.params.index.rf, ]
