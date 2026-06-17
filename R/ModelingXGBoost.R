@@ -45,51 +45,23 @@
 #' obj
 #'
 
-
 ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
                             k.rf = 10,
                             repeats = 5,
                             TaskName = NULL,
                             TrueLabel = NULL,
-                            num_cores = NULL) {
-  # ---- Parallel setup ----
-  cl <- NULL
+                            num_cores = 1) {
 
+  # ---- Thread setup: HPC-safe version ----
   num_cores <- as.integer(num_cores)
 
   if (is.na(num_cores) || num_cores < 1) {
     num_cores <- 1
   }
 
-  if (num_cores > 1) {
-
-    if (.Platform$OS.type == "unix" &&
-        nzchar(Sys.getenv("SLURM_JOB_ID"))) {
-
-      cl <- parallel::makeForkCluster(num_cores)
-
-    } else {
-
-      cl <- parallel::makePSOCKcluster(num_cores)
-
-    }
-
-    doParallel::registerDoParallel(cl)
-    allow_parallel <- TRUE
-
-  } else {
-
-    foreach::registerDoSEQ()
-    allow_parallel <- FALSE
-
-  }
-
-  on.exit({
-    if (!is.null(cl)) {
-      parallel::stopCluster(cl)
-    }
-    foreach::registerDoSEQ()
-  }, add = TRUE)
+  # Do not use foreach/PSOCK/FORK cluster on HPC
+  foreach::registerDoSEQ()
+  allow_parallel <- FALSE
 
   tune_grid <- expand.grid(
     nrounds = c(100, 200, 300),
@@ -110,10 +82,11 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   positive_class <- names(which.max(class_counts))
   negative_class <- names(class_counts)[names(class_counts) != positive_class]
 
-  # Suppose Positive is majority class.  Upweight Negative by ratio:
+  # Upweight the minority class
   w_pos <- 1
-  w_neg <- nrow(train_data[label_train == positive_class, ]) /
-    nrow(train_data[label_train == negative_class, ])
+  w_neg <- nrow(train_data[label_train == positive_class, , drop = FALSE]) /
+    nrow(train_data[label_train == negative_class, , drop = FALSE])
+
   weights <- ifelse(label_train == positive_class, w_pos, w_neg)
 
   # Define caret trainControl
@@ -121,26 +94,35 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
     method = "repeatedcv",
     number = k.rf,
     repeats = repeats,
-    summaryFunction = getFromNamespace("twoClassSummary", "caret"),
-    classProbs = TRUE
+    summaryFunction = caret::twoClassSummary,
+    classProbs = TRUE,
+    savePredictions = "final",
+    allowParallel = allow_parallel
   )
 
   train_data <- as.data.frame(train_data)
   train_data$label_train <- as.factor(label_train)
 
   # Train the model using caret
-  # suppressWarnings(): caret internally uses `ntree_limit`, deprecated in xgboost ≥1.6.
+  # suppressWarnings(): caret internally uses `ntree_limit`, deprecated in xgboost >= 1.6.
   # This does not affect model behavior; warning suppressed for cleaner Bioconductor build logs.
   withr::with_seed(123, {
     old_warn <- getOption("warn")
     options(warn = -1)
-    sink(tempfile())
+
+    sink_file <- tempfile()
+    sink(sink_file)
+
     on.exit({
-      sink(NULL)
+      if (sink.number() > 0) {
+        sink(NULL)
+      }
       options(warn = old_warn)
+      foreach::registerDoSEQ()
     }, add = TRUE)
 
     xgb_method <- .getCaretXgbTreeCompat()
+
     model_fit <- caret::train(
       label_train ~ .,
       data = train_data,
@@ -148,17 +130,16 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
       metric = "ROC",
       trControl = ctrl,
       weights = weights,
-      tuneGrid = tune_grid
+      tuneGrid = tune_grid,
+      nthread = num_cores
     )
   })
-
-  parallel::stopCluster(cl)
-  foreach::registerDoSEQ()
 
   CrcBiomeScreenObject@ModelResult$XGBoost <- list(
     model = model_fit,
     bestTune = model_fit$bestTune
   )
+
   attr(CrcBiomeScreenObject@ModelResult$XGBoost, "TaskName") <- TaskName
 
   return(CrcBiomeScreenObject)
