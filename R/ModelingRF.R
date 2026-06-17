@@ -60,6 +60,8 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   mtry_vals <- mtry_vals[mtry_vals >= 1]
 
   # ---- Parallel setup ----
+  cl <- NULL
+
   num_cores <- as.integer(num_cores)
 
   if (is.na(num_cores) || num_cores < 1) {
@@ -67,25 +69,25 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   }
 
   if (num_cores > 1) {
-
-    if (.Platform$OS.type == "unix" &&
-        nzchar(Sys.getenv("SLURM_JOB_ID"))) {
-
+    if (.Platform$OS.type == "unix" && nzchar(Sys.getenv("SLURM_JOB_ID"))) {
       cl <- parallel::makeForkCluster(num_cores)
-
     } else {
-
       cl <- parallel::makePSOCKcluster(num_cores)
-
     }
 
     doParallel::registerDoParallel(cl)
-
-    on.exit({
-      parallel::stopCluster(cl)
-      foreach::registerDoSEQ()
-    }, add = TRUE)
+    allow_parallel <- TRUE
+  } else {
+    foreach::registerDoSEQ()
+    allow_parallel <- FALSE
   }
+
+  on.exit({
+    if (!is.null(cl)) {
+      parallel::stopCluster(cl)
+    }
+    foreach::registerDoSEQ()
+  }, add = TRUE)
 
   # tuneGrid for ranger
   grid.rf <- expand.grid(
