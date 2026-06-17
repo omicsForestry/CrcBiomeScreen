@@ -71,6 +71,14 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
     foreach::registerDoSEQ()
   }, add = TRUE)
 
+  # tuneGrid for ranger
+  grid.rf <- expand.grid(
+    mtry = mtry_vals,
+    node_size = seq(3, 15, by = 2),
+    sample_size = c(.55, .632, .70, .80),
+    num.trees = seq(300, 600, by = 100),
+    AUC = 0
+  )
   p <- ncol(CrcBiomeScreenObject@ModelData$Training)
   if (max(grid.rf$mtry) > p) {
     warning(sprintf(
