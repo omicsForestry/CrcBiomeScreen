@@ -59,37 +59,21 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   mtry_vals <- unique(pmin(c(1, 2, 3, 5, 10, 15, 20, 25), p))
   mtry_vals <- mtry_vals[mtry_vals >= 1]
 
-  # ---- Parallel setup ----
-  cl <- NULL
-
+  # ---- HPC-safe thread setup ----
   num_cores <- as.integer(num_cores)
 
   if (is.na(num_cores) || num_cores < 1) {
     num_cores <- 1
   }
 
-  if (num_cores > 1) {
-    if (.Platform$OS.type == "unix" && nzchar(Sys.getenv("SLURM_JOB_ID"))) {
-      cl <- parallel::makeForkCluster(num_cores)
-    } else {
-      cl <- parallel::makePSOCKcluster(num_cores)
-    }
-
-    doParallel::registerDoParallel(cl)
-    allow_parallel <- TRUE
-
-  } else {
-    foreach::registerDoSEQ()
-    allow_parallel <- FALSE
-  }
+  # Do not use foreach cluster on HPC
+  # Let xgboost use internal threads via nthread
+  foreach::registerDoSEQ()
+  allow_parallel <- FALSE
 
   on.exit({
-    if (!is.null(cl)) {
-      parallel::stopCluster(cl)
-    }
     foreach::registerDoSEQ()
   }, add = TRUE)
-
 
   # tuneGrid for ranger
   grid.rf <- expand.grid(
