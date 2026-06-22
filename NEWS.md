@@ -1,5 +1,36 @@
 # CrcBiomeScreen (development version)
 
+## Version 1.1.1(2026-06-22)
+
+Bug fixes and improvements
+
+- Improved Random Forest tuning grid handling by ensuring that `mtry` does not exceed the number of available features in the training data.
+- Updated parallel backend setup in Random Forest and XGBoost modelling functions to handle single-core and HPC/Slurm environments more robustly.
+- Added safer cluster cleanup to avoid errors when no parallel cluster is created.
+- Improved XGBoost compatibility with recent versions of the xgboost package.
+- Added clearer warnings for GMPR normalization when the number of samples is larger than the number of microbial features.
+- Improved `qcByCmdscale()` to preserve samples when no outliers are detected and to generate QC plots even when no outliers are identified.
+- Added threshold boundary visualization to `qcByCmdscale()` plots.
+---
+## Version 0.99.15(2026-04-14)
+
+- Standardized the format of the vignette and documentation
+---
+## Version 0.99.14(2026-04-10)
+
+- runnable toy workflow added to vignette
+- examples updated for TrainModels, ValidateModelOnData, RunScreening
+- documentation for included datasets completed
+---
+## Version 0.99.13
+
+- Fixed vignette and example issues
+- Temporarily disabled XGBoost execution due to compatibility issues with caret
+- Improved documentation and S4 accessor usage
+
+---
+
+
 # CrcBiomeScreen 0.99.0 (2025-10-21)
 
 ## Overview
@@ -82,25 +113,6 @@ This ensures data provenance and reproducibility across the full workflow.
 - Add support for additional classifiers.
 - Integrate feature interpretation.
 - Provide reproducible benchmarking across public CRC datasets.
-
----
-## Version 0.99.13
-
-- Fixed vignette and example issues
-- Temporarily disabled XGBoost execution due to compatibility issues with caret
-- Improved documentation and S4 accessor usage
-
----
-## Version 0.99.14(2026-04-10)
-
-- runnable toy workflow added to vignette
-- examples updated for TrainModels, ValidateModelOnData, RunScreening
-- documentation for included datasets completed
-	
-## Version 0.99.15(2026-04-14)
-
-- Standardized the format of the vignette and documentation
-
 
 **Maintainer:** Chengxin Li (University of Leeds)  
 **Date:** 2025-10-21  
