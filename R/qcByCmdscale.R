@@ -78,14 +78,28 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
                          outdir = tempdir(),
                          normalize_method = NULL,
                          threshold_sd = 1,
-                         plot = TRUE) {
+                         plot = FALSE) {
   # Extract normalized data and sample IDs
   study_data <- CrcBiomeScreenObject@NormalizedData
-  sampleID <- CrcBiomeScreenObject@SampleData$sampleID
+  sampleID <- rownames(CrcBiomeScreenObject@SampleData)
+
+  # Safety check: samples should be arranged in rows
+  if (nrow(study_data) != nrow(CrcBiomeScreenObject@SampleData)) {
+    stop(
+      "The number of rows in NormalizedData does not match the number of rows ",
+      "in SampleData. qcByCmdscale() expects samples in rows and features in columns."
+    )
+  }
+
+  if (length(sampleID) != nrow(study_data)) {
+    stop(
+      "The length of sampleID does not match the number of rows in NormalizedData."
+    )
+  }
 
   # Step 1: Compute Euclidean distance matrix and apply classical MDS
-  dist_data <- dist(study_data)
-  mds_coords <- cmdscale(dist_data, k = 2)
+  dist_data <- stats::dist(study_data)
+  mds_coords <- stats::cmdscale(dist_data, k = 2)
   rownames(mds_coords) <- sampleID
 
   x <- mds_coords[, 1]
@@ -96,62 +110,136 @@ qcByCmdscale <- function(CrcBiomeScreenObject,
   distances <- sqrt((x - center[1])^2 + (y - center[2])^2)
 
   # Step 3: Identify outliers based on mean + n*SD rule
-  threshold <- mean(distances) + threshold_sd * sd(distances)
+  threshold <- mean(distances) + threshold_sd * stats::sd(distances)
   is_outlier <- distances > threshold
   outliers <- sampleID[is_outlier]
 
-  # Print outlier sample IDs
-  message("Outlier sample IDs detected:")
-  message(paste(outliers, collapse = "\n"))
-
-  if(!is.null(outliers)){
-    message(sprintf("Number of outliers detected: %d", length(outliers)))
-    # Ensure IsOutlier is a factor for color mapping
-    plot_df <- data.frame(
-      SampleID = sampleID,
-      Dim1 = x,
-      Dim2 = y,
-      IsOutlier = factor(is_outlier, levels = c(FALSE, TRUE))
+  # Safety checks before removing samples
+  if (length(is_outlier) != nrow(study_data)) {
+    stop(
+      "Length of outlier indicator does not match the number of rows in ",
+      "NormalizedData. Please check whether samples are arranged in rows."
     )
-    plot_df$IsOutlier <- factor(plot_df$IsOutlier, levels = c(FALSE, TRUE))
+  }
 
-    if(plot == TRUE){
-    # Output file
-    pdf_name <- paste0("cmdscale_", TaskName, "_", normalize_method, ".pdf")
+  if (length(is_outlier) != nrow(CrcBiomeScreenObject@SampleData)) {
+    stop(
+      "Length of outlier indicator does not match the number of rows in SampleData."
+    )
+  }
 
-    # Create plot
-    p <- ggplot2::ggplot(plot_df, aes(x = Dim1, y = Dim2)) +
-      geom_point(color = "grey50", size = 2) +
-      geom_point(
-        data = subset(plot_df, IsOutlier == TRUE),
-        ggplot2::aes(x = Dim1, y = Dim2),
-        color = "red", size = 2, shape = 1, stroke = 1.2
-      ) +
-      geom_text(aes(label = SampleID, color = IsOutlier), size = 3, vjust = -0.6) +
-      ggplot2::scale_color_manual(values = c(`FALSE` = "black", `TRUE` = "red")) +
-      labs(
-        title = paste0("cmdscale_", TaskName, " (", normalize_method, ")"),
-        x = "PCoA 1", y = "PCoA 2"
-      ) +
-      theme_minimal() +
-      theme(legend.position = "none")
+  # Print outlier information
+  message("Outlier sample IDs detected:")
 
-    # Save PDF
-    ggsave(file.path(outdir,pdf_name), plot = p, width = 12, height = 5)
-    }
+  if (length(outliers) > 0) {
+    message(paste(outliers, collapse = "\n"))
+    message(sprintf("Number of outliers detected: %d", length(outliers)))
   } else {
     message("No outliers detected.")
   }
 
-  # Step 5: Update the object
-  CrcBiomeScreenObject@OrginalNormalizedData <- study_data
-  CrcBiomeScreenObject@NormalizedData <- study_data[!is_outlier, , drop = FALSE]
-  CrcBiomeScreenObject@SampleData <- CrcBiomeScreenObject@SampleData[!is_outlier, , drop = FALSE]
-  if(!is.null(outliers)){
+  # Prepare plot data
+  plot_df <- data.frame(
+    SampleID = sampleID,
+    Dim1 = x,
+    Dim2 = y,
+    IsOutlier = factor(is_outlier, levels = c(FALSE, TRUE))
+  )
+
+  # Circle data for threshold boundary
+  circle_df <- data.frame(
+    x = center[1] + threshold * cos(seq(0, 2 * pi, length.out = 200)),
+    y = center[2] + threshold * sin(seq(0, 2 * pi, length.out = 200))
+  )
+
+  # Plot regardless of whether outliers are detected
+  if (isTRUE(plot)) {
+    if (!dir.exists(outdir)) {
+      dir.create(outdir, recursive = TRUE)
+    }
+
+    pdf_name <- paste0("cmdscale_", TaskName, "_", normalize_method, ".pdf")
+
+    plot_subtitle <- paste0(
+      "Threshold = mean + ", threshold_sd, " SD; ",
+      "Outliers detected: ", length(outliers)
+    )
+
+    p <- ggplot2::ggplot(plot_df, ggplot2::aes(x = Dim1, y = Dim2)) +
+      ggplot2::geom_point(
+        ggplot2::aes(color = IsOutlier),
+        size = 2
+      ) +
+      ggplot2::geom_path(
+        data = circle_df,
+        ggplot2::aes(x = x, y = y),
+        color = "blue",
+        linetype = "dashed",
+        linewidth = 0.8,
+        inherit.aes = FALSE
+      ) +
+      ggplot2::geom_point(
+        data = data.frame(x = center[1], y = center[2]),
+        ggplot2::aes(x = x, y = y),
+        color = "blue",
+        size = 2,
+        inherit.aes = FALSE
+      ) +
+      ggplot2::scale_color_manual(
+        values = c(`FALSE` = "grey50", `TRUE` = "red"),
+        drop = FALSE
+      ) +
+      ggplot2::labs(
+        title = paste0("cmdscale_", TaskName, " (", normalize_method, ")"),
+        subtitle = plot_subtitle,
+        x = "MDS 1",
+        y = "MDS 2",
+        color = "Outlier"
+      ) +
+      ggplot2::theme_minimal()
+
+    # Label only outliers if any are detected
+    if (length(outliers) > 0) {
+      p <- p +
+        ggplot2::geom_point(
+          data = subset(plot_df, IsOutlier == TRUE),
+          ggplot2::aes(x = Dim1, y = Dim2),
+          color = "red",
+          size = 2,
+          shape = 1,
+          stroke = 1.2
+        ) +
+        ggplot2::geom_text(
+          data = subset(plot_df, IsOutlier == TRUE),
+          ggplot2::aes(label = SampleID),
+          color = "red",
+          size = 3,
+          vjust = -0.6
+        )
+    }
+
+    ggplot2::ggsave(
+      filename = file.path(outdir, pdf_name),
+      plot = p,
+      width = 12,
+      height = 5
+    )
+  }
+
+  # Store original normalized data
+  CrcBiomeScreenObject@OriginalNormalizedData <- study_data
+
+  # Remove outliers only if detected
+  if (length(outliers) > 0) {
+    CrcBiomeScreenObject@NormalizedData <- study_data[!is_outlier, , drop = FALSE]
+    CrcBiomeScreenObject@SampleData <- CrcBiomeScreenObject@SampleData[!is_outlier, , drop = FALSE]
+
     attr(outliers, "QC") <- TaskName
     attr(outliers, "OutlierSamples") <- length(outliers)
+
     CrcBiomeScreenObject@OutlierSamples <- outliers
-  } else{
+  } else {
+    CrcBiomeScreenObject@NormalizedData <- study_data
     CrcBiomeScreenObject@OutlierSamples <- character(0)
   }
 

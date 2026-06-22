@@ -51,7 +51,7 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
                        k.rf = n_cv,
                        TaskName = NULL,
                        TrueLabel = NULL,
-                       num_cores = NULL) {
+                       num_cores = 1) {
 
   folds.rf <- caret::createFolds(CrcBiomeScreenObject@ModelData$TrainLabel, k = k.rf)
 
@@ -59,9 +59,21 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
   mtry_vals <- unique(pmin(c(1, 2, 3, 5, 10, 15, 20, 25), p))
   mtry_vals <- mtry_vals[mtry_vals >= 1]
 
-  # Calculate the number of cores
-  cl <- makePSOCKcluster(num_cores)
-  doParallel::registerDoParallel(cl)
+  # ---- HPC-safe thread setup ----
+  num_cores <- as.integer(num_cores)
+
+  if (is.na(num_cores) || num_cores < 1) {
+    num_cores <- 1
+  }
+
+  # Do not use foreach cluster on HPC
+  # Let xgboost use internal threads via nthread
+  foreach::registerDoSEQ()
+  allow_parallel <- FALSE
+
+  on.exit({
+    foreach::registerDoSEQ()
+  }, add = TRUE)
 
   # tuneGrid for ranger
   grid.rf <- expand.grid(
@@ -117,10 +129,6 @@ ModelingRF <- function(CrcBiomeScreenObject = NULL,
     # AUC on the current fold
     mean(aucs)
   }
-
-  # Stop the cluster
-  parallel::stopCluster(cl)
-  foreach::registerDoSEQ()
 
   # Choose the best parameters
   best.params.index.rf <- which.max(grid.rf$AUC)

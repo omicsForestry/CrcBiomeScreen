@@ -14,7 +14,7 @@ demonstrations.(2252 obs. of  647 variables).
 NHS Bowel Cancer Screening Programme
 }
 \usage{
-NHSBCSP_screeningData
+data(NHSBCSP_screeningData)
 }
 \description{
 A toy screening dataset derived from the NHS Bowel Cancer Screening Programme.

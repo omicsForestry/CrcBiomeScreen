@@ -29,7 +29,7 @@ A A \code{CrcBiomeScreen} object. object.
 \item \code{SampleData}: Sample metadata.
 \item \code{TaxaLevelData}: Optional genus-level summary data.
 \item \code{NormalizedData}: Normalized data.
-\item \code{OrginalNormalizedData}: Original normalized data.
+\item \code{OriginalNormalizedData}: Original normalized data.
 \item \code{ValidationData}: Optional validation dataset.
 \item \code{OutlierSamples}: Character vector of outlier sample names.
 \item \code{ModelData}, \code{ModelResult}, \code{EvaluateResult},

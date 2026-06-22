@@ -46,7 +46,7 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
                                  k.rf = n_cv,
                                  TaskName = NULL,
                                  TrueLabel = NULL,
-                                 num_cores = NULL) {
+                                 num_cores = 1) {
 
   # ---- Main function logic ----
   folds.rf <- caret::createFolds(CrcBiomeScreenObject@ModelData$TrainLabel, k = k.rf)
@@ -55,9 +55,21 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
   mtry_vals <- unique(pmin(c(1, 2, 3, 5, 10, 15, 20, 25), p))
   mtry_vals <- mtry_vals[mtry_vals >= 1]
 
-  # Calculate the number of cores
-  cl <- makePSOCKcluster(num_cores)
-  doParallel::registerDoParallel(cl)
+  # ---- HPC-safe thread setup ----
+  num_cores <- as.integer(num_cores)
+
+  if (is.na(num_cores) || num_cores < 1) {
+    num_cores <- 1
+  }
+
+  # Do not use foreach cluster on HPC
+  # Let xgboost use internal threads via nthread
+  foreach::registerDoSEQ()
+  allow_parallel <- FALSE
+
+  on.exit({
+    foreach::registerDoSEQ()
+  }, add = TRUE)
 
   # tuneGrid for ranger
   grid.rf <- expand.grid(
@@ -67,7 +79,6 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
     num.trees = seq(300, 600, by = 100),
     AUC = 0
   )
-
   p <- ncol(CrcBiomeScreenObject@ModelData$Training)
   if (max(grid.rf$mtry) > p) {
     warning(sprintf(
@@ -109,16 +120,12 @@ ModelingRF_noweights <- function(CrcBiomeScreenObject = NULL,
     mean(aucs)
   }
 
-  # Stop the cluster
-  parallel::stopCluster(cl)
-  foreach::registerDoSEQ()
-
   # Choose the best parameters
   best.params.index.rf <- which.max(grid.rf$AUC)
   best.params.rf <- grid.rf[best.params.index.rf, ]
   # Save the best parameters
-  CrcBiomeScreenObject@ModelResult$RF_noweights <- list(grid.para = grid.rf, best.params = best.params.rf)
-  attr(CrcBiomeScreenObject@ModelResult$RF_noweights, "TaskName") <- TaskName
+  CrcBiomeScreenObject@ModelResult$RF <- list(grid.para = grid.rf, best.params = best.params.rf)
+  attr(CrcBiomeScreenObject@ModelResult$RF, "TaskName") <- TaskName
 
   return(CrcBiomeScreenObject)
 }

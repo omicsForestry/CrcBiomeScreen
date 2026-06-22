@@ -27,7 +27,7 @@
 #'   \item \code{SampleData}: Sample metadata.
 #'   \item \code{TaxaLevelData}: Optional genus-level summary data.
 #'   \item \code{NormalizedData}: Normalized data.
-#'   \item \code{OrginalNormalizedData}: Original normalized data.
+#'   \item \code{OriginalNormalizedData}: Original normalized data.
 #'   \item \code{ValidationData}: Optional validation dataset.
 #'   \item \code{OutlierSamples}: Character vector of outlier sample names.
 #'   \item \code{ModelData}, \code{ModelResult}, \code{EvaluateResult},
@@ -122,7 +122,7 @@ CreateCrcBiomeScreenObject <- function(
       RelativeAbundance = if (is.null(RelativeAbundance)) data.frame() else as.data.frame(RelativeAbundance),
       TaxaLevelData = NULL,
       NormalizedData = NULL,
-      OrginalNormalizedData = NULL,
+      OriginalNormalizedData = NULL,
       OutlierSamples = "character",
       ValidationData = NULL,
       ModelData = NULL,
@@ -160,7 +160,7 @@ setClass(
     RelativeAbundance = "data.frame",
     TaxaLevelData = "ANY",
     NormalizedData = "ANY",
-    OrginalNormalizedData = "ANY",
+    OriginalNormalizedData = "ANY",
     ValidationData = "ANY",
     ModelData = "ANY",
     ModelResult = "ANY",
@@ -502,7 +502,7 @@ setReplaceMethod("setNormalizedData", "CrcBiomeScreen"
 #'   SampleData          = toy_sample,
 #'   TaxaLevelData       = NULL,
 #'   NormalizedData      = NULL,
-#'   OrginalNormalizedData = NULL,
+#'   OriginalNormalizedData = NULL,
 #'   ValidationData      = NULL,
 #'   ModelData           = NULL,
 #'   ModelResult         = NULL,

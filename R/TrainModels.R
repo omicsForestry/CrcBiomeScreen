@@ -60,7 +60,7 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
                         n_cv = 10,
                         TaskName = NULL,
                         TrueLabel = NULL,
-                        num_cores = NULL) {
+                        num_cores = 1) {
   # For specific model types
   if ("RF" %in% model_type && !requireNamespace("ranger", quietly = TRUE)) {
     stop("The RF model in TrainModels() requires the 'ranger' package. Please install it with install.packages('ranger').")
@@ -103,11 +103,11 @@ TrainModels <- function(CrcBiomeScreenObject = NULL,
   # ---- Run XGBoost model ----
   withr::with_seed(123, {
   if ("XGBoost" %in% model_type) {
-    stop(
-      "XGBoost is temporarily disabled due to compatibility issues ",
-      "with caret and recent versions of xgboost. ",
-      "Please use model_type = 'RF' instead."
-    )
+    # stop(
+    #   "XGBoost is temporarily disabled due to compatibility issues ",
+    #   "with caret and recent versions of xgboost. ",
+    #   "Please use model_type = 'RF' instead."
+    # )
     if (ClassWeights) {
       CrcBiomeScreenObject <- ModelingXGBoost(
         CrcBiomeScreenObject = CrcBiomeScreenObject,

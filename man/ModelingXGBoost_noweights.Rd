@@ -10,7 +10,7 @@ ModelingXGBoost_noweights(
   repeats = 5,
   TaskName = NULL,
   TrueLabel = NULL,
-  num_cores = num_cores
+  num_cores = 1
 )
 }
 \arguments{

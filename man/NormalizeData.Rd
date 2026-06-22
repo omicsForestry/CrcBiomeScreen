@@ -68,4 +68,5 @@ toy_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
 toy_obj <- NormalizeData(toy_obj, method = "TSS", level = "Genus")
 # Inspect normalized results
 head(getNormalizedData(toy_obj))
+
 }

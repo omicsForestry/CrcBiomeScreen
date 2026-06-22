@@ -44,18 +44,28 @@
 #'
 #' obj
 #'
-
-
 ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
                             k.rf = 10,
                             repeats = 5,
                             TaskName = NULL,
                             TrueLabel = NULL,
-                            num_cores = num_cores) {
-  # ---- Main function logic ----
-  # Parallel setup（memory friendly）
-  cl <- makePSOCKcluster(num_cores)
-  doParallel::registerDoParallel(cl)
+                            num_cores = 1) {
+
+  # ---- HPC-safe thread setup ----
+  num_cores <- as.integer(num_cores)
+
+  if (is.na(num_cores) || num_cores < 1) {
+    num_cores <- 1
+  }
+
+  # Do not use foreach cluster on HPC
+  # Let xgboost use internal threads via nthread
+  foreach::registerDoSEQ()
+  allow_parallel <- FALSE
+
+  on.exit({
+    foreach::registerDoSEQ()
+  }, add = TRUE)
 
   tune_grid <- expand.grid(
     nrounds = c(100, 200, 300),
@@ -70,16 +80,25 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
   # Prepare training data
   train_data <- CrcBiomeScreenObject@ModelData$Training
   label_train <- CrcBiomeScreenObject@ModelData$TrainLabel
-  label_train <- factor(label_train, levels = unique(CrcBiomeScreenObject@ModelData$TrainLabel))
+  label_train <- factor(
+    label_train,
+    levels = unique(CrcBiomeScreenObject@ModelData$TrainLabel)
+  )
 
   class_counts <- table(label_train)
+
+  if (length(class_counts) != 2) {
+    stop("ModelingXGBoost currently expects a binary classification task.")
+  }
+
   positive_class <- names(which.max(class_counts))
   negative_class <- names(class_counts)[names(class_counts) != positive_class]
 
-  # Suppose Positive is majority class.  Upweight Negative by ratio:
+  # Upweight the minority class
   w_pos <- 1
-  w_neg <- nrow(train_data[label_train == positive_class, ]) /
-    nrow(train_data[label_train == negative_class, ])
+  w_neg <- nrow(train_data[label_train == positive_class, , drop = FALSE]) /
+    nrow(train_data[label_train == negative_class, , drop = FALSE])
+
   weights <- ifelse(label_train == positive_class, w_pos, w_neg)
 
   # Define caret trainControl
@@ -87,44 +106,51 @@ ModelingXGBoost <- function(CrcBiomeScreenObject = NULL,
     method = "repeatedcv",
     number = k.rf,
     repeats = repeats,
-    summaryFunction = getFromNamespace("twoClassSummary", "caret"),
-    classProbs = TRUE
+    summaryFunction = caret::twoClassSummary,
+    classProbs = TRUE,
+    savePredictions = "final",
+    allowParallel = allow_parallel
   )
 
   train_data <- as.data.frame(train_data)
   train_data$label_train <- as.factor(label_train)
 
   # Train the model using caret
-  # suppressWarnings(): caret internally uses `ntree_limit`, deprecated in xgboost ≥1.6.
+  # suppressWarnings(): caret internally uses `ntree_limit`, deprecated in xgboost >= 1.6.
   # This does not affect model behavior; warning suppressed for cleaner Bioconductor build logs.
   withr::with_seed(123, {
+
     old_warn <- getOption("warn")
     options(warn = -1)
-    sink(tempfile())
+
+    sink_file <- tempfile()
+    sink(sink_file)
+
     on.exit({
-      sink(NULL)
+      if (sink.number() > 0) {
+        sink(NULL)
+      }
       options(warn = old_warn)
     }, add = TRUE)
+
+    xgb_method <- .getCaretXgbTreeCompat()
 
     model_fit <- caret::train(
       label_train ~ .,
       data = train_data,
-      method = "xgbTree",
+      method = xgb_method,
       metric = "ROC",
       trControl = ctrl,
-      tuneGrid = tune_grid,
       weights = weights,
-      verbose = FALSE
+      tuneGrid = tune_grid
     )
   })
-
-  parallel::stopCluster(cl)
-  foreach::registerDoSEQ()
 
   CrcBiomeScreenObject@ModelResult$XGBoost <- list(
     model = model_fit,
     bestTune = model_fit$bestTune
   )
+
   attr(CrcBiomeScreenObject@ModelResult$XGBoost, "TaskName") <- TaskName
 
   return(CrcBiomeScreenObject)

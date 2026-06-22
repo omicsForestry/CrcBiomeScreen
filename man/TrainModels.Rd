@@ -11,7 +11,7 @@ TrainModels(
   n_cv = 10,
   TaskName = NULL,
   TrueLabel = NULL,
-  num_cores = NULL
+  num_cores = 1
 )
 }
 \arguments{
