@@ -52,7 +52,7 @@
 #'
 #' # Apply taxonomy splitting + keep genus level
 #' toy_obj <- SplitTaxas(toy_obj)
-#' toy_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
+toy_obj <- KeepTaxonomicLevel(toy_obj, level = "Genus")
 #' toy_obj <- NormalizeData(toy_obj, method = "TSS", level = "Genus")
 #' # Inspect normalized results
 #' head(getNormalizedData(toy_obj))
