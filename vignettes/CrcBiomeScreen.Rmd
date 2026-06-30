@@ -125,7 +125,7 @@ data(NHSBCSP_screeningData, package = "CrcBiomeScreen")
 
 # Create the CrcBiomeScreenObject for simple toy data
 CrcBiomeScreenObject_NHSBCSP_screeningData <- CreateCrcBiomeScreenObject(
-  AbsoluteAbundance = NHSBCSP_screeningData[,-c(1:2,646:647)],
+  AbsoluteAbundance = t(NHSBCSP_screeningData[,-c(1:2,646:647)]),
   TaxaData = colnames(NHSBCSP_screeningData[,-c(1:2,646:647)]),
   SampleData = NHSBCSP_screeningData[,c(1:2,646:647)]
 )
