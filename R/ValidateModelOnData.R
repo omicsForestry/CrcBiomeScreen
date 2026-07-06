@@ -264,8 +264,6 @@ ValidateModelOnData <- function(
   # Store prediction + evaluation results in PredictResult
   CrcBiomeScreenObject@PredictResult[[model_type]][[TaskName]] <- list(
     predictions = probs,
-    true.labels = true_labels,
-    evaluation = eval_result,
     roc.curve = eval_result$roc.curve,
     AUC = eval_result$AUC,
     AUC.CI = eval_result$AUC.CI,

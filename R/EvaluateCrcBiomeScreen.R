@@ -178,9 +178,6 @@ EvaluateCrcBiomeScreen <- function(predictions,
 
   return(list(
     predictions = predictions,
-    prediction.probability = test.pred.prob,
-    predicted.classes = test.class.predictions,
-    true.classes = actual.classes,
     roc.curve = roc.curve,
     AUC = auc.value,
     AUC.CI = auc.ci,
