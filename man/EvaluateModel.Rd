@@ -27,7 +27,7 @@ EvaluateModel(
 \item{PlotAUC}{A logical value indicating whether to plot the AUC curve. If TRUE, the AUC curve will be saved as a PDF file.}
 }
 \value{
-A A \code{CrcBiomeScreen} object. object with with the evaluation results stored in the \code{EvaluateResult} slot.
+A \code{CrcBiomeScreen} object. object with with the evaluation results stored in the \code{EvaluateResult} slot.
 }
 \description{
 Evaluate the model to select the optimal model

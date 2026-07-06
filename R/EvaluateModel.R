@@ -12,7 +12,7 @@
 #' @importFrom withr with_seed
 #' @importFrom ranger ranger
 #'
-#' @return A A \code{CrcBiomeScreen} object. object with with the evaluation results stored in the `EvaluateResult` slot.
+#' @return A \code{CrcBiomeScreen} object. object with with the evaluation results stored in the `EvaluateResult` slot.
 #' @export
 #' @examples
 #' \donttest{
