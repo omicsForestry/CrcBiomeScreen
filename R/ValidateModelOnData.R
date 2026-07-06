@@ -155,76 +155,127 @@
 
 ValidateModelOnData <- function(
     CrcBiomeScreenObject = NULL,
-    model_type = NULL,
+    model_type = c("RF", "XGBoost"),
     ValidationData = NULL,
-    TaskName = NULL,
+    TaskName = "Validation",
     TrueLabel = NULL,
     condition_col = "study_condition",
-    PlotAUC = NULL,
+    PlotAUC = FALSE,
     outdir = tempdir()) {
-  if (!condition_col %in% colnames(ValidationData@SampleData)) {
-    stop(sprintf("Condition column", condition_col, "not found in SampleData."))
+
+  model_type <- match.arg(model_type)
+
+  if (is.null(CrcBiomeScreenObject)) {
+    stop("Please provide a CrcBiomeScreenObject containing the trained model.")
   }
 
-  x <- getNormalizedData(ValidationData)
-  colnames(x) <- make.names(colnames(x))
-  ValidationData@NormalizedData <- x
-  # Load the model
+  if (is.null(ValidationData)) {
+    stop("Please provide ValidationData as a CrcBiomeScreenObject.")
+  }
+
+  if (is.null(TrueLabel)) {
+    stop("Please specify the 'TrueLabel' positive class.")
+  }
+
+  if (!condition_col %in% colnames(ValidationData@SampleData)) {
+    stop(sprintf(
+      "Condition column '%s' not found in ValidationData@SampleData.",
+      condition_col
+    ))
+  }
+
+  if (!dir.exists(outdir)) {
+    dir.create(outdir, recursive = TRUE)
+  }
+
+  if (is.null(CrcBiomeScreenObject@PredictResult)) {
+    CrcBiomeScreenObject@PredictResult <- list()
+  }
+
+  if (is.null(CrcBiomeScreenObject@PredictResult[[model_type]])) {
+    CrcBiomeScreenObject@PredictResult[[model_type]] <- list()
+  }
+
+  # Prepare validation feature matrix
+  validation_data <- as.data.frame(getNormalizedData(ValidationData))
+  colnames(validation_data) <- make.names(colnames(validation_data))
+
+  ValidationData@NormalizedData <- validation_data
+
+  # True labels for validation data
+  true_labels <- as.factor(ValidationData@SampleData[[condition_col]])
+
+  if (length(true_labels) != nrow(validation_data)) {
+    stop(
+      "The number of validation labels does not match the number of rows in ",
+      "ValidationData@NormalizedData."
+    )
+  }
+
   if (model_type == "RF") {
     rf.model <- CrcBiomeScreenObject@EvaluateResult$RF$RF.Model
-    probs.ValidationData.rf <- predict(rf.model, data = ValidationData@NormalizedData, type = "response")$predictions
-    probs.ValidationData.rf.prob <- probs.ValidationData.rf[, TrueLabel]
-    rownames(probs.ValidationData.rf) <- rownames(ValidationData@NormalizedData)
-    # Actual labels
-    actual.classes.rf <- as.factor(ValidationData@SampleData$study_condition)
 
-    # calculating the ROC Curve
-    roc.curve.rf <- roc(actual.classes.rf, probs.ValidationData.rf.prob, levels = levels(as.factor(ValidationData@SampleData$study_condition)))
-
-    # Plot
-    if (PlotAUC == TRUE) {
-      pdf(paste0("roc.curve.rf.", TaskName, ".pdf"))
-      plot(roc.curve.rf, print.auc = TRUE, print.thres = TRUE)
-      dev.off()
-    }
-    CrcBiomeScreenObject@PredictResult[["RF"]][[TaskName]] <-
-      list(
-        # Store the probabilities here
-        predictions = probs.ValidationData.rf,
-        roc.curve = roc.curve.rf,
-        AUC = auc(roc.curve.rf)
+    if (is.null(rf.model)) {
+      stop(
+        "No evaluated RF model found in CrcBiomeScreenObject@EvaluateResult$RF$RF.Model. ",
+        "Please run EvaluateModel(..., model_type = 'RF') first."
       )
+    }
+
+    probs <- predict(
+      rf.model,
+      data = validation_data,
+      type = "response"
+    )$predictions
+
+    probs <- as.data.frame(probs)
+    rownames(probs) <- rownames(validation_data)
+
   } else if (model_type == "XGBoost") {
     xgb.model <- CrcBiomeScreenObject@ModelResult$XGBoost$model
 
-    # Test the model
-    test.pred.prob.xgb <- predict(xgb.model, newdata = ValidationData@NormalizedData, type = "prob")[[TrueLabel]]
-
-    # Calculate AUC
-    roc.curve.xgb <- roc(ValidationData@SampleData$study_condition, test.pred.prob.xgb)
-    auc.value.xgb <- auc(roc.curve.xgb)
-
-    # Plot the ROC curve
-    if (PlotAUC == TRUE) {
-      pdf(file.path(outdir, paste0("roc.curve.xgb.", TaskName, ".pdf")))
-      plot(roc.curve.xgb, print.auc = TRUE, print.thres = TRUE)
-      dev.off()
+    if (is.null(xgb.model)) {
+      stop(
+        "No XGBoost model found in CrcBiomeScreenObject@ModelResult$XGBoost$model. ",
+        "Please run TrainModels(..., model_type = 'XGBoost') first."
+      )
     }
 
-    predictions_df <- data.frame(
-      SampleID = rownames(ValidationData@NormalizedData),
-      Prediction = test.pred.prob.xgb
+    probs <- predict(
+      xgb.model,
+      newdata = validation_data,
+      type = "prob"
     )
 
-    CrcBiomeScreenObject@PredictResult[["XGBoost"]][[TaskName]] <-
-      list(
-        predictions = predictions_df,
-        roc.curve = roc.curve.xgb,
-        AUC = auc(roc.curve.xgb)
-      )
-  } else {
-    stop("Invalid model type. Please choose either 'RF' or 'XGBoost'.")
+    probs <- as.data.frame(probs)
+    rownames(probs) <- rownames(validation_data)
   }
+
+  # Evaluate predictions using the shared evaluation function
+  eval_result <- EvaluateCrcBiomeScreen(
+    predictions = probs,
+    true_labels = true_labels,
+    TrueLabel = TrueLabel,
+    TaskName = TaskName,
+    PlotAUC = PlotAUC,
+    outdir = outdir
+  )
+
+  # Store prediction + evaluation results in PredictResult
+  CrcBiomeScreenObject@PredictResult[[model_type]][[TaskName]] <- list(
+    predictions = probs,
+    true.labels = true_labels,
+    evaluation = eval_result,
+    roc.curve = eval_result$roc.curve,
+    AUC = eval_result$AUC,
+    AUC.CI = eval_result$AUC.CI,
+    optimal.threshold = eval_result$optimal.threshold,
+    F1 = eval_result$F1,
+    BalancedAccuracy = eval_result$BalancedAccuracy,
+    Precision = eval_result$Precision,
+    Recall = eval_result$Recall,
+    conf.matrix = eval_result$conf.matrix
+  )
 
   return(CrcBiomeScreenObject)
 }

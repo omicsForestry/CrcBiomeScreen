@@ -6,12 +6,12 @@
 \usage{
 ValidateModelOnData(
   CrcBiomeScreenObject = NULL,
-  model_type = NULL,
+  model_type = c("RF", "XGBoost"),
   ValidationData = NULL,
-  TaskName = NULL,
+  TaskName = "Validation",
   TrueLabel = NULL,
   condition_col = "study_condition",
-  PlotAUC = NULL,
+  PlotAUC = FALSE,
   outdir = tempdir()
 )
 }
