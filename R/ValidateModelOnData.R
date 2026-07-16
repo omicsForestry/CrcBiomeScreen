@@ -228,8 +228,13 @@ ValidateModelOnData <- function(
       type = "response"
     )$predictions
 
-    probs <- as.data.frame(probs)
-    rownames(probs) <- rownames(validation_data)
+    probs <- data.frame(
+      sampleID = rownames(validation_data),
+      probs,
+      True_label = true_labels,
+      check.names = FALSE,
+      row.names = rownames(probs)
+    )
 
   } else if (model_type == "XGBoost") {
     xgb.model <- CrcBiomeScreenObject@ModelResult$XGBoost$model
@@ -247,8 +252,13 @@ ValidateModelOnData <- function(
       type = "prob"
     )
 
-    probs <- as.data.frame(probs)
-    rownames(probs) <- rownames(validation_data)
+    probs <- data.frame(
+      sampleID = rownames(validation_data),
+      probs,
+      True_label = true_labels,
+      check.names = FALSE,
+      row.names = rownames(probs)
+    )
   }
 
   # Evaluate predictions using the shared evaluation function
@@ -277,3 +287,5 @@ ValidateModelOnData <- function(
 
   return(CrcBiomeScreenObject)
 }
+
+as.factor(CrcBiomeScreenObject@SampleData[[condition_col]])

@@ -5,7 +5,7 @@
 #' @param method "TSS" or "GMPR"
 #' @param level Taxonomic level for normalization, e.g., "Genus"
 #'
-#'
+
 #' @return A A \code{CrcBiomeScreen} object. with the updated NormalizedData.
 #' @export
 #'

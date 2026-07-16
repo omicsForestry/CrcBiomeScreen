@@ -40,7 +40,7 @@ toy_obj <- new(
     SampleData          = data.frame(),
     TaxaLevelData       = NULL,
     NormalizedData      = NULL,
-    OrginalNormalizedData = NULL,
+    OriginalNormalizedData = NULL,
     ValidationData      = NULL,
     ModelData           = NULL,
     ModelResult         = NULL,

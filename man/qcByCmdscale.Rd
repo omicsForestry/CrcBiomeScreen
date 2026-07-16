@@ -33,7 +33,7 @@ A modified \code{CrcBiomeScreenObject} where:
 \item \code{NormalizedData} contains filtered data with outliers removed.
 \item \code{SampleData} is updated to exclude outlier samples.
 \item \code{OutlierSamples} is a character vector of sample IDs identified as outliers.
-\item \code{OrginalNormalizedData} stores the unfiltered data matrix before QC.
+\item \code{OriginalNormalizedData} stores the unfiltered data matrix before QC.
 }
 
 A A \code{CrcBiomeScreen} object. with outliers.

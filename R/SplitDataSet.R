@@ -36,7 +36,7 @@
 #'   SampleData          = toy_sampledata,
 #'   NormalizedData      = toy_norm,   # IMPORTANT: SplitDataSet needs this
 #'   TaxaLevelData       = NULL,
-#'   OrginalNormalizedData = NULL,
+#'   OriginalNormalizedData = NULL,
 #'   ValidationData      = NULL,
 #'   ModelData           = list(),
 #'   ModelResult         = NULL,
