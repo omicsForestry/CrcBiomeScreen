@@ -288,4 +288,3 @@ ValidateModelOnData <- function(
   return(CrcBiomeScreenObject)
 }
 
-as.factor(CrcBiomeScreenObject@SampleData[[condition_col]])
