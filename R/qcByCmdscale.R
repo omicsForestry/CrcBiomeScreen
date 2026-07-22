@@ -41,16 +41,17 @@
 #' # Minimal toy object for QC example
 #' toy_sampledata <- data.frame(
 #'   sample_id = paste0("S", 1:4),
-#'   study_condition = c("control", "CRC", "control", "CRC")
+#'   study_condition = c("control", "CRC", "control", "CRC"),
+#'   row.names = paste0("S", 1:4)
 #' )
 #'
+#' # Samples in rows and features in columns
 #' toy_norm <- data.frame(
-#'   S1 = c(1, 2, 3),
-#'   S2 = c(2, 3, 4),
-#'   S3 = c(1, 1, 1),
-#'   S4 = c(3, 2, 1)
+#'   g1 = c(1, 2, 1, 3),
+#'   g2 = c(2, 3, 1, 2),
+#'   g3 = c(3, 4, 1, 1),
+#'   row.names = paste0("S", 1:4)
 #' )
-#' rownames(toy_norm) <- c("g1", "g2", "g3")
 #'
 #' toy_obj <- new(
 #'   "CrcBiomeScreen",
@@ -62,17 +63,13 @@
 #'   ModelData = list()
 #' )
 #'
-#' # Run QC with 1 SD threshold (small example)
 #' qc_obj <- qcByCmdscale(
 #'   toy_obj,
 #'   TaskName = "ToyQC",
 #'   normalize_method = "GMPR",
 #'   threshold = 1
 #' )
-#'
-#' getSampleData(qc_obj)
-#'
-#'
+#
 qcByCmdscale <- function(CrcBiomeScreenObject,
                          TaskName = NULL,
                          outdir = tempdir(),
